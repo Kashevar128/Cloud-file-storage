@@ -1,7 +1,9 @@
-module org.example {
-    requires javafx.controls;
+module client {
     requires javafx.fxml;
+    requires javafx.controls;
+    requires dto;
 
-    opens org.example to javafx.fxml;
-    exports org.example;
+    exports org.vinogradov.controllers;
+    exports org.vinogradov.GUI;
+
 }
