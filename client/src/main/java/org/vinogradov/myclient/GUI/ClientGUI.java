@@ -1,11 +1,11 @@
-package org.vinogradov.GUI;
+package org.vinogradov.myclient.GUI;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.vinogradov.controllers.ClientController;
+import org.vinogradov.myclient.controllers.ClientController;
 
 import java.io.IOException;
 

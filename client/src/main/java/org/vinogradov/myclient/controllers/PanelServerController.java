@@ -1,14 +1,15 @@
-package org.vinogradov.controllers;
-
+package org.vinogradov.myclient.controllers;
 
 import javafx.fxml.Initializable;
-import org.vinogradov.FileInfo;
+import org.vinogradov.mydto.FileInfo;
 
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.ResourceBundle;
 
-public class PanelClientController implements Initializable, PanelController<Path> {
+public class PanelServerController implements Initializable, PanelController<List<String>> {
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -31,7 +32,7 @@ public class PanelClientController implements Initializable, PanelController<Pat
     }
 
     @Override
-    public void updateList(Path path) {
+    public void updateList(List<String> strings) {
 
     }
 

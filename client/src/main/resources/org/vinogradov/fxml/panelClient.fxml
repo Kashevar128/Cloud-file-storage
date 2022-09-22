@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.vinogradov.controllers.PanelClientController">
+      fx:controller="org.vinogradov.myclient.controllers.PanelClientController">
     <HBox>
         <ComboBox fx:id="disksBox"/>
         <TextField fx:id="pathField" editable="false" HBox.hgrow="ALWAYS"/>

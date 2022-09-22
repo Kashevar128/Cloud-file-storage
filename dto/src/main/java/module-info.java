@@ -1,3 +1,4 @@
 module dto {
-    exports org.vinogradov;
+    exports org.vinogradov.mydto.Request;
+    exports org.vinogradov.mydto.Response;
 }

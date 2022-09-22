@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="org.vinogradov.controllers.ClientController">
+<VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="org.vinogradov.myclient.controllers.ClientController">
     <MenuBar>
         <Menu text="Файл">
             <MenuItem text="Выйти из программы"/>
