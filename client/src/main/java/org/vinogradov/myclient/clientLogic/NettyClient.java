@@ -11,6 +11,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
+import org.vinogradov.mydto.BasicReqRes;
 import org.vinogradov.mysupport.Constans;
 
 public class NettyClient {
@@ -39,8 +40,7 @@ public class NettyClient {
                 });
                 ChannelFuture channelFuture = bootstrap.connect().sync();
                 channel = channelFuture.channel();
-                //StartClientRequest startRequest = new StartClientRequest(nameUser);
-                //sendMessage(startRequest);
+                sendMessage(ClientHandlerLogic.getStartClientRequest());
                 channelFuture.channel().closeFuture().sync();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -50,12 +50,13 @@ public class NettyClient {
         }).start();
     }
 
-    public void sendMessage(Object msg) {
-
+    public void sendMessage (BasicReqRes basic) {
+        channel.writeAndFlush(basic);
     }
 
     public void exitClient() {
-
+        channel.closeFuture();
+        channel.close();
     }
 }
 
