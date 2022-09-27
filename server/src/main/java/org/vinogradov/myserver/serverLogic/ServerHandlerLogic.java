@@ -5,7 +5,8 @@ import org.vinogradov.mydto.responses.StartServerResponse;
 
 public class ServerHandlerLogic {
 
-    static StartServerResponse getStartServerResponse(BasicReqRes basicReqRes) {
+    static StartServerResponse getRegServerResponse(BasicReqRes basicReqRes) {
+
         return new StartServerResponse();
     }
 }

@@ -12,7 +12,7 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.vinogradov.mydto.BasicReqRes;
-import org.vinogradov.mysupport.Constans;
+import org.vinogradov.mysupport.Constants;
 
 public class NettyClient {
 
@@ -32,7 +32,7 @@ public class NettyClient {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline().addLast(
-                                new ObjectDecoder(Constans.MB_20, ClassResolvers.cacheDisabled(null)),
+                                new ObjectDecoder(Constants.MB_20, ClassResolvers.cacheDisabled(null)),
                                 new ObjectEncoder(),
                                 new ClientHandler()
                         );
@@ -40,7 +40,6 @@ public class NettyClient {
                 });
                 ChannelFuture channelFuture = bootstrap.connect().sync();
                 channel = channelFuture.channel();
-                sendMessage(ClientHandlerLogic.getStartClientRequest());
                 channelFuture.channel().closeFuture().sync();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -58,5 +57,6 @@ public class NettyClient {
         channel.closeFuture();
         channel.close();
     }
+
 }
 

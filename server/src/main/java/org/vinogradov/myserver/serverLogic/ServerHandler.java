@@ -3,7 +3,7 @@ package org.vinogradov.myserver.serverLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.vinogradov.mydto.BasicReqRes;
-import org.vinogradov.mydto.requests.StartClientRequest;
+import org.vinogradov.mydto.requests.AuthClientRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +14,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     private static final Map<Class<? extends BasicReqRes>, BiConsumer<ChannelHandlerContext, BasicReqRes>> REQUEST_HANDLERS = new HashMap<>();
 
     static {
-        REQUEST_HANDLERS.put(StartClientRequest.class, ((channelHandlerContext, basicReqRes) -> {
-            channelHandlerContext.writeAndFlush(ServerHandlerLogic.getStartServerResponse(basicReqRes));
+        REQUEST_HANDLERS.put(AuthClientRequest.class, ((channelHandlerContext, basicReqRes) -> {
+            //channelHandlerContext.writeAndFlush(ServerHandlerLogic.getStartServerResponse(basicReqRes));
         }));
     }
 

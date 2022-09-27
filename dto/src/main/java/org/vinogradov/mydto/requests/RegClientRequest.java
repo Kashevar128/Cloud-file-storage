@@ -3,17 +3,17 @@ package org.vinogradov.mydto.requests;
 import org.vinogradov.mydto.BasicReqRes;
 import org.vinogradov.mydto.User;
 
-public class StartClientRequest implements BasicReqRes {
+public class RegClientRequest implements BasicReqRes {
 
     private User user;
 
-//    public StartClientRequest(User user) {
-//        this.user = user;
-//    }
+    public RegClientRequest(User user) {
+        this.user = user;
+    }
 
     @Override
     public String getType() {
-        return "New client";
+        return "Client connect: " + user.getNameUser();
     }
 
     public User getUser() {
