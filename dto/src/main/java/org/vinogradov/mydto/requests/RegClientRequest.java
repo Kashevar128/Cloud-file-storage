@@ -1,9 +1,9 @@
 package org.vinogradov.mydto.requests;
 
-import org.vinogradov.mydto.BasicReqRes;
+import org.vinogradov.mydto.BasicQuery;
 import org.vinogradov.mydto.User;
 
-public class RegClientRequest implements BasicReqRes {
+public class RegClientRequest implements BasicQuery {
 
     private User user;
 

@@ -1,7 +1,5 @@
 package org.vinogradov.mysupport;
 
-import java.util.stream.Stream;
-
 public class HelperMethods {
 
     public static String delSpace(String str) {
@@ -9,4 +7,5 @@ public class HelperMethods {
         newStr = newStr.replaceAll(" ", "");
         return newStr;
     }
+
 }

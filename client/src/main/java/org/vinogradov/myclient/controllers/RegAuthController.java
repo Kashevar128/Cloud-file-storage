@@ -34,7 +34,11 @@ public class RegAuthController {
 
     @FXML
     public void authUser() {
-
+        String name = HelperMethods.delSpace(userField.getText());
+        String pass = HelperMethods.delSpace(passwordField.getText());
+        if (filter(name, pass)) {
+            nettyClient.sendMessage(ClientHandlerLogic.getAuthClientRequest(new User(name, pass)));
+        }
     }
 
     private boolean filter(String userField, String passwordField) {

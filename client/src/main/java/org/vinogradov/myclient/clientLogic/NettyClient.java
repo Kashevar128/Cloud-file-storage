@@ -11,7 +11,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.vinogradov.mydto.BasicReqRes;
+import org.vinogradov.mydto.BasicQuery;
 import org.vinogradov.mysupport.Constants;
 
 public class NettyClient {
@@ -49,7 +49,7 @@ public class NettyClient {
         }).start();
     }
 
-    public void sendMessage (BasicReqRes basic) {
+    public void sendMessage (BasicQuery basic) {
         channel.writeAndFlush(basic);
     }
 

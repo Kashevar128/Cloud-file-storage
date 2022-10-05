@@ -8,11 +8,12 @@ import javafx.stage.Stage;
 import org.vinogradov.myclient.clientLogic.NettyClient;
 import org.vinogradov.myclient.controllers.RegAuthController;
 
-public class TestGui extends Application {
+import java.io.IOException;
+
+public class RegAuthGui extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/reg_auth.fxml"));
         Parent auth = loader.load();
         RegAuthController regAuthController = loader.getController();
@@ -23,6 +24,5 @@ public class TestGui extends Application {
         stage.show();
 
         regAuthController.setNettyClient(new NettyClient());
-
     }
 }

@@ -2,8 +2,9 @@ package org.vinogradov.myclient.clientLogic;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.vinogradov.mydto.BasicReqRes;
-import org.vinogradov.mydto.responses.StartServerResponse;
+import org.vinogradov.mydto.BasicQuery;
+import org.vinogradov.mydto.responses.AuthServerResponse;
+import org.vinogradov.mydto.responses.RegServerResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +13,15 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     NettyClient nettyClient;
 
-    private static  final Map<Class<? extends BasicReqRes>, MyTripleConsumer<ChannelHandlerContext, BasicReqRes, NettyClient>> RESPONSE_HANDLERS = new HashMap<>();
+    private static  final Map<Class<? extends BasicQuery>, MyTripleConsumer<ChannelHandlerContext, BasicQuery, NettyClient>> RESPONSE_HANDLERS = new HashMap<>();
 
     static {
-        RESPONSE_HANDLERS.put(StartServerResponse.class, ((channelHandlerContext, basicReqRes, nettyClient) -> {
-            System.out.println("Обновили список");
+        RESPONSE_HANDLERS.put(RegServerResponse.class, ((channelHandlerContext, basicQuery, nettyClient) -> {
+            ClientHandlerLogic.getServerMessageReg((RegServerResponse) basicQuery);
+        }));
+
+        RESPONSE_HANDLERS.put(AuthServerResponse.class, ((channelHandlerContext, basicQuery, nettyClient) -> {
+            ClientHandlerLogic.getServerMessageAuth((AuthServerResponse) basicQuery);
         }));
     }
 
@@ -27,9 +32,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        BasicReqRes response = (BasicReqRes) msg;
+        BasicQuery response = (BasicQuery) msg;
         System.out.println(response.getType());
-        MyTripleConsumer<ChannelHandlerContext, BasicReqRes, NettyClient> channelClientHandlerContextConsumer = RESPONSE_HANDLERS.get(response.getClass());
+        MyTripleConsumer<ChannelHandlerContext, BasicQuery, NettyClient> channelClientHandlerContextConsumer = RESPONSE_HANDLERS.get(response.getClass());
         channelClientHandlerContextConsumer.accept(ctx, response, null);
     }
 

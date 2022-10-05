@@ -2,9 +2,11 @@ package org.vinogradov.myserver.serverLogic.dataBaseService;
 
 public interface DataBase {
 
-    void createUser(String name, String password);
+    boolean createUser(String name, String password);
 
     boolean findUser(String name);
+
+    boolean auth(String name, String password);
 
     void deleteUser(String name);
 
