@@ -1,4 +1,4 @@
-package org.vinogradov.controllers;
+package org.vinogradov.myclient.controllers;
 
 
 import javafx.fxml.Initializable;

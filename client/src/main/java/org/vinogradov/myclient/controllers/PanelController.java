@@ -1,6 +1,6 @@
-package org.vinogradov.controllers;
+package org.vinogradov.myclient.controllers;
 
-import org.vinogradov.FileInfo;
+import org.vinogradov.mydto.FileInfo;
 
 import java.nio.file.Path;
 
