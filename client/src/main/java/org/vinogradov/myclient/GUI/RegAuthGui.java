@@ -10,10 +10,13 @@ import org.vinogradov.myclient.controllers.RegAuthController;
 
 import java.io.IOException;
 
-public class RegAuthGui extends Application {
+public class RegAuthGui {
 
-    @Override
-    public void start(Stage stage) throws Exception {
+    Stage stage;
+
+    NettyClient nettyClient;
+
+    public RegAuthGui() throws IOException, InterruptedException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/reg_auth.fxml"));
         Parent auth = loader.load();
         RegAuthController regAuthController = loader.getController();
@@ -23,6 +26,8 @@ public class RegAuthGui extends Application {
         stage.setResizable(false);
         stage.show();
 
-        regAuthController.setNettyClient(new NettyClient());
+        nettyClient = new NettyClient();
+        regAuthController.setNettyClient(nettyClient);
+
     }
 }

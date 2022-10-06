@@ -1,5 +1,6 @@
 package org.vinogradov.myclient.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import org.vinogradov.mydto.FileInfo;
 
@@ -39,5 +40,8 @@ public class PanelServerController implements Initializable, PanelController<Lis
     @Override
     public String[] getStringListFiles() {
         return new String[0];
+    }
+
+    public void btnPathBack(ActionEvent actionEvent) {
     }
 }

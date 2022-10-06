@@ -12,11 +12,16 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.vinogradov.mydto.BasicQuery;
+import org.vinogradov.mydto.User;
 import org.vinogradov.mysupport.Constants;
 
 public class NettyClient {
 
     private Channel channel = null;
+
+    private User user;
+
+    private boolean AuthOrRegComplete;
 
     public NettyClient() throws InterruptedException {
 
@@ -58,5 +63,20 @@ public class NettyClient {
         channel.close();
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean isAuthOrRegComplete() {
+        return AuthOrRegComplete;
+    }
+
+    public void setAuthOrRegComplete(boolean authOrRegComplete) {
+        AuthOrRegComplete = authOrRegComplete;
+    }
 }
 

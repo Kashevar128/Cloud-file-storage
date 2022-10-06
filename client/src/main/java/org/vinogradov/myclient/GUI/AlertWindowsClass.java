@@ -45,6 +45,18 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
+    public static void showDelFileError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Некорректное удаление файла.", ButtonType.OK);
+        alert.setHeaderText("Ошибка удаления файла");
+        alert.showAndWait();
+    }
+
+    public static void showUpdateListError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Некорректное обновление списка файлов.", ButtonType.OK);
+        alert.setHeaderText("Ошибка обновления листа файлов");
+        alert.showAndWait();
+    }
+
 
 }
 
