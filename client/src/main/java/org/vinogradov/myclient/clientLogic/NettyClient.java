@@ -21,7 +21,7 @@ public class NettyClient {
 
     private User user;
 
-    private boolean AuthOrRegComplete;
+    ClientHandlerLogicImpl clientHandlerLogicImpl;
 
     public NettyClient() throws InterruptedException {
 
@@ -39,7 +39,7 @@ public class NettyClient {
                         socketChannel.pipeline().addLast(
                                 new ObjectDecoder(Constants.MB_20, ClassResolvers.cacheDisabled(null)),
                                 new ObjectEncoder(),
-                                new ClientHandler()
+                                new ClientHandler(clientHandlerLogicImpl)
                         );
                     }
                 });
@@ -63,20 +63,16 @@ public class NettyClient {
         channel.close();
     }
 
+    public void setClientHandlerLogic(ClientHandlerLogicImpl clientHandlerLogicImpl) {
+        this.clientHandlerLogicImpl = clientHandlerLogicImpl;
+    }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public boolean isAuthOrRegComplete() {
-        return AuthOrRegComplete;
-    }
-
-    public void setAuthOrRegComplete(boolean authOrRegComplete) {
-        AuthOrRegComplete = authOrRegComplete;
     }
 }
 

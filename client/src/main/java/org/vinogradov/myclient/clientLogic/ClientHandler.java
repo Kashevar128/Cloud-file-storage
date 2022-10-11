@@ -8,21 +8,22 @@ import org.vinogradov.mydto.responses.RegServerResponse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-    NettyClient nettyClient;
+    private ClientHandlerLogic handlerLogic;
 
-    private static  final Map<Class<? extends BasicQuery>, MyTripleConsumer<ChannelHandlerContext, BasicQuery, NettyClient>> RESPONSE_HANDLERS = new HashMap<>();
+    private static  final Map<Class<? extends BasicQuery>, BiConsumer<BasicQuery, ClientHandlerLogic>> RESPONSE_HANDLERS = new HashMap<>();
 
     static {
-        RESPONSE_HANDLERS.put(RegServerResponse.class, ((channelHandlerContext, basicQuery, nettyClient) -> {
-            ClientHandlerLogic.getServerMessageReg((RegServerResponse) basicQuery);
-        }));
+        RESPONSE_HANDLERS.put(RegServerResponse.class, (basicQuery, handlerLogic) -> {
+            handlerLogic.getResultMessageReg((RegServerResponse) basicQuery);
+        });
 
-        RESPONSE_HANDLERS.put(AuthServerResponse.class, ((channelHandlerContext, basicQuery, nettyClient) -> {
-            ClientHandlerLogic.getServerMessageAuth((AuthServerResponse) basicQuery);
-        }));
+        RESPONSE_HANDLERS.put(AuthServerResponse.class, (basicQuery, handlerLogic) -> {
+            handlerLogic.getResultMessageAuth((AuthServerResponse) basicQuery);
+        });
     }
 
     @Override
@@ -34,12 +35,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery response = (BasicQuery) msg;
         System.out.println(response.getType());
-        MyTripleConsumer<ChannelHandlerContext, BasicQuery, NettyClient> channelClientHandlerContextConsumer = RESPONSE_HANDLERS.get(response.getClass());
-        channelClientHandlerContextConsumer.accept(ctx, response, null);
+        BiConsumer<BasicQuery, ClientHandlerLogic> channelClientHandlerContextConsumer = RESPONSE_HANDLERS.get(response.getClass());
+        channelClientHandlerContextConsumer.accept(response, handlerLogic);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
+    }
+
+    public ClientHandler(ClientHandlerLogicImpl handlerLogic) {
+        this.handlerLogic = handlerLogic;
     }
 }

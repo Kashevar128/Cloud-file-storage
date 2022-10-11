@@ -13,20 +13,28 @@ import java.io.IOException;
 /**
  * JavaFX App
  */
-public class ClientGUI extends Application {
+public class ClientGUI {
 
-    @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/clientWindow.fxml"));
-        Parent root = loader.load();
-        ClientController clientController = loader.getController();
-        stage.setTitle("Java File Storage");
-        stage.setScene(new Scene(root, 1000, 600));
+    ClientController clientController;
+
+    public ClientGUI() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/clientWindow.fxml"));
+            Parent root = loader.load();
+            clientController = loader.getController();
+            stage.setTitle("Java File Storage");
+            stage.setScene(new Scene(root, 1000, 600));
 //            stage.setOnCloseRequest(windowEvent -> {
 //                clientController.nettyClient.exitClient();
 //            });
-
-        stage.show();
+            stage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    public ClientController getClientController() {
+        return clientController;
+    }
 }

@@ -24,7 +24,7 @@ public class DataBaseImpl implements DataBase {
         createTable();
     }
 
-    private void createTable() {
+    private synchronized void createTable() {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(queryCreateTable);
         } catch (SQLException e) {
@@ -33,7 +33,7 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public boolean createUser(String name, String password) {
+    public synchronized boolean createUser(String name, String password) {
         if (!findUser(name)) {
             try (PreparedStatement statement = connection.prepareStatement(queryNewUser)) {
                 statement.setString(1, name);

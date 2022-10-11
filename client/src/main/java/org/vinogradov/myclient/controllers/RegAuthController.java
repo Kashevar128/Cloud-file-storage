@@ -4,9 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
-import org.vinogradov.myclient.clientLogic.ClientHandlerLogic;
 import org.vinogradov.myclient.clientLogic.NettyClient;
 import org.vinogradov.mydto.User;
+import org.vinogradov.mydto.requests.AuthClientRequest;
+import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mysupport.HelperMethods;
 
 import java.util.regex.Matcher;
@@ -27,8 +28,7 @@ public class RegAuthController {
         String name = HelperMethods.delSpace(userField.getText());
         String pass = HelperMethods.delSpace(passwordField.getText());
         if (filter(name, pass)) {
-            nettyClient.sendMessage(ClientHandlerLogic
-                    .getRegClientRequest(new User(name, pass)));
+            nettyClient.sendMessage(new RegClientRequest(new User(name, pass)));
         }
     }
 
@@ -37,8 +37,12 @@ public class RegAuthController {
         String name = HelperMethods.delSpace(userField.getText());
         String pass = HelperMethods.delSpace(passwordField.getText());
         if (filter(name, pass)) {
-            nettyClient.sendMessage(ClientHandlerLogic.getAuthClientRequest(new User(name, pass)));
+            nettyClient.sendMessage(new AuthClientRequest(new User(name, pass)));
         }
+    }
+
+    public void exit() {
+
     }
 
     private boolean filter(String userField, String passwordField) {
