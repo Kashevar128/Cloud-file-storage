@@ -14,10 +14,12 @@ public class RegAuthGui {
 
     Stage stage;
 
+    RegAuthController regAuthController;
+
     public RegAuthGui() throws IOException, InterruptedException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/reg_auth.fxml"));
         Parent auth = loader.load();
-        RegAuthController regAuthController = loader.getController();
+        regAuthController = loader.getController();
         regAuthController.regUser();
         stage = new Stage();
         stage.setTitle("Авторизация");
@@ -31,6 +33,10 @@ public class RegAuthGui {
         nettyClient.setClientHandlerLogic(clientHandlerLogicImpl);
         clientHandlerLogicImpl.setRegAuthGui(this);
         clientHandlerLogicImpl.setNettyClient(nettyClient);
+
+        stage.setOnCloseRequest(windowEvent -> {
+            regAuthController.getNettyClient().exitClient();
+        });
     }
 
     public Stage getStage() {

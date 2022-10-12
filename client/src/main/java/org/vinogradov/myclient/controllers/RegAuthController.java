@@ -71,4 +71,8 @@ public class RegAuthController {
     public void setNettyClient(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
     }
+
+    public NettyClient getNettyClient() {
+        return nettyClient;
+    }
 }

@@ -32,6 +32,7 @@ public class AuthServerResponse implements BasicQuery {
         return authComplete;
     }
 
+    @Override
     public User getUser() {
         return user;
     }

@@ -16,6 +16,7 @@ public class AuthClientRequest implements BasicQuery {
         return "Client connect: " + user.getNameUser();
     }
 
+    @Override
     public User getUser() {
         return user;
     }

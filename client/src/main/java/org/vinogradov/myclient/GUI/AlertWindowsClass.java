@@ -57,6 +57,12 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
+    public static void showOperationBan() {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Запрет на оперецию.", ButtonType.OK);
+        alert.setHeaderText("Ошибка действия");
+        alert.showAndWait();
+    }
+
 
 }
 

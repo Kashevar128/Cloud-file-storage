@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.clientLogic.NettyClient;
 import org.vinogradov.mydto.FileInfo;
+import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mysupport.HelperMethods;
 
 import java.net.URL;
@@ -82,7 +83,7 @@ public class PanelServerController implements Initializable, PanelController<Lis
                 if (mouseEvent.getClickCount() == 2) {
                     Path path = Paths.get(getCurrentPath()).resolve(filesTable.getSelectionModel().getSelectedItem().getFilename());
                     if (Files.isDirectory(path)) {
-                       // nettyClient.sendMessage(new GetFileListRequest(path.toString()));
+                        nettyClient.sendMessage(new GetListRequest(nettyClient.getUser(), path.toString()));
                     }
                 }
             }
@@ -122,6 +123,10 @@ public class PanelServerController implements Initializable, PanelController<Lis
     }
 
     public void btnPathBack(ActionEvent actionEvent) {
+        Path backPath = Paths.get(getCurrentPath()).getParent();
+        if (backPath != null && !backPath.toString().endsWith("Data_Storage")) {
+            nettyClient.sendMessage(new GetListRequest(nettyClient.getUser(), backPath.toString()));
+        }
     }
 
     public void setNettyClient(NettyClient nettyClient) {

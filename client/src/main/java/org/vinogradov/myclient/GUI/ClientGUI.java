@@ -25,9 +25,9 @@ public class ClientGUI {
             clientController = loader.getController();
             stage.setTitle("Java File Storage");
             stage.setScene(new Scene(root, 1000, 600));
-//            stage.setOnCloseRequest(windowEvent -> {
-//                clientController.nettyClient.exitClient();
-//            });
+            stage.setOnCloseRequest(windowEvent -> {
+                clientController.getNettyClient().exitClient();
+            });
             stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);

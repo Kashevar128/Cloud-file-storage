@@ -3,17 +3,17 @@ package org.vinogradov.mydto.requests;
 import org.vinogradov.mydto.BasicQuery;
 import org.vinogradov.mydto.User;
 
-public class RegClientRequest implements BasicQuery {
+public class BackListRequest implements BasicQuery {
 
-    private User user;
+    User user;
 
-    public RegClientRequest(User user) {
+    public BackListRequest(User user) {
         this.user = user;
     }
 
     @Override
     public String getType() {
-        return "Client connect: " + user.getNameUser();
+        return "Back list";
     }
 
     @Override

@@ -32,6 +32,7 @@ public class RegServerResponse implements BasicQuery {
         return regComplete;
     }
 
+    @Override
     public User getUser() {
         return user;
     }

@@ -1,6 +1,7 @@
 package org.vinogradov.myclient.controllers;
 
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,6 +34,8 @@ public class ClientController implements Initializable {
 
     @FXML
     public void exitBtnAction(ActionEvent actionEvent) {
+        Platform.exit();
+        nettyClient.exitClient();
     }
 
     @FXML
@@ -50,5 +53,9 @@ public class ClientController implements Initializable {
     public void setNettyClient(NettyClient nettyClient) {
         this.nettyClient = nettyClient;
         serverPC.setNettyClient(nettyClient);
+    }
+
+    public NettyClient getNettyClient() {
+        return nettyClient;
     }
 }

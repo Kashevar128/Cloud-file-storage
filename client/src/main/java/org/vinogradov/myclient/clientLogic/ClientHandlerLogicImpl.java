@@ -6,6 +6,8 @@ import org.vinogradov.myclient.GUI.ClientGUI;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
 import org.vinogradov.mydto.responses.AuthServerResponse;
+import org.vinogradov.mydto.responses.GetListResponse;
+import org.vinogradov.mydto.responses.OperationBan;
 import org.vinogradov.mydto.responses.RegServerResponse;
 
 import java.util.List;
@@ -22,7 +24,8 @@ public class ClientHandlerLogicImpl implements ClientHandlerLogic {
 
     private List<String> currentList;
 
-    public void getResultMessageReg(RegServerResponse responseReg) {
+    @Override
+    public void getHandingMessageReg(RegServerResponse responseReg) {
         if (responseReg.isRegComplete()) {
             Platform.runLater(() -> {
                 regAuthGui.getStage().close();
@@ -36,7 +39,8 @@ public class ClientHandlerLogicImpl implements ClientHandlerLogic {
         }
     }
 
-    public void getResultMessageAuth(AuthServerResponse responseAuth) {
+    @Override
+    public void getHandingMessageAuth(AuthServerResponse responseAuth) {
         if (responseAuth.isAuthComplete()) {
             Platform.runLater(() -> {
                 regAuthGui.getStage().close();
@@ -48,6 +52,17 @@ public class ClientHandlerLogicImpl implements ClientHandlerLogic {
         else {
             Platform.runLater(AlertWindowsClass::showAuthFalse);
         }
+    }
+
+    @Override
+    public void getHandingMessageList(GetListResponse responseList) {
+        List<String>currentList = responseList.getCurrentList();
+        clientController.serverPC.updateList(currentList);
+    }
+
+    @Override
+    public void getOperationBan() {
+        Platform.runLater(AlertWindowsClass::showOperationBan);
     }
 
     public void setRegAuthGui(RegAuthGui regAuthGui) {

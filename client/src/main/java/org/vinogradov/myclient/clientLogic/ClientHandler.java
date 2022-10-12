@@ -4,6 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.vinogradov.mydto.BasicQuery;
 import org.vinogradov.mydto.responses.AuthServerResponse;
+import org.vinogradov.mydto.responses.GetListResponse;
+import org.vinogradov.mydto.responses.OperationBan;
 import org.vinogradov.mydto.responses.RegServerResponse;
 
 import java.util.HashMap;
@@ -18,11 +20,19 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     static {
         RESPONSE_HANDLERS.put(RegServerResponse.class, (basicQuery, handlerLogic) -> {
-            handlerLogic.getResultMessageReg((RegServerResponse) basicQuery);
+            handlerLogic.getHandingMessageReg((RegServerResponse) basicQuery);
         });
 
         RESPONSE_HANDLERS.put(AuthServerResponse.class, (basicQuery, handlerLogic) -> {
-            handlerLogic.getResultMessageAuth((AuthServerResponse) basicQuery);
+            handlerLogic.getHandingMessageAuth((AuthServerResponse) basicQuery);
+        });
+
+        RESPONSE_HANDLERS.put(GetListResponse.class, (basicQuery, handlerLogic) -> {
+            handlerLogic.getHandingMessageList((GetListResponse) basicQuery);
+        });
+
+        RESPONSE_HANDLERS.put(OperationBan.class, (basicQuery, handlerLogic) -> {
+            handlerLogic.getOperationBan();
         });
     }
 

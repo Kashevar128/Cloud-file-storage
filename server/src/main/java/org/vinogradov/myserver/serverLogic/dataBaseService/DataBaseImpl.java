@@ -1,6 +1,7 @@
 package org.vinogradov.myserver.serverLogic.dataBaseService;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.vinogradov.mysupport.HelperMethods;
 
 import java.sql.*;
 
@@ -35,9 +36,10 @@ public class DataBaseImpl implements DataBase {
     @Override
     public synchronized boolean createUser(String name, String password) {
         if (!findUser(name)) {
+            String passwordMd5 = DigestUtils.md5Hex(password);
             try (PreparedStatement statement = connection.prepareStatement(queryNewUser)) {
                 statement.setString(1, name);
-                statement.setString(2, password);
+                statement.setString(2, passwordMd5);
                 statement.executeUpdate();
                 return true;
             } catch (SQLException e) {
@@ -65,11 +67,12 @@ public class DataBaseImpl implements DataBase {
     @Override
     public boolean auth(String name, String password) {
         if (!findUser(name)) return false;
+        String passwordMd5 = DigestUtils.md5Hex(password);
         try (PreparedStatement statement = connection.prepareStatement(queryGetUserForName)) {
             statement.setString(1, name);
             ResultSet rs = statement.executeQuery();
             String passTable = rs.getString("Password");
-            if (!passTable.equals(password)) return false;
+            if (!passTable.equals(passwordMd5)) return false;
             else return true;
         }catch (SQLException e) {
             throw new RuntimeException(e);
