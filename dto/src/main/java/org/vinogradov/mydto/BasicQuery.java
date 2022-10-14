@@ -6,5 +6,7 @@ public interface BasicQuery extends Serializable {
 
     String getType();
 
-    User getUser();
+    default User getUser() {
+        return null;
+    };
 }

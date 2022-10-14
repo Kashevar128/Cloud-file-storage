@@ -63,6 +63,12 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
+    public static void showConnectionLimit() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Время сессии вышло.", ButtonType.OK);
+        alert.setHeaderText("!!!");
+        alert.showAndWait();
+    }
+
 
 }
 

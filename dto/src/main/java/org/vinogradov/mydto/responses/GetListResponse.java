@@ -22,10 +22,6 @@ public class GetListResponse implements BasicQuery {
         return "this new list";
     }
 
-    @Override
-    public User getUser() {
-        return null;
-    }
 
 
 }

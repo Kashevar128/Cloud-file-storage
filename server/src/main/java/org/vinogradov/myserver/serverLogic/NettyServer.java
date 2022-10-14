@@ -12,6 +12,8 @@ import org.vinogradov.mysupport.Constants;
 
 public class NettyServer {
 
+    private ServerHandlerLogicImpl serverHandlerLogicImpl = new ServerHandlerLogicImpl();
+
     NettyServer() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -26,7 +28,7 @@ public class NettyServer {
                             inbound.addLast(
                                     new ObjectDecoder(Constants.MB_20, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ServerHandler()
+                                    new ServerHandler(serverHandlerLogicImpl)
                             );
                         }
                     });

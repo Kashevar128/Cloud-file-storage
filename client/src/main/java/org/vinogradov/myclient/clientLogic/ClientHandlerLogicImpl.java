@@ -7,7 +7,6 @@ import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
 import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.OperationBan;
 import org.vinogradov.mydto.responses.RegServerResponse;
 
 import java.util.List;
@@ -61,8 +60,15 @@ public class ClientHandlerLogicImpl implements ClientHandlerLogic {
     }
 
     @Override
-    public void getOperationBan() {
+    public void getHandingOperationBan() {
         Platform.runLater(AlertWindowsClass::showOperationBan);
+    }
+
+    @Override
+    public void getHandingConnectionLimit() {
+        Platform.runLater(()-> {
+            AlertWindowsClass.showConnectionLimit();
+            regAuthGui.getStage().close();});
     }
 
     public void setRegAuthGui(RegAuthGui regAuthGui) {

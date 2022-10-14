@@ -25,7 +25,7 @@ public class DataBaseImpl implements DataBase {
         createTable();
     }
 
-    private synchronized void createTable() {
+    private void createTable() {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(queryCreateTable);
         } catch (SQLException e) {

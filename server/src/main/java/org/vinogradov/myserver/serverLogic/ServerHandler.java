@@ -6,9 +6,6 @@ import org.vinogradov.mydto.BasicQuery;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
-import org.vinogradov.mydto.responses.OperationBan;
-import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
-import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,19 +13,23 @@ import java.util.function.BiConsumer;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Map<Class<? extends BasicQuery>, BiConsumer<ChannelHandlerContext, BasicQuery>> REQUEST_HANDLERS = new HashMap<>();
+    private ServerHandlerLogicImpl serverHandlerLogicImpl;
+
+    private ConnectionLimit connectionLimit;
+
+    private static final Map<Class<? extends BasicQuery>, BiConsumer<ServerHandlerLogic, BasicQuery>> REQUEST_HANDLERS = new HashMap<>();
 
     static {
-        REQUEST_HANDLERS.put(RegClientRequest.class, ((channelHandlerContext, basicQuery) -> {
-            channelHandlerContext.writeAndFlush(ServerHandlerLogic.getRegServerResponse((RegClientRequest) basicQuery, channelHandlerContext));
+        REQUEST_HANDLERS.put(RegClientRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.sendRegServerResponse((RegClientRequest) basicQuery);
         }));
 
-        REQUEST_HANDLERS.put(AuthClientRequest.class, ((channelHandlerContext, basicQuery) -> {
-            channelHandlerContext.writeAndFlush(ServerHandlerLogic.getAuthServerResponse((AuthClientRequest) basicQuery, channelHandlerContext));
+        REQUEST_HANDLERS.put(AuthClientRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.sendAuthServerResponse((AuthClientRequest) basicQuery);
         }));
 
-        REQUEST_HANDLERS.put(GetListRequest.class, ((channelHandlerContext, basicQuery) -> {
-            channelHandlerContext.writeAndFlush(ServerHandlerLogic.getListResponse((GetListRequest) basicQuery));
+        REQUEST_HANDLERS.put(GetListRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.sendListResponse((GetListRequest) basicQuery);
         }));
     }
 
@@ -41,18 +42,29 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery request = (BasicQuery) msg;
-        if (!ServerHandlerLogic.security(request)) {
-            ctx.writeAndFlush(new OperationBan());
-            return;
-        }
-
+        connectionLimit.stopTimer(request);
+        serverHandlerLogicImpl.getUsersListChannels().putUserChannel(request.getUser().getNameUser(), ctx.channel());
         System.out.println(request.getType());
-        BiConsumer<ChannelHandlerContext, BasicQuery> channelServerHandlerContextConsumer = REQUEST_HANDLERS.get(request.getClass());
-        channelServerHandlerContextConsumer.accept(ctx, request);
+        BiConsumer<ServerHandlerLogic, BasicQuery> channelServerHandlerContextConsumer = REQUEST_HANDLERS.get(request.getClass());
+        channelServerHandlerContextConsumer.accept(serverHandlerLogicImpl, request);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        connectionLimit = new ConnectionLimit(ctx);
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        serverHandlerLogicImpl.getUsersListChannels().deleteUserChannel(ctx.channel());
+    }
+
+    public ServerHandler(ServerHandlerLogicImpl serverHandlerLogicImpl) {
+        this.serverHandlerLogicImpl = serverHandlerLogicImpl;
     }
 }

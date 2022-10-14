@@ -2,7 +2,6 @@ package org.vinogradov.myclient.clientLogic;
 
 import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.OperationBan;
 import org.vinogradov.mydto.responses.RegServerResponse;
 
 public interface ClientHandlerLogic {
@@ -13,5 +12,7 @@ public interface ClientHandlerLogic {
 
     void getHandingMessageList(GetListResponse responseList);
 
-    void getOperationBan();
+    void getHandingOperationBan();
+
+    void getHandingConnectionLimit();
 }
