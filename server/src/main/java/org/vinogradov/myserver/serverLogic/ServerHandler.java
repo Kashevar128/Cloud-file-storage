@@ -6,6 +6,7 @@ import org.vinogradov.mydto.BasicQuery;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
+import org.vinogradov.mydto.requests.SendFileRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
         REQUEST_HANDLERS.put(GetListRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.sendListResponse((GetListRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(SendFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingSendFileRequest((SendFileRequest) basicQuery);
         }));
     }
 

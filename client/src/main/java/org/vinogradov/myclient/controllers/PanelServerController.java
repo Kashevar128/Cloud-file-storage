@@ -11,19 +11,24 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.clientLogic.NettyClient;
 import org.vinogradov.mydto.FileInfo;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mysupport.HelperMethods;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PanelServerController implements Initializable, PanelController<List<String>> {
 
@@ -92,7 +97,10 @@ public class PanelServerController implements Initializable, PanelController<Lis
 
     @Override
     public FileInfo getSelectedFileInfo() {
-        return null;
+        if (!filesTable.isFocused()) {
+            return null;
+        }
+        return filesTable.getSelectionModel().getSelectedItem();
     }
 
     @Override
@@ -102,7 +110,13 @@ public class PanelServerController implements Initializable, PanelController<Lis
 
     @Override
     public void delFile(Path srcPath) {
-
+        try (Stream<Path> walk = Files.walk(srcPath)) {
+            walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+        } catch (IOException e) {
+            e.printStackTrace();
+            AlertWindowsClass.showDelFileError();
+        }
+        System.out.println("Удаленный файл или папка: " + srcPath);
     }
 
     @Override
@@ -119,8 +133,11 @@ public class PanelServerController implements Initializable, PanelController<Lis
 
     @Override
     public String[] getStringListFiles() {
-        return new String[0];
+        String[] strings = filesTable.getItems().stream().map(FileInfo::getFilename)
+                .collect(Collectors.toList()).toArray(String[]::new);
+        return strings;
     }
+
 
     public void btnPathBack(ActionEvent actionEvent) {
         Path backPath = Paths.get(getCurrentPath()).getParent();

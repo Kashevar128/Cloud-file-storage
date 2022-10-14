@@ -69,6 +69,12 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
+    public static void showSelectFileAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите файл, который хоттите перенестию.", ButtonType.OK);
+        alert.setHeaderText("Вы не выбрали файл");
+        alert.showAndWait();
+    }
+
 
 }
 

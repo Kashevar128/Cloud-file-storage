@@ -2,10 +2,12 @@ package org.vinogradov.myserver.serverLogic;
 
 import io.netty.channel.Channel;
 import org.vinogradov.mydto.BasicQuery;
+import org.vinogradov.mydto.FileInfo;
 import org.vinogradov.mydto.User;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
+import org.vinogradov.mydto.requests.SendFileRequest;
 import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
 import org.vinogradov.mydto.responses.OperationBanResponse;
@@ -14,6 +16,9 @@ import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 import org.vinogradov.mysupport.HelperMethods;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -68,6 +73,38 @@ public class ServerHandlerLogicImpl implements ServerHandlerLogic {
         User user = listRequest.getUser();
         Path path = Paths.get(listRequest.getPath());
         List<String> newList = HelperMethods.generateStringList(path);
+        sendMessage(user, new GetListResponse(newList));
+    }
+
+    @Override
+    public void getHandingSendFileRequest(SendFileRequest sendFileRequest) {
+        User user = sendFileRequest.getUser();
+        security(sendFileRequest);
+        byte[]bytes = sendFileRequest.getPackageByte();
+        FileInfo.FileType fileType = sendFileRequest.getFileInfo().getType();
+        Path dstPath = Paths.get(sendFileRequest.getDstPath());
+        switch (fileType) {
+            case FILE -> {
+                try (FileOutputStream fileOutputStream = new FileOutputStream(dstPath.toFile())) {
+                    fileOutputStream.write(bytes);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            case DIRECTORY -> {
+                if (!Files.exists(dstPath)) {
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(dstPath.toFile())) {
+                        Files.createDirectory(dstPath);
+                        fileOutputStream.write(bytes);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        Path filePath = dstPath.getParent();
+        List<String> newList = HelperMethods.generateStringList(filePath);
         sendMessage(user, new GetListResponse(newList));
     }
 
