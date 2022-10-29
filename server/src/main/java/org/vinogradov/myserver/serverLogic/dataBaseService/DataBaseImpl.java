@@ -85,12 +85,12 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public void start() {
+    public void startDataBase() {
 
     }
 
     @Override
-    public void stop() {
+    public void stopDataBase() {
         try {
             connection.close();
         } catch (SQLException e) {

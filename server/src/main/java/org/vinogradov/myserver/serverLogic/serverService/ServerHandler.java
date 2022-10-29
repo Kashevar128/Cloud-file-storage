@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
-    private ServerHandlerLogicImpl serverHandlerLogicImpl;
+    private ServerLogic serverLogic;
 
     private ConnectionLimit connectionLimit;
 
@@ -48,11 +48,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery request = (BasicQuery) msg;
-        connectionLimit.stopTimer(request);
-        serverHandlerLogicImpl.getUsersListChannels().putUserChannel(request.getUser().getNameUser(), ctx.channel());
+
+        serverLogic.getConnectionsController().putChannel(request, ctx);
+
         System.out.println(request.getType());
         BiConsumer<ServerHandlerLogic, BasicQuery> channelServerHandlerContextConsumer = REQUEST_HANDLERS.get(request.getClass());
-        channelServerHandlerContextConsumer.accept(serverHandlerLogicImpl, request);
+        channelServerHandlerContextConsumer.accept(serverLogic, request);
     }
 
     @Override
@@ -62,15 +63,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        connectionLimit = new ConnectionLimit(ctx);
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        serverHandlerLogicImpl.getUsersListChannels().deleteUserChannel(ctx.channel());
+        serverLogic.getConnectionsController().unConnectUser(ctx);
     }
 
-    public ServerHandler(ServerHandlerLogicImpl serverHandlerLogicImpl) {
-        this.serverHandlerLogicImpl = serverHandlerLogicImpl;
+    public ServerHandler(ServerLogic serverLogic) {
+        this.serverLogic = serverLogic;
     }
 }

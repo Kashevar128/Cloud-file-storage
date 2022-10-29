@@ -12,6 +12,7 @@ import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
 import org.vinogradov.mydto.responses.OperationBanResponse;
 import org.vinogradov.mydto.responses.RegServerResponse;
+import org.vinogradov.myserver.serverLogic.ConnectionsService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 import org.vinogradov.myserver.serverLogic.ConnectionsService.UsersListChannels;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
@@ -25,19 +26,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class ServerHandlerLogicImpl implements ServerHandlerLogic {
+public class ServerLogic implements ServerHandlerLogic {
+
+    private final ConnectionsController connectionsController;
 
     private final DataBase dataBase;
 
     private final Storage storage;
 
-    private final UsersListChannels usersListChannels;
-
-    public ServerHandlerLogicImpl() {
+    public ServerLogic() {
         try {
+            this.connectionsController = new ConnectionsController();
             this.dataBase = new DataBaseImpl();
             this.storage = new Storage();
-            this.usersListChannels = new UsersListChannels();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -118,8 +119,12 @@ public class ServerHandlerLogicImpl implements ServerHandlerLogic {
     }
 
     private void sendMessage(User user, BasicQuery basicQuery) {
-        Channel channel = usersListChannels.getUserChannel(user.getNameUser());
+        Channel channel = connectionsController.getUserChannel(user.getNameUser());
         channel.writeAndFlush(basicQuery);
+    }
+
+    public ConnectionsController getConnectionsController() {
+        return connectionsController;
     }
 
     public DataBase getDataBase() {
@@ -128,10 +133,6 @@ public class ServerHandlerLogicImpl implements ServerHandlerLogic {
 
     public Storage getStorage() {
         return storage;
-    }
-
-    public UsersListChannels getUsersListChannels() {
-        return usersListChannels;
     }
 
 }

@@ -10,8 +10,8 @@ public interface DataBase {
 
     void deleteUser(String name);
 
-    void start();
+    void startDataBase();
 
-    void stop();
+    void stopDataBase();
 
 }

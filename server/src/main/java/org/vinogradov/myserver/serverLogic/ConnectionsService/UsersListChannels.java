@@ -13,27 +13,34 @@ public class UsersListChannels {
 
 
     public void putUserChannel(String name, Channel channelUser) {
-        usersChannels.put(name, channelUser);
-        usersChannelsReverse.put(channelUser, name);
+        if (!usersChannels.containsKey(name)) {
+            usersChannels.put(name, channelUser);
+            usersChannelsReverse.put(channelUser, name);
+        }
     }
 
-    public void deleteUserChannel(String nameUser) {
-        Channel channel = usersChannels.get(nameUser);
-        usersChannels.remove(nameUser);
-        usersChannelsReverse.remove(channel);
+    public void deleteUserChannelByUserName(String nameUser) {
+        if (usersChannels.containsKey(nameUser)) {
+            Channel channel = usersChannels.get(nameUser);
+            usersChannels.remove(nameUser);
+            usersChannelsReverse.remove(channel);
+        }
     }
 
-    public void deleteUserChannel(Channel channel) {
-        String nameUser = usersChannelsReverse.get(channel);
-        usersChannelsReverse.remove(channel);
-        usersChannels.remove(nameUser);
+    public void deleteUserChannelByChannel(Channel channel) {
+        if (usersChannelsReverse.containsKey(channel)) {
+            String nameUser = usersChannelsReverse.get(channel);
+            usersChannelsReverse.remove(channel);
+            usersChannels.remove(nameUser);
+        }
+
     }
 
-    public Channel getUserChannel(String nameUser) {
+    public Channel getUserChannelByUserName(String nameUser) {
         return usersChannels.get(nameUser);
     }
 
-    public String getUserChannel(Channel userChannel) {
+    public String getUserNameByChannel(Channel userChannel) {
         return usersChannelsReverse.get(userChannel);
     }
 }
