@@ -5,6 +5,7 @@ import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.ClientGUI;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
@@ -24,7 +25,6 @@ public class ClientLogic implements ClientHandlerLogic {
 
     private ClientController clientController;
 
-    private List<String> currentList;
 
     @Override
     public void getHandingMessageReg(RegServerResponse responseReg) {
@@ -78,12 +78,14 @@ public class ClientLogic implements ClientHandlerLogic {
         nettyClient.exitClient();
     }
 
+    public void sendMessage(BasicQuery basicQuery) {nettyClient.send(basicQuery);}
+
     public void createRegClientRequest(String name, String pass) {
-        nettyClient.sendMessage(new RegClientRequest(new User(name, pass)));
+        nettyClient.send(new RegClientRequest(new User(name, pass)));
     }
 
     public void createAuthClientRequest(String name, String pass) {
-        nettyClient.sendMessage(new AuthClientRequest(new User(name, pass)));
+        nettyClient.send(new AuthClientRequest(new User(name, pass)));
     }
 
 

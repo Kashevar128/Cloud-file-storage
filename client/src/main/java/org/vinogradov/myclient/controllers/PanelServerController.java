@@ -88,7 +88,7 @@ public class PanelServerController implements Initializable, PanelController<Lis
                 if (mouseEvent.getClickCount() == 2) {
                     Path path = Paths.get(getCurrentPath()).resolve(filesTable.getSelectionModel().getSelectedItem().getFilename());
                     if (Files.isDirectory(path)) {
-                        nettyClient.sendMessage(new GetListRequest(nettyClient.getUser(), path.toString()));
+                        nettyClient.send(new GetListRequest(nettyClient.getUser(), path.toString()));
                     }
                 }
             }
@@ -142,7 +142,7 @@ public class PanelServerController implements Initializable, PanelController<Lis
     public void btnPathBack(ActionEvent actionEvent) {
         Path backPath = Paths.get(getCurrentPath()).getParent();
         if (backPath != null && !backPath.toString().endsWith("Data_Storage")) {
-            nettyClient.sendMessage(new GetListRequest(nettyClient.getUser(), backPath.toString()));
+            nettyClient.send(new GetListRequest(nettyClient.getUser(), backPath.toString()));
         }
     }
 

@@ -1,54 +1,44 @@
 package org.vinogradov.myserver.serverLogic.ConnectionsService;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mydto.responses.ConnectionLimitResponse;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static java.lang.Thread.sleep;
 
 public class ConnectionLimit {
 
-    private ChannelHandlerContext context;
-    private boolean flagLimit;
+    private Channel channel;
+    private TimerTask timerTask;
+    private Timer timer;
+    private long delay;
 
-    public ConnectionLimit(ChannelHandlerContext context) {
-        flagLimit = false;
-        this.context = context;
-        startTimer();
-    }
-
-    private void startTimer() {
-        new Thread(()->{
-            try {
-                sleep(40000);
-                cancel();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+    public ConnectionLimit(Channel channel) {
+        this.channel = channel;
+        this.delay = 180000L;
+        this.timer = new Timer();
+        this.timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                closeConnect();
             }
-        }).start();
-    }
-    private void cancel() {
-        if(!flagLimit) {
-            context.channel().writeAndFlush(new ConnectionLimitResponse());
-            context.channel().close();
-        }
-        flagLimit = false;
+        };
+        timer.schedule(timerTask, delay);
     }
 
-    public void stopTimer(BasicQuery basicQuery) {
-        if(basicQuery instanceof AuthClientRequest || basicQuery instanceof RegClientRequest) {
-            flagLimit = true;
-        }
+    private void closeConnect() {
+        channel.writeAndFlush(new ConnectionLimitResponse());
+        channel.close();
     }
 
-    public boolean isFlagLimit() {
-        return flagLimit;
-    }
-
-    public void setFlagLimit(boolean flagLimit) {
-        this.flagLimit = flagLimit;
+    public void stopTimer() {
+        timer.cancel();
     }
 
 

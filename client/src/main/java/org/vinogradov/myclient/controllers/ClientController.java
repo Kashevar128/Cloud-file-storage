@@ -74,7 +74,7 @@ public class ClientController implements Initializable {
         dstPath = Paths.get(dstPC.getCurrentPath(), selectedFile.getFilename());
 
         if (transfer) {
-            copyConsumer = bytes -> nettyClient.sendMessage(
+            copyConsumer = bytes -> nettyClient.send(
                     new SendFileRequest(dstPath.toString(), selectedFile, bytes, nettyClient.getUser()));
             HelperMethods.saw(srcPath, copyConsumer);
         }
@@ -87,7 +87,7 @@ public class ClientController implements Initializable {
     @FXML
     public void refresh(ActionEvent actionEvent) {
         clientPC.updateList(Paths.get(clientPC.getCurrentPath()));
-        nettyClient.sendMessage(new GetListRequest(nettyClient.getUser(), serverPC.getCurrentPath()));
+        nettyClient.send(new GetListRequest(nettyClient.getUser(), serverPC.getCurrentPath()));
     }
 
     public void setNettyClient(NettyClient nettyClient) {

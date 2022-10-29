@@ -1,10 +1,7 @@
 package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.vinogradov.mydto.requests.AuthClientRequest;
-import org.vinogradov.mydto.requests.GetListRequest;
-import org.vinogradov.mydto.requests.RegClientRequest;
-import org.vinogradov.mydto.requests.SendFileRequest;
+import org.vinogradov.mydto.requests.*;
 import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
 import org.vinogradov.mydto.responses.RegServerResponse;

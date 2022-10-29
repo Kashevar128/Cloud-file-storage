@@ -4,10 +4,7 @@ import io.netty.channel.Channel;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mydto.requests.AuthClientRequest;
-import org.vinogradov.mydto.requests.GetListRequest;
-import org.vinogradov.mydto.requests.RegClientRequest;
-import org.vinogradov.mydto.requests.SendFileRequest;
+import org.vinogradov.mydto.requests.*;
 import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
 import org.vinogradov.mydto.responses.OperationBanResponse;
@@ -47,10 +44,9 @@ public class ServerLogic implements ServerHandlerLogic {
     @Override
     public void sendRegServerResponse(RegClientRequest regClient) {
         User user = regClient.getUser();
-        boolean regComplete = dataBase.createUser(user.getNameUser(), user.getPassword());
+        boolean regComplete = dataBase.createUser(user);
         if (regComplete) {
-            Path path = storage.createUserRepository(user.getNameUser());
-            List<String> startList = HelperMethods.generateStringList(path);
+            List<String> startList = startWorkingWithUser(user);
             sendMessage(user, new RegServerResponse(true, user, startList));
             return;
         }
@@ -60,10 +56,9 @@ public class ServerLogic implements ServerHandlerLogic {
     @Override
     public void sendAuthServerResponse(AuthClientRequest authClient) {
         User user = authClient.getUser();
-        boolean authComplete = dataBase.auth(user.getNameUser(), user.getPassword());
+        boolean authComplete = dataBase.auth(user);
         if (authComplete) {
-            Path path = storage.createUserRepository(user.getNameUser());
-            List<String> startList = HelperMethods.generateStringList(path);
+            List<String> startList = startWorkingWithUser(user);
             sendMessage(user, new AuthServerResponse(true, user, startList));
             return;
         }
@@ -72,7 +67,6 @@ public class ServerLogic implements ServerHandlerLogic {
 
     @Override
     public void sendListResponse(GetListRequest listRequest) {
-        security(listRequest);
         User user = listRequest.getUser();
         Path path = Paths.get(listRequest.getPath());
         List<String> newList = HelperMethods.generateStringList(path);
@@ -82,7 +76,6 @@ public class ServerLogic implements ServerHandlerLogic {
     @Override
     public void getHandingSendFileRequest(SendFileRequest sendFileRequest) {
         User user = sendFileRequest.getUser();
-        security(sendFileRequest);
         byte[]bytes = sendFileRequest.getPackageByte();
         FileInfo.FileType fileType = sendFileRequest.getFileInfo().getType();
         Path dstPath = Paths.get(sendFileRequest.getDstPath());
@@ -111,16 +104,16 @@ public class ServerLogic implements ServerHandlerLogic {
         sendMessage(user, new GetListResponse(newList));
     }
 
-    private void security(BasicQuery basicQuery) {
-        User user = basicQuery.getUser();
-        boolean auth = dataBase.auth(user.getNameUser(), user.getPassword());
-        if (auth) return;
-        sendMessage(user, new OperationBanResponse());
-    }
-
     private void sendMessage(User user, BasicQuery basicQuery) {
         Channel channel = connectionsController.getUserChannel(user.getNameUser());
         channel.writeAndFlush(basicQuery);
+    }
+
+    private List<String> startWorkingWithUser(User user) {
+        connectionsController.stopTimerConnectionLimit(user);
+        Path path = storage.createUserRepository(user.getNameUser());
+        List<String> startList = HelperMethods.generateStringList(path);
+        return startList;
     }
 
     public ConnectionsController getConnectionsController() {

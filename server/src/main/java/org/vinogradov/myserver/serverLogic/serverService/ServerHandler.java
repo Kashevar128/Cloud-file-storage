@@ -1,14 +1,14 @@
 package org.vinogradov.myserver.serverLogic.serverService;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.requests.AuthClientRequest;
-import org.vinogradov.mydto.requests.GetListRequest;
-import org.vinogradov.mydto.requests.RegClientRequest;
-import org.vinogradov.mydto.requests.SendFileRequest;
+import org.vinogradov.mydto.requests.*;
 import org.vinogradov.myserver.serverLogic.ConnectionsService.ConnectionLimit;
+import org.vinogradov.myserver.serverLogic.ConnectionsService.ConnectionLimitRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -17,11 +17,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     private ServerLogic serverLogic;
 
-    private ConnectionLimit connectionLimit;
-
     private static final Map<Class<? extends BasicQuery>, BiConsumer<ServerHandlerLogic, BasicQuery>> REQUEST_HANDLERS = new HashMap<>();
 
+    public ServerHandler(ServerLogic serverLogic) {
+        this.serverLogic = serverLogic;
+    }
+
     static {
+
         REQUEST_HANDLERS.put(RegClientRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.sendRegServerResponse((RegClientRequest) basicQuery);
         }));
@@ -42,7 +45,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println(ctx.channel().remoteAddress());
+        serverLogic.getConnectionsController().newConnectionLimit(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        serverLogic.getConnectionsController().unConnectUser(ctx);
     }
 
     @Override
@@ -59,18 +67,5 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
-    }
-
-    @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        serverLogic.getConnectionsController().unConnectUser(ctx);
-    }
-
-    public ServerHandler(ServerLogic serverLogic) {
-        this.serverLogic = serverLogic;
     }
 }

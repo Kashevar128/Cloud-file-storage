@@ -54,7 +54,7 @@ public class NettyClient {
         }).start();
     }
 
-    public void sendMessage (BasicQuery basic) {
+    public void send(BasicQuery basic) {
         channel.writeAndFlush(basic);
     }
 

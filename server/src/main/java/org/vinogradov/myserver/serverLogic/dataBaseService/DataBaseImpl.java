@@ -1,6 +1,7 @@
 package org.vinogradov.myserver.serverLogic.dataBaseService;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mysupport.HelperMethods;
 
 import java.sql.*;
@@ -34,7 +35,9 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public synchronized boolean createUser(String name, String password) {
+    public synchronized boolean createUser(User user) {
+        String name = user.getNameUser();
+        String password = user.getPassword();
         if (!findUser(name)) {
             String passwordMd5 = DigestUtils.md5Hex(password);
             try (PreparedStatement statement = connection.prepareStatement(queryNewUser)) {
@@ -65,7 +68,9 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public boolean auth(String name, String password) {
+    public boolean auth(User user) {
+        String name = user.getNameUser();
+        String password = user.getPassword();
         if (!findUser(name)) return false;
         String passwordMd5 = DigestUtils.md5Hex(password);
         try (PreparedStatement statement = connection.prepareStatement(queryGetUserForName)) {

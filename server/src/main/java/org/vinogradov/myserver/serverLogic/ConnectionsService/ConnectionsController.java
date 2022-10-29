@@ -8,9 +8,11 @@ import org.vinogradov.mydto.commonClasses.User;
 public class ConnectionsController {
 
     UsersListChannels usersListChannels;
+    ConnectionLimitRepository connectionLimitRepository;
 
     public ConnectionsController() {
         this.usersListChannels = new UsersListChannels();
+        this.connectionLimitRepository = new ConnectionLimitRepository();
     }
 
     public Channel getUserChannel(String name) {
@@ -24,6 +26,20 @@ public class ConnectionsController {
     }
 
     public void unConnectUser(ChannelHandlerContext context) {
-        usersListChannels.deleteUserChannelByChannel(context.channel());
+        Channel channel = context.channel();
+        usersListChannels.deleteUserChannelByChannel(channel);
+        connectionLimitRepository.deleteConnectionLimit(channel);
+    }
+
+    public void newConnectionLimit(ChannelHandlerContext context) {
+            Channel channel = context.channel();
+            connectionLimitRepository.addConnectionLimit(channel, new ConnectionLimit(channel));
+    }
+
+    public void stopTimerConnectionLimit(User user) {
+        String name = user.getNameUser();
+        Channel channel = usersListChannels.getUserChannelByUserName(name);
+        ConnectionLimit connectionLimit = connectionLimitRepository.getConnectionLimitByChannel(channel);
+        connectionLimit.stopTimer();
     }
 }
