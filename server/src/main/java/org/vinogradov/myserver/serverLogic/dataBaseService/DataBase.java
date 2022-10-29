@@ -14,6 +14,6 @@ public interface DataBase {
 
     void startDataBase();
 
-    void stopDataBase();
+    void closeDataBase();
 
 }

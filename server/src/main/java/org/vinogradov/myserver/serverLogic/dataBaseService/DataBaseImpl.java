@@ -95,7 +95,7 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public void stopDataBase() {
+    public void closeDataBase() {
         try {
             connection.close();
         } catch (SQLException e) {
