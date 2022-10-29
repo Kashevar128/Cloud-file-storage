@@ -8,6 +8,7 @@ import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mydto.requests.SendFileRequest;
 import org.vinogradov.myserver.serverLogic.ConnectionsService.ConnectionLimit;
+import org.vinogradov.myserver.serverLogic.ConnectionsService.ConnectionsController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +17,6 @@ import java.util.function.BiConsumer;
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     private ServerLogic serverLogic;
-
-    private ConnectionLimit connectionLimit;
 
     private static final Map<Class<? extends BasicQuery>, BiConsumer<ServerHandlerLogic, BasicQuery>> REQUEST_HANDLERS = new HashMap<>();
 
@@ -63,6 +62,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        serverLogic.getConnectionsController().newConnectionLimit(ctx);
     }
 
     @Override

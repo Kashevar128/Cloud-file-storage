@@ -1,17 +1,17 @@
 package org.vinogradov.myserver.serverLogic.dataBaseService;
 
+import org.vinogradov.mydto.commonClasses.User;
+
 public interface DataBase {
 
-    boolean createUser(String name, String password);
+    boolean addUser(User user);
 
     boolean findUser(String name);
 
-    boolean auth(String name, String password);
+    boolean auth(User user);
 
     void deleteUser(String name);
 
-    void startDataBase();
-
-    void stopDataBase();
+    void closeDataBase();
 
 }

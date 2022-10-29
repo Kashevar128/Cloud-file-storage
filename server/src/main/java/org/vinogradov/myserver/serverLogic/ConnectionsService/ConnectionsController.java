@@ -9,8 +9,11 @@ public class ConnectionsController {
 
     UsersListChannels usersListChannels;
 
+    ConnectionLimitRepository connectionLimitRepository;
+
     public ConnectionsController() {
         this.usersListChannels = new UsersListChannels();
+        this.connectionLimitRepository = new ConnectionLimitRepository();
     }
 
     public Channel getUserChannel(String name) {
@@ -24,6 +27,19 @@ public class ConnectionsController {
     }
 
     public void unConnectUser(ChannelHandlerContext context) {
-        usersListChannels.deleteUserChannelByChannel(context.channel());
+        Channel channel = context.channel();
+        usersListChannels.deleteUserChannelByChannel(channel);
+        connectionLimitRepository.deleteConnectionLimit(channel);
+    }
+
+    public void newConnectionLimit(ChannelHandlerContext context) {
+        connectionLimitRepository.addConnectionLimit(context.channel(), new ConnectionLimit(context));
+    }
+
+    public void stopConnectionTimer(User user) {
+        String name = user.getNameUser();
+        Channel channel = usersListChannels.getUserChannelByUserName(name);
+        ConnectionLimit connectionLimit = connectionLimitRepository.getConnectionLimitByChannel(channel);
+        connectionLimit.stopTimer();
     }
 }
