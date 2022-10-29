@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.mydto.requests.AuthClientRequest;

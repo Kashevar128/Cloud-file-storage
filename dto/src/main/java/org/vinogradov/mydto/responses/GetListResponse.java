@@ -1,7 +1,6 @@
 package org.vinogradov.mydto.responses;
 
-import org.vinogradov.mydto.BasicQuery;
-import org.vinogradov.mydto.User;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
 
 import java.util.List;
 

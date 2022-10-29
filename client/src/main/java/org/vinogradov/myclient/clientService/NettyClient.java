@@ -1,4 +1,4 @@
-package org.vinogradov.myclient.clientLogic;
+package org.vinogradov.myclient.clientService;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -11,8 +11,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.vinogradov.mydto.BasicQuery;
-import org.vinogradov.mydto.User;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
+import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mysupport.Constants;
 
 public class NettyClient {

@@ -1,7 +1,7 @@
-package org.vinogradov.myclient.GUI;
+package org.vinogradov.myclient.starterClient;
 
 import javafx.application.Platform;
-import javafx.stage.Stage;
+import org.vinogradov.myclient.GUI.RegAuthGui;
 
 import java.io.IOException;
 

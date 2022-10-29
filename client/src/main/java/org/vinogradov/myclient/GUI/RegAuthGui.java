@@ -4,8 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.vinogradov.myclient.clientLogic.ClientLogic;
-import org.vinogradov.myclient.clientLogic.NettyClient;
+import org.vinogradov.myclient.clientService.ClientLogic;
+import org.vinogradov.myclient.clientService.NettyClient;
 import org.vinogradov.myclient.controllers.RegAuthController;
 
 import java.io.IOException;

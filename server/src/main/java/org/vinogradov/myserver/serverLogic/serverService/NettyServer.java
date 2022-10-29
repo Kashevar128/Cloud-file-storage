@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -14,7 +14,7 @@ public class NettyServer {
 
     private ServerHandlerLogicImpl serverHandlerLogicImpl = new ServerHandlerLogicImpl();
 
-    NettyServer() throws InterruptedException {
+    public NettyServer() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {

@@ -1,6 +1,6 @@
 package org.vinogradov.mydto.requests;
 
-import org.vinogradov.mydto.BasicQuery;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
 
 public class GetFileRequest implements BasicQuery {
 

@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.storageService;
 
 import java.io.IOException;
 import java.nio.file.Files;

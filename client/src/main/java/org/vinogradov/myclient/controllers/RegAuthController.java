@@ -4,11 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
-import org.vinogradov.myclient.clientLogic.ClientLogic;
-import org.vinogradov.myclient.clientLogic.NettyClient;
-import org.vinogradov.mydto.User;
-import org.vinogradov.mydto.requests.AuthClientRequest;
-import org.vinogradov.mydto.requests.RegClientRequest;
+import org.vinogradov.myclient.clientService.ClientLogic;
 import org.vinogradov.mysupport.HelperMethods;
 
 import java.util.regex.Matcher;

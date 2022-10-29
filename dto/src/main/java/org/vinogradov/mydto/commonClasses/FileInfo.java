@@ -1,4 +1,4 @@
-package org.vinogradov.mydto;
+package org.vinogradov.mydto.commonClasses;
 
 import java.io.IOException;
 import java.io.Serializable;

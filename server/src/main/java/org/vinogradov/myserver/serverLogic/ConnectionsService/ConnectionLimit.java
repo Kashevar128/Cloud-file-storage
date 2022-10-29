@@ -1,7 +1,7 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.ConnectionsService;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.vinogradov.mydto.BasicQuery;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mydto.responses.ConnectionLimitResponse;

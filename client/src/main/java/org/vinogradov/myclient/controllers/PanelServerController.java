@@ -12,8 +12,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
-import org.vinogradov.myclient.clientLogic.NettyClient;
-import org.vinogradov.mydto.FileInfo;
+import org.vinogradov.myclient.clientService.NettyClient;
+import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mysupport.HelperMethods;
 

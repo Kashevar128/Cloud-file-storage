@@ -1,4 +1,4 @@
-package org.vinogradov.myclient.clientLogic;
+package org.vinogradov.myclient.clientService;
 
 import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;

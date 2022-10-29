@@ -1,11 +1,11 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.ConnectionsService;
 
 import io.netty.channel.Channel;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class UsersList {
+public class UsersListChannels {
 
     private final ConcurrentMap<String, Channel> usersChannels = new ConcurrentHashMap<>();
 

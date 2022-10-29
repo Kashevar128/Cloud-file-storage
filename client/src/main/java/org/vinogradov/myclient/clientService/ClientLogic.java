@@ -1,11 +1,11 @@
-package org.vinogradov.myclient.clientLogic;
+package org.vinogradov.myclient.clientService;
 
 import javafx.application.Platform;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.ClientGUI;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
-import org.vinogradov.mydto.User;
+import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mydto.responses.AuthServerResponse;

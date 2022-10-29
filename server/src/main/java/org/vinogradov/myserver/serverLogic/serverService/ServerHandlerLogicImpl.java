@@ -1,9 +1,9 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.Channel;
-import org.vinogradov.mydto.BasicQuery;
-import org.vinogradov.mydto.FileInfo;
-import org.vinogradov.mydto.User;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
+import org.vinogradov.mydto.commonClasses.FileInfo;
+import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
@@ -12,6 +12,8 @@ import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
 import org.vinogradov.mydto.responses.OperationBanResponse;
 import org.vinogradov.mydto.responses.RegServerResponse;
+import org.vinogradov.myserver.serverLogic.storageService.Storage;
+import org.vinogradov.myserver.serverLogic.ConnectionsService.UsersListChannels;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 import org.vinogradov.mysupport.HelperMethods;
@@ -29,13 +31,13 @@ public class ServerHandlerLogicImpl implements ServerHandlerLogic {
 
     private final Storage storage;
 
-    private final UsersList usersListChannels;
+    private final UsersListChannels usersListChannels;
 
     public ServerHandlerLogicImpl() {
         try {
             this.dataBase = new DataBaseImpl();
             this.storage = new Storage();
-            this.usersListChannels = new UsersList();
+            this.usersListChannels = new UsersListChannels();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -128,7 +130,7 @@ public class ServerHandlerLogicImpl implements ServerHandlerLogic {
         return storage;
     }
 
-    public UsersList getUsersListChannels() {
+    public UsersListChannels getUsersListChannels() {
         return usersListChannels;
     }
 

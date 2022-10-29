@@ -1,8 +1,8 @@
 package org.vinogradov.mydto.requests;
 
-import org.vinogradov.mydto.BasicQuery;
-import org.vinogradov.mydto.FileInfo;
-import org.vinogradov.mydto.User;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
+import org.vinogradov.mydto.commonClasses.FileInfo;
+import org.vinogradov.mydto.commonClasses.User;
 
 public class SendFileRequest implements BasicQuery {
 

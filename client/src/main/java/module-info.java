@@ -8,5 +8,6 @@ module client {
 
     exports org.vinogradov.myclient.controllers;
     exports org.vinogradov.myclient.GUI;
+    exports org.vinogradov.myclient.starterClient;
 
 }

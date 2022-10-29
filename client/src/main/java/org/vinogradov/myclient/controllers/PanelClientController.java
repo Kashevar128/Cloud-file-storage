@@ -10,7 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
-import org.vinogradov.mydto.FileInfo;
+import org.vinogradov.mydto.commonClasses.FileInfo;
 
 import java.io.File;
 import java.io.IOException;

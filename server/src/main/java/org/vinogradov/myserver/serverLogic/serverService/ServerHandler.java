@@ -1,12 +1,13 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.vinogradov.mydto.BasicQuery;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.requests.AuthClientRequest;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mydto.requests.SendFileRequest;
+import org.vinogradov.myserver.serverLogic.ConnectionsService.ConnectionLimit;
 
 import java.util.HashMap;
 import java.util.Map;
