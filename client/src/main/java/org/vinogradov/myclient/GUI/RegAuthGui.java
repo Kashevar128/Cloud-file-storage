@@ -4,7 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.vinogradov.myclient.clientLogic.ClientHandlerLogicImpl;
+import org.vinogradov.myclient.clientLogic.ClientLogic;
 import org.vinogradov.myclient.clientLogic.NettyClient;
 import org.vinogradov.myclient.controllers.RegAuthController;
 
@@ -28,14 +28,14 @@ public class RegAuthGui {
         stage.show();
 
         NettyClient nettyClient = new NettyClient();
-        regAuthController.setNettyClient(nettyClient);
-        ClientHandlerLogicImpl clientHandlerLogicImpl = new ClientHandlerLogicImpl();
-        nettyClient.setClientHandlerLogic(clientHandlerLogicImpl);
-        clientHandlerLogicImpl.setRegAuthGui(this);
-        clientHandlerLogicImpl.setNettyClient(nettyClient);
+        ClientLogic clientLogic = new ClientLogic();
+        regAuthController.setClientLogic(clientLogic);
+        nettyClient.setClientLogic(clientLogic);
+        clientLogic.setRegAuthGui(this);
+        clientLogic.setNettyClient(nettyClient);
 
         stage.setOnCloseRequest(windowEvent -> {
-            regAuthController.getNettyClient().exitClient();
+            clientLogic.closeClient();
         });
     }
 

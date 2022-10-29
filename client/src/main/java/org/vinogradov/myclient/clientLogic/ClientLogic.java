@@ -5,13 +5,16 @@ import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.ClientGUI;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
+import org.vinogradov.mydto.User;
+import org.vinogradov.mydto.requests.AuthClientRequest;
+import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mydto.responses.AuthServerResponse;
 import org.vinogradov.mydto.responses.GetListResponse;
 import org.vinogradov.mydto.responses.RegServerResponse;
 
 import java.util.List;
 
-public class ClientHandlerLogicImpl implements ClientHandlerLogic {
+public class ClientLogic implements ClientHandlerLogic {
 
     private RegAuthGui regAuthGui;
 
@@ -71,6 +74,19 @@ public class ClientHandlerLogicImpl implements ClientHandlerLogic {
             regAuthGui.getStage().close();});
     }
 
+    public void closeClient() {
+        nettyClient.exitClient();
+    }
+
+    public void createRegClientRequest(String name, String pass) {
+        nettyClient.sendMessage(new RegClientRequest(new User(name, pass)));
+    }
+
+    public void createAuthClientRequest(String name, String pass) {
+        nettyClient.sendMessage(new AuthClientRequest(new User(name, pass)));
+    }
+
+
     public void setRegAuthGui(RegAuthGui regAuthGui) {
         this.regAuthGui = regAuthGui;
     }
@@ -86,7 +102,7 @@ public class ClientHandlerLogicImpl implements ClientHandlerLogic {
             clientController.serverPC.updateList(startList);
     }
 
-    public ClientGUI getClientGUI() {
-        return clientGUI;
+    public NettyClient getNettyClient() {
+        return nettyClient;
     }
 }

@@ -55,7 +55,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
     }
 
-    public ClientHandler(ClientHandlerLogicImpl handlerLogic) {
+    public ClientHandler(ClientLogic handlerLogic) {
         this.handlerLogic = handlerLogic;
     }
 }

@@ -21,7 +21,7 @@ public class NettyClient {
 
     private User user;
 
-    ClientHandlerLogicImpl clientHandlerLogicImpl;
+    ClientLogic clientLogic;
 
     public NettyClient() throws InterruptedException {
 
@@ -39,7 +39,7 @@ public class NettyClient {
                         socketChannel.pipeline().addLast(
                                 new ObjectDecoder(Constants.MB_200, ClassResolvers.cacheDisabled(null)),
                                 new ObjectEncoder(),
-                                new ClientHandler(clientHandlerLogicImpl)
+                                new ClientHandler(clientLogic)
                         );
                     }
                 });
@@ -63,8 +63,8 @@ public class NettyClient {
         channel.close();
     }
 
-    public void setClientHandlerLogic(ClientHandlerLogicImpl clientHandlerLogicImpl) {
-        this.clientHandlerLogicImpl = clientHandlerLogicImpl;
+    public void setClientLogic(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
     }
 
     public User getUser() {

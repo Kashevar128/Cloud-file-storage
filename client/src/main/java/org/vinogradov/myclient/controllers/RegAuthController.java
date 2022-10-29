@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
+import org.vinogradov.myclient.clientLogic.ClientLogic;
 import org.vinogradov.myclient.clientLogic.NettyClient;
 import org.vinogradov.mydto.User;
 import org.vinogradov.mydto.requests.AuthClientRequest;
@@ -15,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class RegAuthController {
 
-    NettyClient nettyClient;
+    ClientLogic clientLogic;
 
     @FXML
     public TextField userField;
@@ -28,7 +29,7 @@ public class RegAuthController {
         String name = HelperMethods.delSpace(userField.getText());
         String pass = HelperMethods.delSpace(passwordField.getText());
         if (filter(name, pass)) {
-            nettyClient.sendMessage(new RegClientRequest(new User(name, pass)));
+            clientLogic.createRegClientRequest(name, pass);
         }
     }
 
@@ -37,12 +38,8 @@ public class RegAuthController {
         String name = HelperMethods.delSpace(userField.getText());
         String pass = HelperMethods.delSpace(passwordField.getText());
         if (filter(name, pass)) {
-            nettyClient.sendMessage(new AuthClientRequest(new User(name, pass)));
+            clientLogic.createAuthClientRequest(name, pass);
         }
-    }
-
-    public void exit() {
-
     }
 
     private boolean filter(String userField, String passwordField) {
@@ -68,11 +65,11 @@ public class RegAuthController {
         return true;
     }
 
-    public void setNettyClient(NettyClient nettyClient) {
-        this.nettyClient = nettyClient;
+    public ClientLogic getClientLogic() {
+        return clientLogic;
     }
 
-    public NettyClient getNettyClient() {
-        return nettyClient;
+    public void setClientLogic(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
     }
 }
