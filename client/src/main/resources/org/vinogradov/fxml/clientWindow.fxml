@@ -7,7 +7,7 @@
 <VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="org.vinogradov.myclient.controllers.ClientController">
     <MenuBar>
         <Menu text="Файл">
-            <MenuItem text="Выйти из программы"/>
+            <MenuItem text="Выйти из программы" onAction="#exitBtnAction"/>
         </Menu>
     </MenuBar>
 
@@ -17,9 +17,9 @@
     </HBox>
 
     <HBox spacing="5">
-        <Button maxWidth="Infinity" focusTraversable="false" text="Загрузить файл" HBox.hgrow="ALWAYS"/>
-        <Button maxWidth="Infinity" focusTraversable="false" text="Удалить" HBox.hgrow="ALWAYS"/>
-        <Button maxWidth="Infinity" focusTraversable="false" text="Обновить" HBox.hgrow="ALWAYS"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Загрузить файл" HBox.hgrow="ALWAYS" onAction="#copyBtnAction"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Удалить" HBox.hgrow="ALWAYS" onAction="#delBtnAction"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Обновить" HBox.hgrow="ALWAYS" onAction="#refresh"/>
         <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
         </padding>

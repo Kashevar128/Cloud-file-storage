@@ -1,4 +1,4 @@
-package org.vinogradov.myclient.clientLogic;
+package org.vinogradov.myclient.clientService;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -11,12 +11,15 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.vinogradov.mydto.BasicQuery;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
+import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mysupport.Constants;
 
 public class NettyClient {
 
     private Channel channel = null;
+
+    ClientLogic clientLogic;
 
     public NettyClient() throws InterruptedException {
 
@@ -32,9 +35,9 @@ public class NettyClient {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline().addLast(
-                                new ObjectDecoder(Constants.MB_20, ClassResolvers.cacheDisabled(null)),
+                                new ObjectDecoder(Constants.MB_200, ClassResolvers.cacheDisabled(null)),
                                 new ObjectEncoder(),
-                                new ClientHandler()
+                                new ClientHandler(clientLogic)
                         );
                     }
                 });
@@ -49,7 +52,7 @@ public class NettyClient {
         }).start();
     }
 
-    public void sendMessage (BasicQuery basic) {
+    public void send(BasicQuery basic) {
         channel.writeAndFlush(basic);
     }
 
@@ -58,5 +61,8 @@ public class NettyClient {
         channel.close();
     }
 
+    public void setClientLogic(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
+    }
 }
 

@@ -45,6 +45,30 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
+    public static void showDelFileError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Некорректное удаление файла.", ButtonType.OK);
+        alert.setHeaderText("Ошибка удаления файла");
+        alert.showAndWait();
+    }
+
+    public static void showUpdateListError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Некорректное обновление списка файлов.", ButtonType.OK);
+        alert.setHeaderText("Ошибка обновления листа файлов");
+        alert.showAndWait();
+    }
+
+    public static void showConnectionLimit() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Время сессии вышло.", ButtonType.OK);
+        alert.setHeaderText("!!!");
+        alert.showAndWait();
+    }
+
+    public static void showSelectFileAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите файл, который хоттите перенестию.", ButtonType.OK);
+        alert.setHeaderText("Вы не выбрали файл");
+        alert.showAndWait();
+    }
+
 
 }
 

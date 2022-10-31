@@ -1,6 +1,8 @@
 package org.vinogradov.myserver.serverLogic.dataBaseService;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.vinogradov.mydto.commonClasses.User;
+import org.vinogradov.mysupport.HelperMethods;
 
 import java.sql.*;
 
@@ -33,11 +35,13 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public boolean createUser(String name, String password) {
+    public synchronized boolean createUser(User user) {
+        String name = user.getNameUser();
+        String encryptedPassword = DigestUtils.md5Hex(user.getPassword());
         if (!findUser(name)) {
             try (PreparedStatement statement = connection.prepareStatement(queryNewUser)) {
                 statement.setString(1, name);
-                statement.setString(2, password);
+                statement.setString(2, encryptedPassword);
                 statement.executeUpdate();
                 return true;
             } catch (SQLException e) {
@@ -63,13 +67,15 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public boolean auth(String name, String password) {
+    public boolean auth(User user) {
+        String name = user.getNameUser();
+        String encryptPassword = DigestUtils.md5Hex(user.getPassword());
         if (!findUser(name)) return false;
         try (PreparedStatement statement = connection.prepareStatement(queryGetUserForName)) {
             statement.setString(1, name);
             ResultSet rs = statement.executeQuery();
             String passTable = rs.getString("Password");
-            if (!passTable.equals(password)) return false;
+            if (!passTable.equals(encryptPassword)) return false;
             else return true;
         }catch (SQLException e) {
             throw new RuntimeException(e);
@@ -82,12 +88,12 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public void start() {
+    public void startDataBase() {
 
     }
 
     @Override
-    public void stop() {
+    public void closeDataBase() {
         try {
             connection.close();
         } catch (SQLException e) {

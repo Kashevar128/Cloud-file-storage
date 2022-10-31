@@ -1,4 +1,6 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.starterServer;
+
+import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 
 public class StartServer {
     public static void main(String[] args) {

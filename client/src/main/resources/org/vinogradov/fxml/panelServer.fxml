@@ -7,7 +7,7 @@
       fx:controller="org.vinogradov.myclient.controllers.PanelServerController">
     <HBox>
         <TextField fx:id="pathField" editable="false" HBox.hgrow="ALWAYS"/>
-        <Button text="Назад"/>
+        <Button text="Назад" onAction="#btnPathBack"/>
     </HBox>
     <TableView fx:id="filesTable" VBox.vgrow="ALWAYS"/>
 

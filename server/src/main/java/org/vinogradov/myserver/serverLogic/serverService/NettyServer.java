@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic;
+package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -12,7 +12,9 @@ import org.vinogradov.mysupport.Constants;
 
 public class NettyServer {
 
-    NettyServer() throws InterruptedException {
+    private ServerLogic serverLogic = new ServerLogic();
+
+    public NettyServer() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -24,9 +26,9 @@ public class NettyServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline inbound = socketChannel.pipeline();
                             inbound.addLast(
-                                    new ObjectDecoder(Constants.MB_20, ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(Constants.MB_200, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ServerHandler()
+                                    new ServerHandler(serverLogic)
                             );
                         }
                     });
@@ -36,6 +38,7 @@ public class NettyServer {
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
+            serverLogic.unConnectDataBase();
         }
     }
 
