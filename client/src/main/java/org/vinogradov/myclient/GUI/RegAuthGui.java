@@ -33,6 +33,7 @@ public class RegAuthGui {
         nettyClient.setClientLogic(clientLogic);
         clientLogic.setRegAuthGui(this);
         clientLogic.setNettyClient(nettyClient);
+        clientLogic.setClientLogic(clientLogic);
 
         stage.setOnCloseRequest(windowEvent -> {
             clientLogic.closeClient();

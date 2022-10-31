@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.vinogradov.myclient.clientService.ClientLogic;
 import org.vinogradov.myclient.controllers.ClientController;
 
 import java.io.IOException;
@@ -15,9 +16,9 @@ import java.io.IOException;
  */
 public class ClientGUI {
 
-    ClientController clientController;
+    private ClientController clientController;
 
-    public ClientGUI() {
+    public ClientGUI(ClientLogic clientLogic) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/clientWindow.fxml"));
@@ -26,7 +27,7 @@ public class ClientGUI {
             stage.setTitle("Java File Storage");
             stage.setScene(new Scene(root, 1000, 600));
             stage.setOnCloseRequest(windowEvent -> {
-                clientController.getNettyClient().exitClient();
+               clientLogic.exitUserClient();
             });
             stage.show();
         } catch (IOException e) {

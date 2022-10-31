@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
+import org.vinogradov.myclient.clientService.ClientLogic;
 import org.vinogradov.myclient.clientService.NettyClient;
 import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.requests.GetListRequest;
@@ -34,7 +35,7 @@ public class PanelServerController implements Initializable, PanelController<Lis
 
     private String stringCurrentPath;
 
-    private NettyClient nettyClient;
+    private ClientLogic clientLogic;
 
     @FXML
     public TableView<FileInfo> filesTable;
@@ -88,7 +89,7 @@ public class PanelServerController implements Initializable, PanelController<Lis
                 if (mouseEvent.getClickCount() == 2) {
                     Path path = Paths.get(getCurrentPath()).resolve(filesTable.getSelectionModel().getSelectedItem().getFilename());
                     if (Files.isDirectory(path)) {
-                        nettyClient.send(new GetListRequest(nettyClient.getUser(), path.toString()));
+                        clientLogic.createGetListRequest(path.toString());
                     }
                 }
             }
@@ -124,7 +125,7 @@ public class PanelServerController implements Initializable, PanelController<Lis
         List<Path> listPath = list.stream().map(Paths::get).collect(Collectors.toList());
         Path currentPath = listPath.get(list.size() - 1);
         listPath.remove(list.size() - 1);
-        pathField.setText(HelperMethods.editingPath(currentPath.normalize().toString(), nettyClient.getUser().getNameUser()));
+        pathField.setText(HelperMethods.editingPath(currentPath.normalize().toString(), clientLogic.getUser().getNameUser()));
         stringCurrentPath = currentPath.normalize().toAbsolutePath().toString();
         filesTable.getItems().clear();
         filesTable.getItems().addAll(listPath.stream().map(FileInfo::new).collect(Collectors.toList()));
@@ -142,11 +143,11 @@ public class PanelServerController implements Initializable, PanelController<Lis
     public void btnPathBack(ActionEvent actionEvent) {
         Path backPath = Paths.get(getCurrentPath()).getParent();
         if (backPath != null && !backPath.toString().endsWith("Data_Storage")) {
-            nettyClient.send(new GetListRequest(nettyClient.getUser(), backPath.toString()));
+            clientLogic.createGetListRequest(backPath.toString());
         }
     }
 
-    public void setNettyClient(NettyClient nettyClient) {
-        this.nettyClient = nettyClient;
+    public void setClientLogic(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
     }
 }

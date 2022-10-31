@@ -1,16 +1,10 @@
 package org.vinogradov.myserver.serverLogic.ConnectionsService;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.requests.AuthClientRequest;
-import org.vinogradov.mydto.requests.RegClientRequest;
 import org.vinogradov.mydto.responses.ConnectionLimitResponse;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static java.lang.Thread.sleep;
 
 public class ConnectionLimit {
 

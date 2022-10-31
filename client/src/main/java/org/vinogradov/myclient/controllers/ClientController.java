@@ -7,8 +7,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
+import org.vinogradov.myclient.clientService.ClientLogic;
 import org.vinogradov.myclient.clientService.NettyClient;
 import org.vinogradov.mydto.commonClasses.FileInfo;
+import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mydto.requests.GetListRequest;
 import org.vinogradov.mydto.requests.SendFileRequest;
 import org.vinogradov.mysupport.HelperMethods;
@@ -21,11 +23,9 @@ import java.util.function.Consumer;
 
 public class ClientController implements Initializable {
 
-    private NettyClient nettyClient;
+    private ClientLogic clientLogic;
 
     private boolean transfer;
-
-    Consumer<byte[]> copyConsumer;
 
     private PanelController srcPC = null, dstPC = null;
 
@@ -46,7 +46,7 @@ public class ClientController implements Initializable {
     @FXML
     public void exitBtnAction(ActionEvent actionEvent) {
         Platform.exit();
-        nettyClient.exitClient();
+        clientLogic.exitUserClient();
     }
 
     @FXML
@@ -74,9 +74,7 @@ public class ClientController implements Initializable {
         dstPath = Paths.get(dstPC.getCurrentPath(), selectedFile.getFilename());
 
         if (transfer) {
-            copyConsumer = bytes -> nettyClient.send(
-                    new SendFileRequest(dstPath.toString(), selectedFile, bytes, nettyClient.getUser()));
-            HelperMethods.saw(srcPath, copyConsumer);
+            clientLogic.createSendFileRequest(dstPath, srcPath, selectedFile);
         }
     }
 
@@ -87,15 +85,11 @@ public class ClientController implements Initializable {
     @FXML
     public void refresh(ActionEvent actionEvent) {
         clientPC.updateList(Paths.get(clientPC.getCurrentPath()));
-        nettyClient.send(new GetListRequest(nettyClient.getUser(), serverPC.getCurrentPath()));
+        clientLogic.createGetListRequest(serverPC.getCurrentPath());
     }
 
-    public void setNettyClient(NettyClient nettyClient) {
-        this.nettyClient = nettyClient;
-        serverPC.setNettyClient(nettyClient);
-    }
-
-    public NettyClient getNettyClient() {
-        return nettyClient;
+    public void setClientLogic(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
+        serverPC.setClientLogic(clientLogic);
     }
 }

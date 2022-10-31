@@ -38,7 +38,7 @@ public class NettyServer {
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            serverLogic.getDataBase().closeDataBase();
+            serverLogic.unConnectDataBase();
         }
     }
 

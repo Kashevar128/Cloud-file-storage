@@ -19,8 +19,6 @@ public class NettyClient {
 
     private Channel channel = null;
 
-    private User user;
-
     ClientLogic clientLogic;
 
     public NettyClient() throws InterruptedException {
@@ -65,14 +63,6 @@ public class NettyClient {
 
     public void setClientLogic(ClientLogic clientLogic) {
         this.clientLogic = clientLogic;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }
 

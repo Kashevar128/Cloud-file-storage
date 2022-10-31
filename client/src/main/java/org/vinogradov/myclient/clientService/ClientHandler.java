@@ -28,10 +28,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             handlerLogic.getHandingMessageList((GetListResponse) basicQuery);
         });
 
-        RESPONSE_HANDLERS.put(OperationBanResponse.class, (basicQuery, handlerLogic) -> {
-            handlerLogic.getHandingOperationBan();
-        });
-
         RESPONSE_HANDLERS.put(ConnectionLimitResponse.class, (basicQuery, handlerLogic) -> {
             handlerLogic.getHandingConnectionLimit();
         });

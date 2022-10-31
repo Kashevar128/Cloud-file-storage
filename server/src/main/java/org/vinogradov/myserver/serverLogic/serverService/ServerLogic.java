@@ -1,6 +1,7 @@
 package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
@@ -76,7 +77,7 @@ public class ServerLogic implements ServerHandlerLogic {
     @Override
     public void getHandingSendFileRequest(SendFileRequest sendFileRequest) {
         User user = sendFileRequest.getUser();
-        byte[]bytes = sendFileRequest.getPackageByte();
+        byte[] bytes = sendFileRequest.getPackageByte();
         FileInfo.FileType fileType = sendFileRequest.getFileInfo().getType();
         Path dstPath = Paths.get(sendFileRequest.getDstPath());
         switch (fileType) {
@@ -104,6 +105,38 @@ public class ServerLogic implements ServerHandlerLogic {
         sendMessage(user, new GetListResponse(newList));
     }
 
+
+    public boolean filterSecurity(BasicQuery basicQuery) {
+        User user = basicQuery.getUser();
+        if (basicQuery instanceof AuthClientRequest
+                || basicQuery instanceof RegClientRequest) return true;
+        if (connectionsController.security(user)) {
+            System.out.println("Доступ " + user.getNameUser() +  " разрешен");
+            return true;
+        }
+        return false;
+    }
+
+    public void channelCollector(BasicQuery basicQuery, ChannelHandlerContext context) {
+        if (basicQuery instanceof AuthClientRequest
+                || basicQuery instanceof RegClientRequest) {
+            connectionsController.putChannel(basicQuery, context);
+        }
+    }
+
+    public void addConnectionLimit(ChannelHandlerContext context) {
+        connectionsController.newConnectionLimit(context);
+    }
+
+    public void deleteUserConnection(ChannelHandlerContext context) {
+        connectionsController.unConnectUser(context);
+    }
+
+    public void unConnectDataBase() {
+        dataBase.closeDataBase();
+    }
+
+
     private void sendMessage(User user, BasicQuery basicQuery) {
         Channel channel = connectionsController.getUserChannel(user.getNameUser());
         channel.writeAndFlush(basicQuery);
@@ -111,21 +144,10 @@ public class ServerLogic implements ServerHandlerLogic {
 
     private List<String> startWorkingWithUser(User user) {
         connectionsController.stopTimerConnectionLimit(user);
+        connectionsController.addUserInTemporaryDataBase(user);
         Path path = storage.createUserRepository(user.getNameUser());
         List<String> startList = HelperMethods.generateStringList(path);
         return startList;
-    }
-
-    public ConnectionsController getConnectionsController() {
-        return connectionsController;
-    }
-
-    public DataBase getDataBase() {
-        return dataBase;
-    }
-
-    public Storage getStorage() {
-        return storage;
     }
 
 }

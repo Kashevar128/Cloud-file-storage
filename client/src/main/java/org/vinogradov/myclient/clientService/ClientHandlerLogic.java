@@ -12,7 +12,5 @@ public interface ClientHandlerLogic {
 
     void getHandingMessageList(GetListResponse responseList);
 
-    void getHandingOperationBan();
-
     void getHandingConnectionLimit();
 }
