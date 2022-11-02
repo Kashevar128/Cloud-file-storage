@@ -4,20 +4,17 @@ import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
 
-public class SendFileRequest implements BasicQuery {
+public class SendPartFileRequest implements BasicQuery {
 
     private String dstPath;
 
-    private FileInfo fileInfo;
-
-    private byte[] packageByte;
+    private byte[] packagePart;
 
     private User user;
 
-    public SendFileRequest(String dstPath, FileInfo fileInfo, byte[] packageByte, User user) {
+    public SendPartFileRequest(String dstPath, byte[] packagePart, User user) {
         this.dstPath = dstPath;
-        this.fileInfo = fileInfo;
-        this.packageByte = packageByte;
+        this.packagePart = packagePart;
         this.user = user;
     }
 
@@ -30,12 +27,8 @@ public class SendFileRequest implements BasicQuery {
         return dstPath;
     }
 
-    public FileInfo getFileInfo() {
-        return fileInfo;
-    }
-
-    public byte[] getPackageByte() {
-        return packageByte;
+    public byte[] getPackagePart() {
+        return packagePart;
     }
 
     @Override

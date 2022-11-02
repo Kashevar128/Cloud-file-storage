@@ -1,10 +1,6 @@
 package org.vinogradov.myserver.serverLogic.serverService;
 
-import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.mydto.requests.*;
-import org.vinogradov.mydto.responses.AuthServerResponse;
-import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.RegServerResponse;
 
 public interface ServerHandlerLogic {
 
@@ -14,5 +10,9 @@ public interface ServerHandlerLogic {
 
     void sendListResponse(GetListRequest listRequest);
 
-    void getHandingSendFileRequest(SendFileRequest sendFileRequest);
+    void getHandingStartSendFileRequest(StartSendFileRequest startSendFileRequest);
+
+    void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest);
+
+    void getHandingStopSendFileRequest(StopSendFileRequest stopSendFileRequest);
 }

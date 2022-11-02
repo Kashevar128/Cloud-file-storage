@@ -17,6 +17,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     public ServerHandler(ServerLogic serverLogic) {
         this.serverLogic = serverLogic;
+        serverLogic.getServerHandlers().add(this);
     }
 
     static {
@@ -33,8 +34,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             serverHandlerLogic.sendListResponse((GetListRequest) basicQuery);
         }));
 
-        REQUEST_HANDLERS.put(SendFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.getHandingSendFileRequest((SendFileRequest) basicQuery);
+        REQUEST_HANDLERS.put(StartSendFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingStartSendFileRequest((StartSendFileRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(SendPartFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingSendPartFileRequest((SendPartFileRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(StopSendFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingStopSendFileRequest((StopSendFileRequest) basicQuery);
         }));
     }
 
@@ -54,7 +63,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         BasicQuery request = (BasicQuery) msg;
 
         serverLogic.channelCollector(request, ctx);
-        serverLogic.filterSecurity(request);
+        if (!serverLogic.filterSecurity(request)) return;
 
         System.out.println(request.getType());
         BiConsumer<ServerHandlerLogic, BasicQuery> channelServerHandlerContextConsumer = REQUEST_HANDLERS.get(request.getClass());

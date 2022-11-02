@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic.ConnectionsService;
+package org.vinogradov.myserver.serverLogic.connectionsService;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -6,16 +6,23 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.commonClasses.User;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 public class ConnectionsController {
 
     UsersListChannels usersListChannels;
     ConnectionLimitRepository connectionLimitRepository;
     TemporaryDataBase temporaryDataBase;
+    FileChannelRepository fileChannelRepository;
 
     public ConnectionsController() {
         this.usersListChannels = new UsersListChannels();
         this.connectionLimitRepository = new ConnectionLimitRepository();
         this.temporaryDataBase = new TemporaryDataBase();
+        this.fileChannelRepository = new FileChannelRepository();
     }
 
     public Channel getUserChannel(String name) {
@@ -64,6 +71,30 @@ public class ConnectionsController {
             return true;
         }
         return false;
+    }
+
+    public void addFileChannelUser(String dstPath) {
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream(dstPath, true);
+            fileChannelRepository.addFileChannel(dstPath, fileOutputStream);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public FileOutputStream getFileChannelUser(String dstPath) {
+        return fileChannelRepository.getFileChannel(dstPath);
+    }
+
+    public void stopFileOutputStream(String dstPath) {
+        FileOutputStream fileOutputStream = fileChannelRepository.getFileChannel(dstPath);
+        try {
+            fileOutputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fileChannelRepository.deleteFileChannel(dstPath);
     }
 
 

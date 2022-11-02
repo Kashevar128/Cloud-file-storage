@@ -3,25 +3,20 @@ package org.vinogradov.myserver.serverLogic.serverService;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mydto.requests.*;
-import org.vinogradov.mydto.responses.AuthServerResponse;
-import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.OperationBanResponse;
-import org.vinogradov.mydto.responses.RegServerResponse;
-import org.vinogradov.myserver.serverLogic.ConnectionsService.ConnectionsController;
+import org.vinogradov.mydto.responses.*;
+import org.vinogradov.myserver.serverLogic.connectionsService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
-import org.vinogradov.myserver.serverLogic.ConnectionsService.UsersListChannels;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 import org.vinogradov.mysupport.HelperMethods;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServerLogic implements ServerHandlerLogic {
@@ -31,6 +26,8 @@ public class ServerLogic implements ServerHandlerLogic {
     private final DataBase dataBase;
 
     private final Storage storage;
+
+    private final List<ServerHandler> serverHandlers = new ArrayList<>();
 
     public ServerLogic() {
         try {
@@ -75,34 +72,37 @@ public class ServerLogic implements ServerHandlerLogic {
     }
 
     @Override
-    public void getHandingSendFileRequest(SendFileRequest sendFileRequest) {
-        User user = sendFileRequest.getUser();
-        byte[] bytes = sendFileRequest.getPackageByte();
-        FileInfo.FileType fileType = sendFileRequest.getFileInfo().getType();
-        Path dstPath = Paths.get(sendFileRequest.getDstPath());
-        switch (fileType) {
-            case FILE -> {
-                try (FileOutputStream fileOutputStream = new FileOutputStream(dstPath.toFile())) {
-                    fileOutputStream.write(bytes);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+    public void getHandingStartSendFileRequest(StartSendFileRequest startSendFileRequest) {
+        User user = startSendFileRequest.getUser();
+        String path = startSendFileRequest.getPathFile();
+        connectionsController.addFileChannelUser(path);
+        sendMessage(user, new StartSendFileResponse());
+    }
 
-            case DIRECTORY -> {
-                if (!Files.exists(dstPath)) {
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(dstPath.toFile())) {
-                        Files.createDirectory(dstPath);
-                        fileOutputStream.write(bytes);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+    @Override
+    public void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest) {
+        User user = sendPartFileRequest.getUser();
+        byte[] bytes = sendPartFileRequest.getPackagePart();
+        String dstPath = sendPartFileRequest.getDstPath();
+
+        FileOutputStream fileOutputStream = connectionsController.getFileChannelUser(dstPath);
+        try {
+            fileOutputStream.write(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        Path filePath = dstPath.getParent();
-        List<String> newList = HelperMethods.generateStringList(filePath);
-        sendMessage(user, new GetListResponse(newList));
+//        Path filePath = dstPath.getParent();
+//        List<String> newList = HelperMethods.generateStringList(filePath);
+        sendMessage(user, new SendPartFileResponse());
+    }
+
+    @Override
+    public void getHandingStopSendFileRequest(StopSendFileRequest stopSendFileRequest) {
+        User user = stopSendFileRequest.getUser();
+        String dstPath = stopSendFileRequest.getDstPath();
+        connectionsController.stopFileOutputStream(dstPath);
+        sendMessage(user, new StopSendFileResponse());
+        sendMessage(user, new GetListResponse(HelperMethods.generateStringList(Paths.get(dstPath).getParent())));
     }
 
 
@@ -111,7 +111,6 @@ public class ServerLogic implements ServerHandlerLogic {
         if (basicQuery instanceof AuthClientRequest
                 || basicQuery instanceof RegClientRequest) return true;
         if (connectionsController.security(user)) {
-            System.out.println("Доступ " + user.getNameUser() +  " разрешен");
             return true;
         }
         return false;
@@ -150,4 +149,8 @@ public class ServerLogic implements ServerHandlerLogic {
         return startList;
     }
 
+
+    public List<ServerHandler> getServerHandlers() {
+        return serverHandlers;
+    }
 }

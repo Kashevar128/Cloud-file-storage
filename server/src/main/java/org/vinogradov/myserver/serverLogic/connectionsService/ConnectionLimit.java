@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic.ConnectionsService;
+package org.vinogradov.myserver.serverLogic.connectionsService;
 
 import io.netty.channel.Channel;
 import org.vinogradov.mydto.responses.ConnectionLimitResponse;

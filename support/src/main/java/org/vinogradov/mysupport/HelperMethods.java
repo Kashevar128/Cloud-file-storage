@@ -1,11 +1,11 @@
 package org.vinogradov.mysupport;
 
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -36,10 +36,25 @@ public class HelperMethods {
         return newPath;
     }
 
-    public static void saw(Path path, Consumer<byte[]> filePartConsumer) {
+    public static void split(Path path, long sizeFile, Consumer<byte[]> filePartConsumer) {
         byte[] filePart = new byte[MB_100];
+        byte[] lastFilePart = null;
+        System.out.println(sizeFile);
+        long numberOfPackages = sizeFile / MB_100;
+        long size = numberOfPackages * MB_100;
+        if (size < sizeFile) {
+            numberOfPackages += 1;
+            lastFilePart = new byte[(int) (sizeFile - size)];
+        };
+        System.out.println(numberOfPackages);
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile())) {
+            int counter = 0;
             while (fileInputStream.read(filePart) != -1) {
+                counter++;
+                if (counter == numberOfPackages) {
+                    filePartConsumer.accept(lastFilePart);
+                    break;
+                }
                 filePartConsumer.accept(filePart);
             }
         } catch (IOException e) {

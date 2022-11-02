@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic.ConnectionsService;
+package org.vinogradov.myserver.serverLogic.connectionsService;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

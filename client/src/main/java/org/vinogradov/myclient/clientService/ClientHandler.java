@@ -11,25 +11,29 @@ import java.util.function.BiConsumer;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-    private ClientHandlerLogic handlerLogic;
+    private ClientLogic clientLogic;
 
     private static  final Map<Class<? extends BasicQuery>, BiConsumer<BasicQuery, ClientHandlerLogic>> RESPONSE_HANDLERS = new HashMap<>();
 
+    public ClientHandler(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
+    }
+
     static {
-        RESPONSE_HANDLERS.put(RegServerResponse.class, (basicQuery, handlerLogic) -> {
-            handlerLogic.getHandingMessageReg((RegServerResponse) basicQuery);
+        RESPONSE_HANDLERS.put(RegServerResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingMessageReg((RegServerResponse) basicQuery);
         });
 
-        RESPONSE_HANDLERS.put(AuthServerResponse.class, (basicQuery, handlerLogic) -> {
-            handlerLogic.getHandingMessageAuth((AuthServerResponse) basicQuery);
+        RESPONSE_HANDLERS.put(AuthServerResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingMessageAuth((AuthServerResponse) basicQuery);
         });
 
-        RESPONSE_HANDLERS.put(GetListResponse.class, (basicQuery, handlerLogic) -> {
-            handlerLogic.getHandingMessageList((GetListResponse) basicQuery);
+        RESPONSE_HANDLERS.put(GetListResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingMessageList((GetListResponse) basicQuery);
         });
 
-        RESPONSE_HANDLERS.put(ConnectionLimitResponse.class, (basicQuery, handlerLogic) -> {
-            handlerLogic.getHandingConnectionLimit();
+        RESPONSE_HANDLERS.put(ConnectionLimitResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingConnectionLimit();
         });
     }
 
@@ -42,16 +46,13 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery response = (BasicQuery) msg;
         System.out.println(response.getType());
+        if (!clientLogic.filterMessage(response)) return;
         BiConsumer<BasicQuery, ClientHandlerLogic> channelClientHandlerContextConsumer = RESPONSE_HANDLERS.get(response.getClass());
-        channelClientHandlerContextConsumer.accept(response, handlerLogic);
+        channelClientHandlerContextConsumer.accept(response, clientLogic);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
-    }
-
-    public ClientHandler(ClientLogic handlerLogic) {
-        this.handlerLogic = handlerLogic;
     }
 }

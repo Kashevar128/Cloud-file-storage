@@ -5,15 +5,11 @@ import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.ClientGUI;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
+import org.vinogradov.mydto.commonClasses.BasicQuery;
 import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mydto.requests.AuthClientRequest;
-import org.vinogradov.mydto.requests.GetListRequest;
-import org.vinogradov.mydto.requests.RegClientRequest;
-import org.vinogradov.mydto.requests.SendFileRequest;
-import org.vinogradov.mydto.responses.AuthServerResponse;
-import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.RegServerResponse;
+import org.vinogradov.mydto.requests.*;
+import org.vinogradov.mydto.responses.*;
 import org.vinogradov.mysupport.HelperMethods;
 
 import java.nio.file.Path;
@@ -94,13 +90,27 @@ public class ClientLogic implements ClientHandlerLogic {
     }
 
     public void createSendFileRequest(Path dstPath, Path srcPath, FileInfo selectedFile) {
-        Consumer<byte[]> copyConsumer = bytes -> nettyClient.send(
-                new SendFileRequest(dstPath.toString(), selectedFile, bytes, user));
-        HelperMethods.saw(srcPath, copyConsumer);
+        Consumer<byte[]> sendFile = null;
+        FileInfo.FileType fileType = selectedFile.getType();
+        long sizeFile = selectedFile.getSize();
+        switch (fileType) {
+            case FILE -> sendFile = bytes -> nettyClient.send(
+                    new SendPartFileRequest(dstPath.toString(), bytes, user));
+        }
+        nettyClient.send(new StartSendFileRequest(dstPath.toString(), user));
+        HelperMethods.split(srcPath, sizeFile, sendFile);
+        nettyClient.send(new StopSendFileRequest(dstPath.toString(), user));
     }
 
     public void createGetListRequest(String currentPath) {
         nettyClient.send(new GetListRequest(user, currentPath));
+    }
+
+    public boolean filterMessage(BasicQuery basicQuery) {
+        if (basicQuery instanceof StartSendFileResponse ||
+        basicQuery instanceof SendPartFileResponse ||
+        basicQuery instanceof StopSendFileResponse) return false;
+        return true;
     }
 
 

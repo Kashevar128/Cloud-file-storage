@@ -8,18 +8,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.clientService.ClientLogic;
-import org.vinogradov.myclient.clientService.NettyClient;
 import org.vinogradov.mydto.commonClasses.FileInfo;
-import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mydto.requests.GetListRequest;
-import org.vinogradov.mydto.requests.SendFileRequest;
-import org.vinogradov.mysupport.HelperMethods;
 
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class ClientController implements Initializable {
 
