@@ -12,6 +12,8 @@ import org.vinogradov.mydto.requests.*;
 import org.vinogradov.mydto.responses.*;
 import org.vinogradov.mysupport.HelperMethods;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
@@ -90,16 +92,26 @@ public class ClientLogic implements ClientHandlerLogic {
     }
 
     public void createSendFileRequest(Path dstPath, Path srcPath, FileInfo selectedFile) {
-        Consumer<byte[]> sendFile = null;
         FileInfo.FileType fileType = selectedFile.getType();
-        long sizeFile = selectedFile.getSize();
         switch (fileType) {
-            case FILE -> sendFile = bytes -> nettyClient.send(
-                    new SendPartFileRequest(dstPath.toString(), bytes, user));
+            case FILE -> {
+                long sizeFile = selectedFile.getSize();
+                sendUserPackage(srcPath, dstPath, sizeFile);
+            }
+
+            case DIRECTORY -> {
+                HelperMethods.filesWalk(srcPath, (filePathEntry) -> {
+                    try {
+                        long sizeFileEntry = Files.size(filePathEntry);
+                        Path newFilePathEntry = HelperMethods.createNewPath(srcPath, filePathEntry, dstPath);
+                        sendUserPackage(filePathEntry, newFilePathEntry, sizeFileEntry);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
         }
-        nettyClient.send(new StartSendFileRequest(dstPath.toString(), user));
-        HelperMethods.split(srcPath, sizeFile, sendFile);
-        nettyClient.send(new StopSendFileRequest(dstPath.toString(), user));
+        nettyClient.send(new GetListRequest(user, dstPath.getParent().toString()));
     }
 
     public void createGetListRequest(String currentPath) {
@@ -107,9 +119,9 @@ public class ClientLogic implements ClientHandlerLogic {
     }
 
     public boolean filterMessage(BasicQuery basicQuery) {
-        if (basicQuery instanceof StartSendFileResponse ||
-        basicQuery instanceof SendPartFileResponse ||
-        basicQuery instanceof StopSendFileResponse) return false;
+        if (basicQuery instanceof StartSendPackageResponse ||
+                basicQuery instanceof SendPackageResponse ||
+                basicQuery instanceof StopSendPackageResponse) return false;
         return true;
     }
 
@@ -136,5 +148,14 @@ public class ClientLogic implements ClientHandlerLogic {
         this.clientController = clientGUI.getClientController();
         clientController.setClientLogic(clientLogic);
         clientController.serverPC.updateList(startList);
+    }
+
+    private void sendUserPackage(Path srcPath, Path dstPath, long sizeFile) {
+        Consumer<byte[]> sendFile = bytes -> nettyClient.send(
+                new SendPackageRequest(dstPath.toString(), bytes, user)
+        );
+        nettyClient.send(new StartSendPackageRequest(dstPath.toString(), user));
+        HelperMethods.split(srcPath, sizeFile, sendFile);
+        nettyClient.send(new StopSendPackageRequest(dstPath.toString(), user));
     }
 }

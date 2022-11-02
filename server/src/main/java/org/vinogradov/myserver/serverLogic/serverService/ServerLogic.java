@@ -3,6 +3,7 @@ package org.vinogradov.myserver.serverLogic.serverService;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
+import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mydto.requests.*;
 import org.vinogradov.mydto.responses.*;
@@ -72,37 +73,35 @@ public class ServerLogic implements ServerHandlerLogic {
     }
 
     @Override
-    public void getHandingStartSendFileRequest(StartSendFileRequest startSendFileRequest) {
-        User user = startSendFileRequest.getUser();
-        String path = startSendFileRequest.getPathFile();
+    public void getHandingStartPackageRequest(StartSendPackageRequest startSendPackageRequest) {
+        User user = startSendPackageRequest.getUser();
+        String path = startSendPackageRequest.getPathFile();
+        Path parentPath = Paths.get(path).getParent();
+        HelperMethods.createNewDirectory(parentPath);
         connectionsController.addFileChannelUser(path);
-        sendMessage(user, new StartSendFileResponse());
+        sendMessage(user, new StartSendPackageResponse());
     }
 
     @Override
-    public void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest) {
-        User user = sendPartFileRequest.getUser();
-        byte[] bytes = sendPartFileRequest.getPackagePart();
-        String dstPath = sendPartFileRequest.getDstPath();
-
+    public void getHandingSendPackageRequest(SendPackageRequest sendPackageRequest) {
+        User user = sendPackageRequest.getUser();
+        byte[] bytes = sendPackageRequest.getPackagePart();
+        String dstPath = sendPackageRequest.getDstPath();
         FileOutputStream fileOutputStream = connectionsController.getFileChannelUser(dstPath);
         try {
             fileOutputStream.write(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        Path filePath = dstPath.getParent();
-//        List<String> newList = HelperMethods.generateStringList(filePath);
-        sendMessage(user, new SendPartFileResponse());
+        sendMessage(user, new SendPackageResponse());
     }
 
     @Override
-    public void getHandingStopSendFileRequest(StopSendFileRequest stopSendFileRequest) {
-        User user = stopSendFileRequest.getUser();
-        String dstPath = stopSendFileRequest.getDstPath();
+    public void getHandingStopPackageRequest(StopSendPackageRequest stopSendPackageRequest) {
+        User user = stopSendPackageRequest.getUser();
+        String dstPath = stopSendPackageRequest.getDstPath();
         connectionsController.stopFileOutputStream(dstPath);
-        sendMessage(user, new StopSendFileResponse());
-        sendMessage(user, new GetListResponse(HelperMethods.generateStringList(Paths.get(dstPath).getParent())));
+        sendMessage(user, new StopSendPackageResponse());
     }
 
 

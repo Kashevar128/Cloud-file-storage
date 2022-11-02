@@ -4,6 +4,7 @@ package org.vinogradov.mysupport;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -61,5 +62,47 @@ public class HelperMethods {
             throw new RuntimeException(e);
         }
     }
+
+    public static void filesWalk(Path directory, Consumer<Path> pathConsumer) {
+        try {
+            List<Path> list = Files.list(directory).collect(Collectors.toList());
+            for (Path filePathEntry : list) {
+                if (Files.isDirectory(filePathEntry)) {
+                    filesWalk(filePathEntry, pathConsumer);
+                } else {
+                    pathConsumer.accept(filePathEntry);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Path createNewPath(Path src, Path srcEntryFile, Path dst) {
+        String pathSrc = src.toString();
+        String pathSrcEntryFile = srcEntryFile.toString();
+        String pathDst = dst.toString();
+        String partString = pathSrcEntryFile.replace(pathSrc, "");
+        String newPath = pathDst.concat(partString);
+        return Paths.get(newPath);
+    }
+
+    public static void createNewDirectory(Path path) {
+        Path pathChild = null;
+        if (!Files.exists(path)) {
+            pathChild = path;
+            createNewDirectory(path.getParent());
+        }
+        try {
+            if (pathChild != null) {
+                Files.createDirectory(pathChild);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 
 }

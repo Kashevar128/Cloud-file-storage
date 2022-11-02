@@ -1,10 +1,9 @@
 package org.vinogradov.mydto.requests;
 
 import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
 
-public class SendPartFileRequest implements BasicQuery {
+public class SendPackageRequest implements BasicQuery {
 
     private String dstPath;
 
@@ -12,7 +11,7 @@ public class SendPartFileRequest implements BasicQuery {
 
     private User user;
 
-    public SendPartFileRequest(String dstPath, byte[] packagePart, User user) {
+    public SendPackageRequest(String dstPath, byte[] packagePart, User user) {
         this.dstPath = dstPath;
         this.packagePart = packagePart;
         this.user = user;

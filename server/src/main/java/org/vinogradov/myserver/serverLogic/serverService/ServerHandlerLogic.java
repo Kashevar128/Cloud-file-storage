@@ -10,9 +10,9 @@ public interface ServerHandlerLogic {
 
     void sendListResponse(GetListRequest listRequest);
 
-    void getHandingStartSendFileRequest(StartSendFileRequest startSendFileRequest);
+    void getHandingStartPackageRequest(StartSendPackageRequest startSendPackageRequest);
 
-    void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest);
+    void getHandingSendPackageRequest(SendPackageRequest sendPackageRequest);
 
-    void getHandingStopSendFileRequest(StopSendFileRequest stopSendFileRequest);
+    void getHandingStopPackageRequest(StopSendPackageRequest stopSendPackageRequest);
 }

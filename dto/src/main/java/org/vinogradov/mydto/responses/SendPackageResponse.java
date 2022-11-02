@@ -2,11 +2,9 @@ package org.vinogradov.mydto.responses;
 
 import org.vinogradov.mydto.commonClasses.BasicQuery;
 
-public class StartSendFileResponse implements BasicQuery {
-
-
+public class SendPackageResponse implements BasicQuery {
     @Override
     public String getType() {
-        return "Начало передачи файла";
+        return "Пакет успешно доставлен";
     }
 }
