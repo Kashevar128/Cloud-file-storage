@@ -3,7 +3,6 @@ package org.vinogradov.myserver.serverLogic.serverService;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.FileInfo;
 import org.vinogradov.mydto.commonClasses.User;
 import org.vinogradov.mydto.requests.*;
 import org.vinogradov.mydto.responses.*;
@@ -102,6 +101,17 @@ public class ServerLogic implements ServerHandlerLogic {
         String dstPath = stopSendPackageRequest.getDstPath();
         connectionsController.stopFileOutputStream(dstPath);
         sendMessage(user, new StopSendPackageResponse());
+        List<String> currentPath = HelperMethods.generateStringList(Paths.get(dstPath).getParent());
+        sendMessage(user, new GetListResponse(currentPath));
+    }
+
+    @Override
+    public void getHandingDelFileRequest(DelFileRequest delFileRequest) {
+        User user = delFileRequest.getUser();
+        Path delFilePath = Paths.get(delFileRequest.getDelFilePath());
+        HelperMethods.deleteUserFile(delFilePath);
+        List<String> currentPath = HelperMethods.generateStringList(delFilePath.getParent());
+        sendMessage(user, new GetListResponse(currentPath));
     }
 
 

@@ -15,4 +15,6 @@ public interface ServerHandlerLogic {
     void getHandingSendPackageRequest(SendPackageRequest sendPackageRequest);
 
     void getHandingStopPackageRequest(StopSendPackageRequest stopSendPackageRequest);
+
+    void getHandingDelFileRequest(DelFileRequest delFileRequest);
 }

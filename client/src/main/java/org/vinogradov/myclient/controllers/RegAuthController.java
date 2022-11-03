@@ -1,5 +1,6 @@
 package org.vinogradov.myclient.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -36,6 +37,12 @@ public class RegAuthController {
         if (filter(name, pass)) {
             clientLogic.createAuthClientRequest(name, pass);
         }
+    }
+
+    @FXML
+    public void clearFields(ActionEvent actionEvent) {
+        userField.clear();
+        passwordField.clear();
     }
 
     private boolean filter(String userField, String passwordField) {

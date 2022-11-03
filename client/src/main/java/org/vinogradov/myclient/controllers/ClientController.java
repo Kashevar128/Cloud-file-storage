@@ -46,9 +46,34 @@ public class ClientController implements Initializable {
     @FXML
     public void copyBtnAction(ActionEvent actionEvent) {
 
+        FileInfo selectedFile = selectFile();
+
+        if (transfer) {
+            clientLogic.createSendFileRequest(dstPath, srcPath, selectedFile);
+        }
+    }
+
+    @FXML
+    public void delBtnAction(ActionEvent actionEvent) {
+        selectFile();
+        srcPC.delFile(srcPath);
+    }
+
+    @FXML
+    public void refresh(ActionEvent actionEvent) {
+        clientPC.updateList(Paths.get(clientPC.getCurrentPath()));
+        clientLogic.createGetListRequest(serverPC.getCurrentPath());
+    }
+
+    public void setClientLogic(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
+        serverPC.setClientLogic(clientLogic);
+    }
+
+    private FileInfo selectFile() {
         if (clientPC.getSelectedFileInfo() == null && serverPC.getSelectedFileInfo() == null) {
             AlertWindowsClass.showSelectFileAlert();
-            return;
+            return null;
         }
 
         if (clientPC.getSelectedFileInfo() != null) {
@@ -66,24 +91,8 @@ public class ClientController implements Initializable {
         FileInfo selectedFile = srcPC.getSelectedFileInfo();
         srcPath = Paths.get(srcPC.getCurrentPath(), selectedFile.getFilename());
         dstPath = Paths.get(dstPC.getCurrentPath(), selectedFile.getFilename());
-
-        if (transfer) {
-            clientLogic.createSendFileRequest(dstPath, srcPath, selectedFile);
-        }
+        return selectedFile;
     }
 
-    @FXML
-    public void delBtnAction(ActionEvent actionEvent) {
-    }
 
-    @FXML
-    public void refresh(ActionEvent actionEvent) {
-        clientPC.updateList(Paths.get(clientPC.getCurrentPath()));
-        clientLogic.createGetListRequest(serverPC.getCurrentPath());
-    }
-
-    public void setClientLogic(ClientLogic clientLogic) {
-        this.clientLogic = clientLogic;
-        serverPC.setClientLogic(clientLogic);
-    }
 }

@@ -5,11 +5,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.vinogradov.mysupport.Constants.MB_100;
 
@@ -99,6 +100,17 @@ public class HelperMethods {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean deleteUserFile(Path srcPath) {
+        try (Stream<Path> walk = Files.walk(srcPath)) {
+            walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+            System.out.println("Удаленный файл или папка: " + srcPath);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

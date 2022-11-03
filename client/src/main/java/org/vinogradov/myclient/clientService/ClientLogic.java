@@ -111,11 +111,14 @@ public class ClientLogic implements ClientHandlerLogic {
                 });
             }
         }
-        nettyClient.send(new GetListRequest(user, dstPath.getParent().toString()));
     }
 
     public void createGetListRequest(String currentPath) {
         nettyClient.send(new GetListRequest(user, currentPath));
+    }
+
+    public void createDelFileRequest(String delFilePath) {
+        nettyClient.send(new DelFileRequest(user, delFilePath));
     }
 
     public boolean filterMessage(BasicQuery basicQuery) {

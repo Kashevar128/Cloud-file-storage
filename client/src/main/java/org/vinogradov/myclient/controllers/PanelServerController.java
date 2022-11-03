@@ -111,13 +111,7 @@ public class PanelServerController implements Initializable, PanelController<Lis
 
     @Override
     public void delFile(Path srcPath) {
-        try (Stream<Path> walk = Files.walk(srcPath)) {
-            walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        } catch (IOException e) {
-            e.printStackTrace();
-            AlertWindowsClass.showDelFileError();
-        }
-        System.out.println("Удаленный файл или папка: " + srcPath);
+        clientLogic.createDelFileRequest(srcPath.toString());
     }
 
     @Override

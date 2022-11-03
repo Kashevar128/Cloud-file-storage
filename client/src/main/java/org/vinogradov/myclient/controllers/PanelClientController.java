@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.mydto.commonClasses.FileInfo;
+import org.vinogradov.mysupport.HelperMethods;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PanelClientController implements Initializable, PanelController<Path> {
-    
+
     @FXML
     public TableView<FileInfo> filesTable;
     public ComboBox<String> disksBox;
@@ -110,13 +111,11 @@ public class PanelClientController implements Initializable, PanelController<Pat
 
     @Override
     public void delFile(Path path) {
-        try(Stream<Path> walk = Files.walk(path)) {
-            walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        } catch (IOException e) {
-            AlertWindowsClass.showDelFileError();
-            e.printStackTrace();
+        if (HelperMethods.deleteUserFile(path)) {
+            updateList(path.getParent());
+            return;
         }
-        System.out.println("Удаленный файл или папка: " + path);
+        AlertWindowsClass.showDelFileError();
     }
 
     @Override

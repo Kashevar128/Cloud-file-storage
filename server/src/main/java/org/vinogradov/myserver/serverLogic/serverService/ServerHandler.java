@@ -45,6 +45,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         REQUEST_HANDLERS.put(StopSendPackageRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingStopPackageRequest((StopSendPackageRequest) basicQuery);
         }));
+
+        REQUEST_HANDLERS.put(DelFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingDelFileRequest((DelFileRequest) basicQuery);
+        }));
     }
 
 
