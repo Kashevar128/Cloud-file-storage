@@ -11,25 +11,18 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.clientService.ClientLogic;
-import org.vinogradov.myclient.clientService.NettyClient;
-import org.vinogradov.mydto.commonClasses.FileInfo;
-import org.vinogradov.mydto.requests.GetListRequest;
-import org.vinogradov.mysupport.HelperMethods;
+import org.vinogradov.common.commonClasses.FileInfo;
+import org.vinogradov.common.commonClasses.HelperMethods;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PanelServerController implements Initializable, PanelController<List<String>> {
 
@@ -127,10 +120,15 @@ public class PanelServerController implements Initializable, PanelController<Lis
     }
 
     @Override
-    public String[] getStringListFiles() {
-        String[] strings = filesTable.getItems().stream().map(FileInfo::getFilename)
-                .collect(Collectors.toList()).toArray(String[]::new);
-        return strings;
+    public void createNewPackage(String nameFolder) {
+        Path path = Paths.get(getCurrentPath()).resolve(nameFolder);
+        clientLogic.createUserFolder(path);
+    }
+
+    @Override
+    public boolean getSelectedTable() {
+        if (!filesTable.isFocused()) return false;
+        return true;
     }
 
 

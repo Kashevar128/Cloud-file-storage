@@ -7,8 +7,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
+import org.vinogradov.myclient.GUI.EnterWindow;
 import org.vinogradov.myclient.clientService.ClientLogic;
-import org.vinogradov.mydto.commonClasses.FileInfo;
+import org.vinogradov.common.commonClasses.FileInfo;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -60,33 +61,26 @@ public class ClientController implements Initializable {
     }
 
     @FXML
-    public void refresh(ActionEvent actionEvent) {
+    public void refreshBtnAction(ActionEvent actionEvent) {
         clientPC.updateList(Paths.get(clientPC.getCurrentPath()));
         clientLogic.createGetListRequest(serverPC.getCurrentPath());
     }
 
-    public void setClientLogic(ClientLogic clientLogic) {
-        this.clientLogic = clientLogic;
-        serverPC.setClientLogic(clientLogic);
+    @FXML
+    public void createPackageBtnAction(ActionEvent actionEvent) {
+        if (selectTable()) {
+            Platform.runLater(() -> new EnterWindow(clientLogic.getClientController(), clientLogic.getClientGUI()));
+        }
     }
 
     private FileInfo selectFile() {
+
         if (clientPC.getSelectedFileInfo() == null && serverPC.getSelectedFileInfo() == null) {
             AlertWindowsClass.showSelectFileAlert();
             return null;
         }
 
-        if (clientPC.getSelectedFileInfo() != null) {
-            srcPC = clientPC;
-            dstPC = serverPC;
-            transfer = true;
-        }
-
-        if (serverPC.getSelectedFileInfo() != null) {
-            srcPC = serverPC;
-            dstPC = clientPC;
-            transfer = false;
-        }
+        panelDistribution();
 
         FileInfo selectedFile = srcPC.getSelectedFileInfo();
         srcPath = Paths.get(srcPC.getCurrentPath(), selectedFile.getFilename());
@@ -94,5 +88,37 @@ public class ClientController implements Initializable {
         return selectedFile;
     }
 
+    private boolean selectTable() {
+        if (!clientPC.getSelectedTable() && !serverPC.getSelectedTable()) {
+            AlertWindowsClass.showSelectTableAlert();
+            return false;
+        }
 
+        panelDistribution();
+
+        return true;
+    }
+
+    private void panelDistribution() {
+        if (clientPC.getSelectedTable()) {
+            srcPC = clientPC;
+            dstPC = serverPC;
+            transfer = true;
+        }
+
+        if (serverPC.getSelectedTable()) {
+            srcPC = serverPC;
+            dstPC = clientPC;
+            transfer = false;
+        }
+    }
+
+    public void setClientLogic(ClientLogic clientLogic) {
+        this.clientLogic = clientLogic;
+        serverPC.setClientLogic(clientLogic);
+    }
+
+    public PanelController getSrcPC() {
+        return srcPC;
+    }
 }

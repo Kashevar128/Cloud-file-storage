@@ -3,14 +3,12 @@ package org.vinogradov.myserver.serverLogic.connectionsService;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.User;
+import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.commonClasses.User;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.Path;
 
 public class ConnectionsController {
 

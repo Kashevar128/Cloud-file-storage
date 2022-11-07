@@ -11,9 +11,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mysupport.Constants;
+import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.commonClasses.Constants;
 
 public class NettyClient {
 

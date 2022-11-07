@@ -5,12 +5,12 @@ import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.ClientGUI;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.FileInfo;
-import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mydto.requests.*;
-import org.vinogradov.mydto.responses.*;
-import org.vinogradov.mysupport.HelperMethods;
+import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.commonClasses.FileInfo;
+import org.vinogradov.common.commonClasses.User;
+import org.vinogradov.common.requests.*;
+import org.vinogradov.common.responses.*;
+import org.vinogradov.common.commonClasses.HelperMethods;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -121,6 +121,10 @@ public class ClientLogic implements ClientHandlerLogic {
         nettyClient.send(new DelFileRequest(user, delFilePath));
     }
 
+    public void createUserFolder(Path path) {
+        nettyClient.send(new CreateNewFolderRequest(user, path.toString()));
+    }
+
     public boolean filterMessage(BasicQuery basicQuery) {
         if (basicQuery instanceof StartSendPackageResponse ||
                 basicQuery instanceof SendPackageResponse ||
@@ -145,6 +149,13 @@ public class ClientLogic implements ClientHandlerLogic {
         return user;
     }
 
+    public ClientGUI getClientGUI() {
+        return clientGUI;
+    }
+
+    public ClientController getClientController() {
+        return clientController;
+    }
 
     private void createClientGUI(List<String> startList) {
         this.clientGUI = new ClientGUI(clientLogic);

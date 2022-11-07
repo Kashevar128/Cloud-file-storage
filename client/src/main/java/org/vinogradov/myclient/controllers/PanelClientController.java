@@ -10,10 +10,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
-import org.vinogradov.mydto.commonClasses.FileInfo;
-import org.vinogradov.mysupport.HelperMethods;
+import org.vinogradov.common.commonClasses.FileInfo;
+import org.vinogradov.common.commonClasses.HelperMethods;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
@@ -21,11 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PanelClientController implements Initializable, PanelController<Path> {
 
@@ -132,11 +128,16 @@ public class PanelClientController implements Initializable, PanelController<Pat
     }
 
     @Override
-    public String[] getStringListFiles() {
-        String[] string = filesTable.getItems().stream().map(FileInfo::getFilename).
-                collect(Collectors.toList()).toArray(String[]::new);
-        System.out.println(Arrays.deepToString(string));
-        return string;
+    public void createNewPackage(String nameFolder) {
+        Path path = Paths.get(getCurrentPath()).resolve(nameFolder);
+        HelperMethods.createNewUserFile(path);
+        updateList(Paths.get(getCurrentPath()));
+    }
+
+    @Override
+    public boolean getSelectedTable() {
+        if (!filesTable.isFocused()) return false;
+        return true;
     }
 
     @FXML

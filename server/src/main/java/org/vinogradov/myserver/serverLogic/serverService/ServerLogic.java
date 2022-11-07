@@ -2,15 +2,15 @@ package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mydto.requests.*;
-import org.vinogradov.mydto.responses.*;
+import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.commonClasses.HelperMethods;
+import org.vinogradov.common.commonClasses.User;
+import org.vinogradov.common.requests.*;
+import org.vinogradov.common.responses.*;
 import org.vinogradov.myserver.serverLogic.connectionsService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
-import org.vinogradov.mysupport.HelperMethods;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class ServerLogic implements ServerHandlerLogic {
         User user = regClient.getUser();
         boolean regComplete = dataBase.createUser(user);
         if (regComplete) {
-            List<String> startList = startWorkingWithUser(user);
+            Path startList = startWorkingWithUser(user);
             sendMessage(user, new RegServerResponse(true, user, startList));
             return;
         }
@@ -56,7 +56,7 @@ public class ServerLogic implements ServerHandlerLogic {
         User user = authClient.getUser();
         boolean authComplete = dataBase.auth(user);
         if (authComplete) {
-            List<String> startList = startWorkingWithUser(user);
+            Path startList = startWorkingWithUser(user);
             sendMessage(user, new AuthServerResponse(true, user, startList));
             return;
         }
@@ -67,8 +67,7 @@ public class ServerLogic implements ServerHandlerLogic {
     public void sendListResponse(GetListRequest listRequest) {
         User user = listRequest.getUser();
         Path path = Paths.get(listRequest.getPath());
-        List<String> newList = HelperMethods.generateStringList(path);
-        sendMessage(user, new GetListResponse(newList));
+        sendMessage(user, new GetListResponse(path));
     }
 
     @Override
@@ -76,7 +75,7 @@ public class ServerLogic implements ServerHandlerLogic {
         User user = startSendPackageRequest.getUser();
         String path = startSendPackageRequest.getPathFile();
         Path parentPath = Paths.get(path).getParent();
-        HelperMethods.createNewDirectory(parentPath);
+        HelperMethods.createNewDirectoryRecursion(parentPath);
         connectionsController.addFileChannelUser(path);
         sendMessage(user, new StartSendPackageResponse());
     }
@@ -101,8 +100,7 @@ public class ServerLogic implements ServerHandlerLogic {
         String dstPath = stopSendPackageRequest.getDstPath();
         connectionsController.stopFileOutputStream(dstPath);
         sendMessage(user, new StopSendPackageResponse());
-        List<String> currentPath = HelperMethods.generateStringList(Paths.get(dstPath).getParent());
-        sendMessage(user, new GetListResponse(currentPath));
+        sendMessage(user, new GetListResponse(Paths.get(dstPath).getParent()));
     }
 
     @Override
@@ -110,8 +108,15 @@ public class ServerLogic implements ServerHandlerLogic {
         User user = delFileRequest.getUser();
         Path delFilePath = Paths.get(delFileRequest.getDelFilePath());
         HelperMethods.deleteUserFile(delFilePath);
-        List<String> currentPath = HelperMethods.generateStringList(delFilePath.getParent());
-        sendMessage(user, new GetListResponse(currentPath));
+        sendMessage(user, new GetListResponse(delFilePath.getParent()));
+    }
+
+    @Override
+    public void getHandingCreateNewFolderRequest(CreateNewFolderRequest createNewFolderRequest) {
+        User user = createNewFolderRequest.getUser();
+        Path path = Paths.get(createNewFolderRequest.getPathFolder());
+        HelperMethods.createNewUserFile(path);
+        sendMessage(user, new GetListResponse(path.getParent()));
     }
 
 
@@ -150,12 +155,10 @@ public class ServerLogic implements ServerHandlerLogic {
         channel.writeAndFlush(basicQuery);
     }
 
-    private List<String> startWorkingWithUser(User user) {
+    private Path startWorkingWithUser(User user) {
         connectionsController.stopTimerConnectionLimit(user);
         connectionsController.addUserInTemporaryDataBase(user);
-        Path path = storage.createUserRepository(user.getNameUser());
-        List<String> startList = HelperMethods.generateStringList(path);
-        return startList;
+        return storage.createUserRepository(user.getNameUser());
     }
 
 

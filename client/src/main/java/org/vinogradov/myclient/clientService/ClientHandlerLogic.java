@@ -1,8 +1,8 @@
 package org.vinogradov.myclient.clientService;
 
-import org.vinogradov.mydto.responses.AuthServerResponse;
-import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.RegServerResponse;
+import org.vinogradov.common.responses.AuthServerResponse;
+import org.vinogradov.common.responses.GetListResponse;
+import org.vinogradov.common.responses.RegServerResponse;
 
 public interface ClientHandlerLogic {
 

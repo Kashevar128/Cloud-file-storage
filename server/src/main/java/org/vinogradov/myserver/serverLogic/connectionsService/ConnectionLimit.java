@@ -1,7 +1,7 @@
 package org.vinogradov.myserver.serverLogic.connectionsService;
 
 import io.netty.channel.Channel;
-import org.vinogradov.mydto.responses.ConnectionLimitResponse;
+import org.vinogradov.common.responses.ConnectionLimitResponse;
 
 import java.util.Timer;
 import java.util.TimerTask;

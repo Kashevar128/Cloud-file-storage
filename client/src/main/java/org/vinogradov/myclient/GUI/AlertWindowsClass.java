@@ -64,11 +64,22 @@ public class AlertWindowsClass {
     }
 
     public static void showSelectFileAlert() {
-        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите файл, который хоттите перенестию.", ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите файл, который хотите перенести.", ButtonType.OK);
         alert.setHeaderText("Вы не выбрали файл");
         alert.showAndWait();
     }
 
+    public static void showSelectTableAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите панель сервера или панель клиента для " +
+                "создания новой папки.", ButtonType.OK);
+        alert.setHeaderText("Вы не выбрали панель");
+        alert.showAndWait();
+    }
 
+    public static void showLengthFolderNameAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "В названии папки должно быть не больше 50 сиволов", ButtonType.OK);
+        alert.setHeaderText("Слишком длинное имя папки");
+        alert.showAndWait();
+    }
 }
 

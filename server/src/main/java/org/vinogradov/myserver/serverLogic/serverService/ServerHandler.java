@@ -2,8 +2,8 @@ package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.requests.*;
+import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.requests.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +48,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
         REQUEST_HANDLERS.put(DelFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingDelFileRequest((DelFileRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(CreateNewFolderRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingCreateNewFolderRequest((CreateNewFolderRequest) basicQuery);
         }));
     }
 

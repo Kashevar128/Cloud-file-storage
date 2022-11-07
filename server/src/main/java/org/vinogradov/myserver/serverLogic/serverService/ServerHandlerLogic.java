@@ -1,6 +1,6 @@
 package org.vinogradov.myserver.serverLogic.serverService;
 
-import org.vinogradov.mydto.requests.*;
+import org.vinogradov.common.requests.*;
 
 public interface ServerHandlerLogic {
 
@@ -17,4 +17,6 @@ public interface ServerHandlerLogic {
     void getHandingStopPackageRequest(StopSendPackageRequest stopSendPackageRequest);
 
     void getHandingDelFileRequest(DelFileRequest delFileRequest);
+
+    void getHandingCreateNewFolderRequest(CreateNewFolderRequest createNewFolderRequest);
 }

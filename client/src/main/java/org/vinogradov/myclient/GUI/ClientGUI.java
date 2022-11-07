@@ -18,9 +18,11 @@ public class ClientGUI {
 
     private ClientController clientController;
 
+    private Stage stage;
+
     public ClientGUI(ClientLogic clientLogic) {
         try {
-            Stage stage = new Stage();
+            stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/clientWindow.fxml"));
             Parent root = loader.load();
             clientController = loader.getController();
@@ -37,5 +39,9 @@ public class ClientGUI {
 
     public ClientController getClientController() {
         return clientController;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<GridPane fx:controller="org.vinogradov.myclient.controllers.EnterWindowController"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="5">
+    <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+
+    <Label text="New folder:"
+           GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+
+    <TextField fx:id="nameFolderField"
+                   GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#createFolder"/>
+
+    <HBox spacing="10" alignment="bottom_right"
+          GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <Button text="Create!" onAction="#createFolder"/>
+    </HBox>
+
+</GridPane>
+

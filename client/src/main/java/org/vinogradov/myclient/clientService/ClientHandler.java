@@ -2,8 +2,8 @@ package org.vinogradov.myclient.clientService;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.responses.*;
+import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.responses.*;
 
 import java.util.HashMap;
 import java.util.Map;
