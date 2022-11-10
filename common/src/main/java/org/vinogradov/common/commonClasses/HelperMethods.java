@@ -39,23 +39,23 @@ public class HelperMethods {
     }
 
     public static void split(Path path, long sizeFile, Consumer<byte[]> filePartConsumer) {
+        int count = 0;
         byte[] filePart = new byte[Constants.MB_100];
-        byte[] lastFilePart = null;
-        System.out.println(sizeFile);
-        long numberOfPackages = sizeFile / Constants.MB_100;
-        long size = numberOfPackages * Constants.MB_100;
-        if (size < sizeFile) {
-            numberOfPackages += 1;
-            lastFilePart = new byte[(int) (sizeFile - size)];
-        };
-        System.out.println(numberOfPackages);
+        byte[] additionalFilePart = null;
+        int numberOfPackages = (int) (sizeFile / (long) Constants.MB_100);
+        long newSize = (long) numberOfPackages * (long) Constants.MB_100;
+
+        if (sizeFile > newSize) {
+            additionalFilePart = new byte[(int) (sizeFile - newSize)];
+            numberOfPackages++;
+        }
+
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile())) {
-            int counter = 0;
             while (fileInputStream.read(filePart) != -1) {
-                counter++;
-                if (counter == numberOfPackages) {
-                    filePartConsumer.accept(lastFilePart);
-                    break;
+                count++;
+                if (count == numberOfPackages && additionalFilePart != null) {
+                    System.arraycopy(filePart, 0, additionalFilePart, 0, additionalFilePart.length);
+                    filePart = additionalFilePart;
                 }
                 filePartConsumer.accept(filePart);
             }
@@ -125,8 +125,6 @@ public class HelperMethods {
         }
         return false;
     }
-
-
 
 
 }
