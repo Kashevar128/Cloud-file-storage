@@ -1,19 +1,14 @@
 package org.vinogradov.myclient.clientService;
 
 import javafx.application.Platform;
+import org.vinogradov.common.commonClasses.*;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.ClientGUI;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
-import org.vinogradov.common.commonClasses.BasicQuery;
-import org.vinogradov.common.commonClasses.FileInfo;
-import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
-import org.vinogradov.common.commonClasses.HelperMethods;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
@@ -92,25 +87,15 @@ public class ClientLogic implements ClientHandlerLogic {
     }
 
     public void createSendFileRequest(Path dstPath, Path srcPath, FileInfo selectedFile) {
-        FileInfo.FileType fileType = selectedFile.getType();
-        switch (fileType) {
-            case FILE -> {
-                long sizeFile = selectedFile.getSize();
-                sendUserPackage(srcPath, dstPath, sizeFile);
-            }
-
-            case DIRECTORY -> {
-                HelperMethods.filesWalk(srcPath, (filePathEntry) -> {
-                    try {
-                        long sizeFileEntry = Files.size(filePathEntry);
-                        Path newFilePathEntry = HelperMethods.createNewPath(srcPath, filePathEntry, dstPath);
-                        sendUserPackage(filePathEntry, newFilePathEntry, sizeFileEntry);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-        }
+        BiConsumer<Path, Path> biConsumer = (srcPath1, dstPath1) -> {
+            Consumer<byte[]> sendFile = bytes -> nettyClient.send(
+                    new SendPackageRequest(dstPath1.toString(), bytes, user)
+            );
+            nettyClient.send(new StartSendPackageRequest(dstPath1.toString(), user));
+            HelperMethods.split(srcPath1, sendFile);
+            nettyClient.send(new StopSendPackageRequest(dstPath1.toString(), user));
+        };
+        HelperMethods.sendFile(dstPath, srcPath, selectedFile, biConsumer);
     }
 
     public void createGetListRequest(String currentPath) {
@@ -164,12 +149,5 @@ public class ClientLogic implements ClientHandlerLogic {
         clientController.serverPC.updateList(startList);
     }
 
-    private void sendUserPackage(Path srcPath, Path dstPath, long sizeFile) {
-        Consumer<byte[]> sendFile = bytes -> nettyClient.send(
-                new SendPackageRequest(dstPath.toString(), bytes, user)
-        );
-        nettyClient.send(new StartSendPackageRequest(dstPath.toString(), user));
-        HelperMethods.split(srcPath, sizeFile, sendFile);
-        nettyClient.send(new StopSendPackageRequest(dstPath.toString(), user));
-    }
+
 }

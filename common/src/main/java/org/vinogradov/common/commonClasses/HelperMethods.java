@@ -38,23 +38,14 @@ public class HelperMethods {
         return newPath;
     }
 
-    public static void split(Path path, long sizeFile, Consumer<byte[]> filePartConsumer) {
-        int count = 0;
+    public static void split(Path path, Consumer<byte[]> filePartConsumer) {
         byte[] filePart = new byte[Constants.MB_100];
-        byte[] additionalFilePart = null;
-        int numberOfPackages = (int) (sizeFile / (long) Constants.MB_100);
-        long newSize = (long) numberOfPackages * (long) Constants.MB_100;
-
-        if (sizeFile > newSize) {
-            additionalFilePart = new byte[(int) (sizeFile - newSize)];
-            numberOfPackages++;
-        }
-
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile())) {
-            while (fileInputStream.read(filePart) != -1) {
-                count++;
-                if (count == numberOfPackages && additionalFilePart != null) {
-                    System.arraycopy(filePart, 0, additionalFilePart, 0, additionalFilePart.length);
+            int size;
+            while ((size = fileInputStream.read(filePart)) != -1) {
+                if (size < filePart.length) {
+                    byte[] additionalFilePart  = new byte[size];
+                    System.arraycopy(filePart, 0, additionalFilePart, 0, size );
                     filePart = additionalFilePart;
                 }
                 filePartConsumer.accept(filePart);
@@ -124,6 +115,23 @@ public class HelperMethods {
             }
         }
         return false;
+    }
+
+    public static void sendFile(Path dstPath, Path srcPath, FileInfo selectedFile, BiConsumer<Path, Path> biConsumer) {
+        FileInfo.FileType fileType = selectedFile.getType();
+        switch (fileType) {
+            case FILE -> {
+                biConsumer.accept(srcPath, dstPath);
+            }
+
+            case DIRECTORY -> {
+                HelperMethods.filesWalk(srcPath, (filePathEntry) -> {
+                        Path newFilePathEntry = HelperMethods.createNewPath(srcPath, filePathEntry, dstPath);
+                        biConsumer.accept(filePathEntry, newFilePathEntry);
+                });
+            }
+
+        }
     }
 
 
