@@ -12,8 +12,6 @@ import org.vinogradov.common.commonClasses.Constants;
 
 public class NettyServer {
 
-    private ServerLogic serverLogic = new ServerLogic();
-
     public NettyServer() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -28,7 +26,7 @@ public class NettyServer {
                             inbound.addLast(
                                     new ObjectDecoder(Constants.MB_20, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ServerHandler(serverLogic)
+                                    new ServerHandler()
                             );
                         }
                     });
@@ -38,7 +36,7 @@ public class NettyServer {
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            serverLogic.unConnectDataBase();
+            ServerLogic.unConnectDataBase();
         }
     }
 

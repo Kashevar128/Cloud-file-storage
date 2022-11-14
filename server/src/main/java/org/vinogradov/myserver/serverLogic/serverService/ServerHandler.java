@@ -11,13 +11,12 @@ import java.util.function.BiConsumer;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
-    private ServerLogic serverLogic;
+    private final ServerLogic serverLogic;
 
     private static final Map<Class<? extends BasicQuery>, BiConsumer<ServerHandlerLogic, BasicQuery>> REQUEST_HANDLERS = new HashMap<>();
 
-    public ServerHandler(ServerLogic serverLogic) {
-        this.serverLogic = serverLogic;
-        serverLogic.getServerHandlers().add(this);
+    public ServerHandler() {
+        this.serverLogic = new ServerLogic();
     }
 
     static {
@@ -59,11 +58,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         serverLogic.addConnectionLimit(ctx);
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        serverLogic.deleteUserConnection(ctx);
     }
 
     @Override
