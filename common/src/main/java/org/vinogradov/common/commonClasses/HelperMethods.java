@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -32,9 +33,10 @@ public class HelperMethods {
         }
     }
 
-    public static String editingPath(String path, String name) {
-        int s = path.indexOf(name);
-        String newPath = path.substring(s);
+    public static String editingPath(Path path, String name) {
+        String strPath = path.toString();
+        int s = strPath.indexOf(name);
+        String newPath = strPath.substring(s);
         return newPath;
     }
 
@@ -132,6 +134,33 @@ public class HelperMethods {
             }
 
         }
+    }
+
+    public static long sumSizeFiles(Path directory) {
+        long sumSize = 0;
+        List<Long> sizeList = new ArrayList<>();
+        Consumer<Path> sumSizeFile = (path)-> {
+            try {
+                Long size = Files.size(path);
+                sizeList.add(size);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        if (!Files.isDirectory(directory)) {
+            try {
+                return Files.size(directory);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        filesWalk(directory, sumSizeFile);
+        for(Long sizeFile : sizeList) {
+            sumSize += sizeFile;
+        }
+        return sumSize;
     }
 
     private static byte[] getNewByteArr(byte[] filePart, int size) {

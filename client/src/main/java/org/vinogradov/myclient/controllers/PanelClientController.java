@@ -117,7 +117,7 @@ public class PanelClientController implements Initializable, PanelController<Pat
     @Override
     public void updateList(Path path) {
         try {
-            pathField.setText(path.normalize().toAbsolutePath().toString());
+            pathField.setText(path.toAbsolutePath().toString());
             filesTable.getItems().clear();
             filesTable.getItems().addAll(Files.list(path).map(FileInfo::new).collect(Collectors.toList()));
             filesTable.sort();

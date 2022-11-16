@@ -112,8 +112,8 @@ public class PanelServerController implements Initializable, PanelController<Lis
         List<Path> listPath = list.stream().map(Paths::get).collect(Collectors.toList());
         Path currentPath = listPath.get(list.size() - 1);
         listPath.remove(list.size() - 1);
-        pathField.setText(HelperMethods.editingPath(currentPath.normalize().toString(), clientLogic.getUser().getNameUser()));
-        stringCurrentPath = currentPath.normalize().toAbsolutePath().toString();
+        pathField.setText(HelperMethods.editingPath(currentPath.toAbsolutePath(), clientLogic.getUser().getNameUser()));
+        stringCurrentPath = currentPath.toAbsolutePath().toString();
         filesTable.getItems().clear();
         filesTable.getItems().addAll(listPath.stream().map(FileInfo::new).collect(Collectors.toList()));
         filesTable.sort();
