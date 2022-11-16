@@ -10,6 +10,7 @@ import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -86,16 +87,23 @@ public class ClientLogic implements ClientHandlerLogic {
         nettyClient.exitClient();
     }
 
-    public void createSendFileRequest(Path dstPath, Path srcPath, FileInfo selectedFile) {
-        BiConsumer<Path, Path> biConsumer = (srcPath1, dstPath1) -> {
-            Consumer<byte[]> sendFile = bytes -> nettyClient.send(
-                    new SendPackageRequest(dstPath1.toString(), bytes, user)
-            );
-            nettyClient.send(new StartSendPackageRequest(dstPath1.toString(), user));
-            HelperMethods.split(srcPath1, sendFile);
-            nettyClient.send(new StopSendPackageRequest(dstPath1.toString(), user));
-        };
-        HelperMethods.sendFile(dstPath, srcPath, selectedFile, biConsumer);
+    public void createSendFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
+        List<String> dstPaths = new ArrayList<>();
+        long referenceSize = 0;
+        FileInfo.FileType fileType = selectedFile.getType();
+        switch (fileType) {
+            case FILE -> {
+                dstPaths.add(dstPath.toString());
+                referenceSize = selectedFile.getSize();
+            }
+
+            case DIRECTORY -> {
+                dstPaths = HelperMethods.generatePaths(srcPath, dstPath);
+                referenceSize = HelperMethods.sumSizeFiles(srcPath);
+            }
+        }
+        MetaDataRequest metaDataRequest = new MetaDataRequest(user, dstPaths,
+                selectedFile.getFilename(), referenceSize);
     }
 
     public void createGetListRequest(String currentPath) {
@@ -109,14 +117,6 @@ public class ClientLogic implements ClientHandlerLogic {
     public void createUserFolder(Path path) {
         nettyClient.send(new CreateNewFolderRequest(user, path.toString()));
     }
-
-    public boolean filterMessage(BasicQuery basicQuery) {
-        if (basicQuery instanceof StartSendPackageResponse ||
-                basicQuery instanceof SendPackageResponse ||
-                basicQuery instanceof StopSendPackageResponse) return false;
-        return true;
-    }
-
 
     public void setRegAuthGui(RegAuthGui regAuthGui) {
         this.regAuthGui = regAuthGui;

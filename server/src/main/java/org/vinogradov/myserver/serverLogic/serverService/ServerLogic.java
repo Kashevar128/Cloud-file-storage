@@ -65,36 +65,6 @@ public class ServerLogic implements ServerHandlerLogic {
     }
 
     @Override
-    public void getHandingStartPackageRequest(StartSendPackageRequest startSendPackageRequest) {
-        String path = startSendPackageRequest.getPathFile();
-        Path parentPath = Paths.get(path).getParent();
-        HelperMethods.createNewDirectoryRecursion(parentPath);
-        connectionsController.addFileChannelUser(path);
-        sendMessage(new StartSendPackageResponse());
-    }
-
-    @Override
-    public void getHandingSendPackageRequest(SendPackageRequest sendPackageRequest) {
-        byte[] bytes = sendPackageRequest.getPackagePart();
-        String dstPath = sendPackageRequest.getDstPath();
-        FileOutputStream fileOutputStream = connectionsController.getFileChannelUser(dstPath);
-        try {
-            fileOutputStream.write(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        sendMessage(new SendPackageResponse());
-    }
-
-    @Override
-    public void getHandingStopPackageRequest(StopSendPackageRequest stopSendPackageRequest) {
-        String dstPath = stopSendPackageRequest.getDstPath();
-        connectionsController.stopFileOutputStream(dstPath);
-        sendMessage(new StopSendPackageResponse());
-        sendMessage(new GetListResponse(Paths.get(dstPath).getParent()));
-    }
-
-    @Override
     public void getHandingDelFileRequest(DelFileRequest delFileRequest) {
         Path delFilePath = Paths.get(delFileRequest.getDelFilePath());
         HelperMethods.deleteUserFile(delFilePath);

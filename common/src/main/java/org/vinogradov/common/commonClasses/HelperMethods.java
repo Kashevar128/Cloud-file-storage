@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,6 +32,16 @@ public class HelperMethods {
         }
     }
 
+    public static List<String> generatePaths(Path srcPathDirectory, Path dstPathDirectory) {
+        List<String> listPaths = new ArrayList<>();
+        Consumer<Path> pathEntryConsumer = (srcPathEntryFile) -> {
+            String newDstPathFile = createNewDstPath(srcPathDirectory, srcPathEntryFile, dstPathDirectory);
+            listPaths.add(newDstPathFile);
+        };
+        filesWalk(srcPathDirectory, pathEntryConsumer);
+        return listPaths;
+    }
+
     public static String editingPath(Path path, String name) {
         String strPath = path.toString();
         int s = strPath.indexOf(name);
@@ -57,7 +66,7 @@ public class HelperMethods {
         }
     }
 
-    public static void filesWalk(Path directory, Consumer<Path> pathConsumer) {
+    private static void filesWalk(Path directory, Consumer<Path> pathConsumer) {
         try {
             List<Path> list = Files.list(directory).collect(Collectors.toList());
             for (Path filePathEntry : list) {
@@ -72,13 +81,13 @@ public class HelperMethods {
         }
     }
 
-    public static Path createNewPath(Path src, Path srcEntryFile, Path dst) {
-        String pathSrc = src.toString();
-        String pathSrcEntryFile = srcEntryFile.toString();
-        String pathDst = dst.toString();
+    private static String createNewDstPath(Path srcPathDirectory, Path srcPathEntryFile, Path dstPathDirectory) {
+        String pathSrc = srcPathDirectory.toString();
+        String pathSrcEntryFile = srcPathEntryFile.toString();
+        String pathDst = dstPathDirectory.toString();
         String partString = pathSrcEntryFile.replace(pathSrc, "");
         String newPath = pathDst.concat(partString);
-        return Paths.get(newPath);
+        return newPath;
     }
 
     public static void createNewDirectoryRecursion(Path path) {
@@ -119,27 +128,10 @@ public class HelperMethods {
         return false;
     }
 
-    public static void sendFile(Path dstPath, Path srcPath, FileInfo selectedFile, BiConsumer<Path, Path> biConsumer) {
-        FileInfo.FileType fileType = selectedFile.getType();
-        switch (fileType) {
-            case FILE -> {
-                biConsumer.accept(srcPath, dstPath);
-            }
-
-            case DIRECTORY -> {
-                HelperMethods.filesWalk(srcPath, (filePathEntry) -> {
-                        Path newFilePathEntry = HelperMethods.createNewPath(srcPath, filePathEntry, dstPath);
-                        biConsumer.accept(filePathEntry, newFilePathEntry);
-                });
-            }
-
-        }
-    }
-
     public static long sumSizeFiles(Path directory) {
         long sumSize = 0;
         List<Long> sizeList = new ArrayList<>();
-        Consumer<Path> sumSizeFile = (path)-> {
+        Consumer<Path> sumSizeFile = (path) -> {
             try {
                 Long size = Files.size(path);
                 sizeList.add(size);
@@ -148,24 +140,16 @@ public class HelperMethods {
             }
         };
 
-        if (!Files.isDirectory(directory)) {
-            try {
-                return Files.size(directory);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         filesWalk(directory, sumSizeFile);
-        for(Long sizeFile : sizeList) {
+        for (Long sizeFile : sizeList) {
             sumSize += sizeFile;
         }
         return sumSize;
     }
 
     private static byte[] getNewByteArr(byte[] filePart, int size) {
-        byte[] newArr  = new byte[size];
-        System.arraycopy(filePart, 0, newArr, 0, size );
+        byte[] newArr = new byte[size];
+        System.arraycopy(filePart, 0, newArr, 0, size);
         return newArr;
     }
 

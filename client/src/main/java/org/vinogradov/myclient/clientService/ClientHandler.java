@@ -46,7 +46,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery response = (BasicQuery) msg;
         System.out.println(response.getType());
-        if (!clientLogic.filterMessage(response)) return;
         BiConsumer<BasicQuery, ClientHandlerLogic> channelClientHandlerContextConsumer = RESPONSE_HANDLERS.get(response.getClass());
         channelClientHandlerContextConsumer.accept(response, clientLogic);
     }

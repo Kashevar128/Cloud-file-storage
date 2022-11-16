@@ -33,18 +33,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             serverHandlerLogic.sendListResponse((GetListRequest) basicQuery);
         }));
 
-        REQUEST_HANDLERS.put(StartSendPackageRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.getHandingStartPackageRequest((StartSendPackageRequest) basicQuery);
-        }));
-
-        REQUEST_HANDLERS.put(SendPackageRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.getHandingSendPackageRequest((SendPackageRequest) basicQuery);
-        }));
-
-        REQUEST_HANDLERS.put(StopSendPackageRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.getHandingStopPackageRequest((StopSendPackageRequest) basicQuery);
-        }));
-
         REQUEST_HANDLERS.put(DelFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingDelFileRequest((DelFileRequest) basicQuery);
         }));

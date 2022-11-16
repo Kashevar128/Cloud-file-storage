@@ -50,7 +50,7 @@ public class ClientController implements Initializable {
         FileInfo selectedFile = selectFile();
 
         if (transfer) {
-            clientLogic.createSendFileRequest(dstPath, srcPath, selectedFile);
+            clientLogic.createSendFileRequest(srcPath, dstPath, selectedFile);
         }
     }
 
