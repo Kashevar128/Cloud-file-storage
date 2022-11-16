@@ -12,7 +12,6 @@ import org.vinogradov.common.responses.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class ClientLogic implements ClientHandlerLogic {
 
@@ -36,7 +35,7 @@ public class ClientLogic implements ClientHandlerLogic {
                 regAuthGui.getStage().close();
                 AlertWindowsClass.showRegComplete();
                 this.user = responseReg.getUser();
-                createClientGUI(responseReg.getStartList());
+                createClientGUI(responseReg.getUpdatePanel());
             });
         } else {
             Platform.runLater(AlertWindowsClass::showRegFalse);
@@ -50,7 +49,7 @@ public class ClientLogic implements ClientHandlerLogic {
                 regAuthGui.getStage().close();
                 AlertWindowsClass.showAuthComplete();
                 this.user = responseAuth.getUser();
-                createClientGUI(responseAuth.getStartList());
+                createClientGUI(responseAuth.getUpdatePanel());
             });
         } else {
             Platform.runLater(AlertWindowsClass::showAuthFalse);
@@ -59,8 +58,8 @@ public class ClientLogic implements ClientHandlerLogic {
 
     @Override
     public void getHandingMessageList(GetListResponse responseList) {
-        List<String> currentList = responseList.getCurrentList();
-        clientController.serverPC.updateList(currentList);
+        UpdatePanel updatePanel = responseList.getUpdatePanel();
+        clientController.serverPC.updateList(updatePanel);
     }
 
     @Override
@@ -142,11 +141,11 @@ public class ClientLogic implements ClientHandlerLogic {
         return clientController;
     }
 
-    private void createClientGUI(List<String> startList) {
+    private void createClientGUI(UpdatePanel updatePanel) {
         this.clientGUI = new ClientGUI(clientLogic);
         this.clientController = clientGUI.getClientController();
         clientController.setClientLogic(clientLogic);
-        clientController.serverPC.updateList(startList);
+        clientController.serverPC.updateList(updatePanel);
     }
 
 

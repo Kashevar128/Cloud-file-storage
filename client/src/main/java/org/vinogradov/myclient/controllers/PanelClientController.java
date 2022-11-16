@@ -117,9 +117,10 @@ public class PanelClientController implements Initializable, PanelController<Pat
     @Override
     public void updateList(Path path) {
         try {
-            pathField.setText(path.toAbsolutePath().toString());
+            Path pathNorm = path.toAbsolutePath().normalize();
+            pathField.setText(pathNorm.toString());
             filesTable.getItems().clear();
-            filesTable.getItems().addAll(Files.list(path).map(FileInfo::new).collect(Collectors.toList()));
+            filesTable.getItems().addAll(Files.list(pathNorm).map(FileInfo::new).collect(Collectors.toList()));
             filesTable.sort();
         } catch (IOException e) {
             AlertWindowsClass.showUpdateListError();

@@ -22,10 +22,9 @@ public class HelperMethods {
         return newStr;
     }
 
-    public static List<String> generateStringList(Path path) {
+    public static List<FileInfo> generateFileInfoList(Path path) {
         try {
-            List<String> listPaths = Files.list(path).map(Objects::toString).collect(Collectors.toList());
-            listPaths.add(path.toString());
+            List<FileInfo> listPaths = Files.list(path).map(FileInfo::new).collect(Collectors.toList());
             return listPaths;
         } catch (IOException e) {
             throw new RuntimeException(e);

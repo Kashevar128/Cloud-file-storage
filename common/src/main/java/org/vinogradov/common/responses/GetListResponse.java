@@ -1,21 +1,19 @@
 package org.vinogradov.common.responses;
 
 import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.commonClasses.FileInfo;
 import org.vinogradov.common.commonClasses.HelperMethods;
+import org.vinogradov.common.commonClasses.UpdatePanel;
 
 import java.nio.file.Path;
-import java.util.List;
 
 public class GetListResponse implements BasicQuery {
 
-    private List<String> currentList;
+    private final UpdatePanel updatePanel;
 
     public GetListResponse(Path path) {
-        this.currentList = HelperMethods.generateStringList(path);
-    }
-
-    public List<String> getCurrentList() {
-        return currentList;
+        updatePanel = new UpdatePanel(path.toString(),
+                HelperMethods.generateFileInfoList(path));
     }
 
     @Override
@@ -23,6 +21,7 @@ public class GetListResponse implements BasicQuery {
         return "this new list";
     }
 
-
-
+    public UpdatePanel getUpdatePanel() {
+        return updatePanel;
+    }
 }

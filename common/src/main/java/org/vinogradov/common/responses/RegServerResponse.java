@@ -1,24 +1,23 @@
 package org.vinogradov.common.responses;
 
-import org.vinogradov.common.commonClasses.BasicQuery;
-import org.vinogradov.common.commonClasses.HelperMethods;
-import org.vinogradov.common.commonClasses.User;
+import org.vinogradov.common.commonClasses.*;
 
 import java.nio.file.Path;
 import java.util.List;
 
 public class RegServerResponse implements BasicQuery {
 
-    private boolean regComplete;
+    private final boolean regComplete;
+
+    private UpdatePanel updatePanel;
 
     private User user;
 
-    private List<String> startList;
-
-    public RegServerResponse(boolean regComplete, User user, Path path) {
+    public RegServerResponse(boolean regComplete ,Path path, User user) {
         this.regComplete = regComplete;
+        updatePanel = new UpdatePanel(path.toString(),
+                HelperMethods.generateFileInfoList(path));
         this.user = user;
-        this.startList = HelperMethods.generateStringList(path);
     }
 
     public RegServerResponse(boolean regComplete){
@@ -34,12 +33,12 @@ public class RegServerResponse implements BasicQuery {
         return regComplete;
     }
 
+    public UpdatePanel getUpdatePanel() {
+        return updatePanel;
+    }
+
     @Override
     public User getUser() {
         return user;
-    }
-
-    public List<String> getStartList() {
-        return startList;
     }
 }

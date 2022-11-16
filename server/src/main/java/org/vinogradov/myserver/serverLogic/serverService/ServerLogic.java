@@ -6,13 +6,11 @@ import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
-import org.vinogradov.myserver.serverLogic.connectionsService.ConnectionsController;
+import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -40,7 +38,7 @@ public class ServerLogic implements ServerHandlerLogic {
         boolean regComplete = dataBase.createUser(user);
         if (regComplete) {
             Path startList = startWorkingWithUser(user);
-            sendMessage(new RegServerResponse(true, user, startList));
+            sendMessage(new RegServerResponse(true, startList, user));
             return;
         }
         sendMessage(new RegServerResponse(false));
@@ -52,7 +50,7 @@ public class ServerLogic implements ServerHandlerLogic {
         boolean authComplete = dataBase.auth(user);
         if (authComplete) {
             Path startList = startWorkingWithUser(user);
-            sendMessage(new AuthServerResponse(true, user, startList));
+            sendMessage(new AuthServerResponse(true, startList, user));
             return;
         }
         sendMessage(new AuthServerResponse(false));

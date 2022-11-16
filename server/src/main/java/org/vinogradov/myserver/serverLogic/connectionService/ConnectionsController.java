@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic.connectionsService;
+package org.vinogradov.myserver.serverLogic.connectionService;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

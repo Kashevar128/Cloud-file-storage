@@ -11,6 +11,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import org.vinogradov.common.commonClasses.UpdatePanel;
+import org.vinogradov.common.responses.GetListResponse;
 import org.vinogradov.myclient.clientService.ClientLogic;
 import org.vinogradov.common.commonClasses.FileInfo;
 import org.vinogradov.common.commonClasses.HelperMethods;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class PanelServerController implements Initializable, PanelController<List<String>> {
+public class PanelServerController implements Initializable, PanelController<UpdatePanel> {
 
     private String stringCurrentPath;
 
@@ -108,14 +110,13 @@ public class PanelServerController implements Initializable, PanelController<Lis
     }
 
     @Override
-    public void updateList(List<String> list) {
-        List<Path> listPath = list.stream().map(Paths::get).collect(Collectors.toList());
-        Path currentPath = listPath.get(list.size() - 1);
-        listPath.remove(list.size() - 1);
-        pathField.setText(HelperMethods.editingPath(currentPath.toAbsolutePath(), clientLogic.getUser().getNameUser()));
-        stringCurrentPath = currentPath.toAbsolutePath().toString();
+    public void updateList(UpdatePanel updatePanel) {
+        Path currentPath = Paths.get(updatePanel.getPath()).normalize().toAbsolutePath();
+        List<FileInfo> fileInfos = updatePanel.getListInfo();
+        pathField.setText(HelperMethods.editingPath(currentPath, clientLogic.getUser().getNameUser()));
+        stringCurrentPath = currentPath.toString();
         filesTable.getItems().clear();
-        filesTable.getItems().addAll(listPath.stream().map(FileInfo::new).collect(Collectors.toList()));
+        filesTable.getItems().addAll(fileInfos);
         filesTable.sort();
     }
 
