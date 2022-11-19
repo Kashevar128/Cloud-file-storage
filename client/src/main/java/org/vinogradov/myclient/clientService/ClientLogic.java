@@ -110,7 +110,7 @@ public class ClientLogic implements ClientHandlerLogic {
     public void createSendFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
         FileInfo.FileType fileType = selectedFile.getType();
         String fileName = selectedFile.getFilename();
-        downloadController.addNewFileInQueue(fileName);
+        if (!downloadController.addNewFileInQueue(fileName)) return;
         Map<Long, String> dstPathsFile = new HashMap<>();
         Path parentDirectory = dstPath.getParent();
         long sizeFile = 0;

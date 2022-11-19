@@ -1,5 +1,6 @@
 package org.vinogradov.myclient.downloadService;
 
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,9 @@ public class DownloadController {
         filesMap.remove(fileName);
     }
 
-    public void addNewFileInQueue(String nameFile) {
+    public boolean addNewFileInQueue(String nameFile) {
+        if (filesMap.containsKey(nameFile)) return false;
         filesMap.put(nameFile, new HashMap<>());
+        return true;
     }
 }
