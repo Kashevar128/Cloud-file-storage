@@ -80,8 +80,9 @@ public class PanelClientController implements Initializable, PanelController<Pat
         filesTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 2) {
-                    Path path = Paths.get(pathField.getText()).resolve(filesTable.getSelectionModel().getSelectedItem().getFilename());
+                FileInfo selectedFile = filesTable.getSelectionModel().getSelectedItem();
+                if (mouseEvent.getClickCount() == 2 && selectedFile != null ) {
+                    Path path = Paths.get(pathField.getText()).resolve(selectedFile.getFilename());
                     if (Files.isDirectory(path)) {
                         updateList(path);
                     }

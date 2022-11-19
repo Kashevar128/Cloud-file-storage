@@ -81,8 +81,9 @@ public class PanelServerController implements Initializable, PanelController<Upd
         filesTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 2) {
-                    Path path = Paths.get(getCurrentPath()).resolve(filesTable.getSelectionModel().getSelectedItem().getFilename());
+                FileInfo selectedFile = filesTable.getSelectionModel().getSelectedItem();
+                if (mouseEvent.getClickCount() == 2 && selectedFile != null) {
+                    Path path = Paths.get(getCurrentPath()).resolve(selectedFile.getFilename());
                     if (Files.isDirectory(path)) {
                         clientLogic.createGetListRequest(path.toString());
                     }

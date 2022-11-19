@@ -35,11 +35,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         RESPONSE_HANDLERS.put(ConnectionLimitResponse.class, (basicQuery, clientHandlerLogic) -> {
             clientHandlerLogic.getHandingConnectionLimit();
         });
+
+        RESPONSE_HANDLERS.put(MetaDataFileResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingMetaDataResponse((MetaDataFileResponse) basicQuery);
+        });
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println(ctx.channel().remoteAddress());
+        clientLogic.setContext(ctx);
     }
 
     @Override

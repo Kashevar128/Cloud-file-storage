@@ -1,6 +1,7 @@
 package org.vinogradov.myserver.serverLogic.connectionService;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.common.responses.ConnectionLimitResponse;
 
 import java.util.Timer;
@@ -8,13 +9,13 @@ import java.util.TimerTask;
 
 public class ConnectionLimit {
 
-    private Channel channel;
+    private ChannelHandlerContext userContext;
     private TimerTask timerTask;
     private Timer timer;
     private long delay;
 
-    public ConnectionLimit(Channel channel) {
-        this.channel = channel;
+    public ConnectionLimit(ChannelHandlerContext userContext) {
+        this.userContext = userContext;
         this.delay = 180000L;
         this.timer = new Timer();
         this.timerTask = new TimerTask() {
@@ -27,8 +28,8 @@ public class ConnectionLimit {
     }
 
     private void closeConnect() {
-        channel.writeAndFlush(new ConnectionLimitResponse());
-        channel.close();
+        userContext.writeAndFlush(new ConnectionLimitResponse());
+        userContext.close();
     }
 
     public void stopTimer() {

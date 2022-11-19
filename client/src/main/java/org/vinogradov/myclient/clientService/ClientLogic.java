@@ -1,5 +1,6 @@
 package org.vinogradov.myclient.clientService;
 
+import io.netty.channel.ChannelHandlerContext;
 import javafx.application.Platform;
 import org.vinogradov.common.commonClasses.*;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
@@ -8,12 +9,15 @@ import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
+import org.vinogradov.myclient.downloadService.DownloadController;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientLogic implements ClientHandlerLogic {
+
+    private ChannelHandlerContext context;
 
     private RegAuthGui regAuthGui;
 
@@ -27,6 +31,11 @@ public class ClientLogic implements ClientHandlerLogic {
 
     private User user;
 
+    private DownloadController downloadController;
+
+    public ClientLogic() {
+        this.downloadController = new DownloadController();
+    }
 
     @Override
     public void getHandingMessageReg(RegServerResponse responseReg) {
@@ -70,51 +79,77 @@ public class ClientLogic implements ClientHandlerLogic {
         });
     }
 
+    @Override
+    public void getHandingMetaDataResponse(MetaDataFileResponse metaDataFileResponse) {
+        String fileName = metaDataFileResponse.getFileName();
+        boolean allowTransmission = metaDataFileResponse.isAllowTransmission();
+        if (allowTransmission) {
+            BiConsumer<Long, byte[]> biConsumerSendPartFile = (id, bytes) -> {
+                sendMessage(new SendPartFileRequest(user, id, fileName, bytes));
+            };
+            Map<Long, String> pathsMapFile = downloadController.getPathsMapFile(fileName);
+            for (Map.Entry<Long, String> entry : pathsMapFile.entrySet()) {
+                HelperMethods.split(entry.getKey(), entry.getValue(), biConsumerSendPartFile);
+            }
+        }
+        downloadController.removeFileFromQueue(fileName);
+    }
+
     public void closeClient() {
         nettyClient.exitClient();
     }
 
     public void createRegClientRequest(String name, String pass) {
-        nettyClient.send(new RegClientRequest(new User(name, pass)));
+        sendMessage(new RegClientRequest(new User(name, pass)));
     }
 
     public void createAuthClientRequest(String name, String pass) {
-        nettyClient.send(new AuthClientRequest(new User(name, pass)));
-    }
-
-    public void exitUserClient() {
-        nettyClient.exitClient();
+        sendMessage(new AuthClientRequest(new User(name, pass)));
     }
 
     public void createSendFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
-        List<String> dstPaths = new ArrayList<>();
-        long referenceSize = 0;
         FileInfo.FileType fileType = selectedFile.getType();
+        String fileName = selectedFile.getFilename();
+        downloadController.addNewFileInQueue(fileName);
+        Map<Long, String> dstPathsFile = new HashMap<>();
+        Path parentDirectory = dstPath.getParent();
+        long sizeFile = 0;
+
         switch (fileType) {
+
             case FILE -> {
-                dstPaths.add(dstPath.toString());
-                referenceSize = selectedFile.getSize();
+                sizeFile = selectedFile.getSize();
+                long idFile = downloadController.addFilePath(fileName, srcPath.toString());
+                dstPathsFile.put(idFile, dstPath.toString());
             }
 
             case DIRECTORY -> {
-                dstPaths = HelperMethods.generatePaths(srcPath, dstPath);
-                referenceSize = HelperMethods.sumSizeFiles(srcPath);
+                sizeFile = HelperMethods.sumSizeFiles(srcPath);
+                Map<String, String> srcDstMap = HelperMethods.creatDstPaths(srcPath, dstPath);
+                for (Map.Entry<String, String> entry : srcDstMap.entrySet()) {
+                    long idFile = downloadController.addFilePath(fileName, entry.getKey());
+                    dstPathsFile.put(idFile, entry.getValue());
+                }
             }
         }
-        MetaDataRequest metaDataRequest = new MetaDataRequest(user, dstPaths,
-                selectedFile.getFilename(), referenceSize);
+        sendMessage(new MetaDataFileRequest(user, fileName, dstPathsFile,
+                parentDirectory.toString(), sizeFile));
     }
 
     public void createGetListRequest(String currentPath) {
-        nettyClient.send(new GetListRequest(user, currentPath));
+        sendMessage(new GetListRequest(user, currentPath));
     }
 
     public void createDelFileRequest(String delFilePath) {
-        nettyClient.send(new DelFileRequest(user, delFilePath));
+        sendMessage(new DelFileRequest(user, delFilePath));
     }
 
     public void createUserFolder(Path path) {
-        nettyClient.send(new CreateNewFolderRequest(user, path.toString()));
+        sendMessage(new CreateNewFolderRequest(user, path.toString()));
+    }
+
+    public void sendMessage(BasicQuery basicQuery) {
+        context.writeAndFlush(basicQuery);
     }
 
     public void setRegAuthGui(RegAuthGui regAuthGui) {
@@ -128,6 +163,8 @@ public class ClientLogic implements ClientHandlerLogic {
     public void setClientLogic(ClientLogic clientLogic) {
         this.clientLogic = clientLogic;
     }
+
+    public void setContext(ChannelHandlerContext context) {this.context = context;}
 
     public User getUser() {
         return user;

@@ -41,7 +41,7 @@ public class ClientController implements Initializable {
     @FXML
     public void exitBtnAction(ActionEvent actionEvent) {
         Platform.exit();
-        clientLogic.exitUserClient();
+        clientLogic.closeClient();
     }
 
     @FXML

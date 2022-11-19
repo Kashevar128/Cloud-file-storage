@@ -40,11 +40,20 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         REQUEST_HANDLERS.put(CreateNewFolderRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingCreateNewFolderRequest((CreateNewFolderRequest) basicQuery);
         }));
+
+        REQUEST_HANDLERS.put(MetaDataFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingMetaDataFileRequest((MetaDataFileRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(SendPartFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingSendPartFileRequest((SendPartFileRequest) basicQuery);
+        }));
     }
 
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        serverLogic.setContext(ctx);
         serverLogic.addConnectionLimit(ctx);
     }
 
@@ -52,7 +61,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery request = (BasicQuery) msg;
 
-        serverLogic.channelCollector(request, ctx);
         if (!serverLogic.filterSecurity(request)) return;
 
         System.out.println(request.getType());

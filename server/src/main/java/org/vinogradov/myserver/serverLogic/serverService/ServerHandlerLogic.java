@@ -13,4 +13,8 @@ public interface ServerHandlerLogic {
     void getHandingDelFileRequest(DelFileRequest delFileRequest);
 
     void getHandingCreateNewFolderRequest(CreateNewFolderRequest createNewFolderRequest);
+
+    void getHandingMetaDataFileRequest(MetaDataFileRequest metaDataFileRequest);
+
+    void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest);
 }

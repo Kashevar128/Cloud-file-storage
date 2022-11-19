@@ -29,7 +29,7 @@ public class ClientGUI {
             stage.setTitle("Java File Storage");
             stage.setScene(new Scene(root, 1000, 600));
             stage.setOnCloseRequest(windowEvent -> {
-               clientLogic.exitUserClient();
+               clientLogic.closeClient();
             });
             stage.show();
         } catch (IOException e) {

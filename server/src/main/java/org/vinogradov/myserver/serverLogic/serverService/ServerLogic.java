@@ -6,6 +6,7 @@ import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
+import org.vinogradov.myserver.serverLogic.DownloadService.DownloadController;
 import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
@@ -13,10 +14,15 @@ import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 public class ServerLogic implements ServerHandlerLogic {
 
-    private static final ConnectionsController connectionsController;
+    private ChannelHandlerContext context;
+
+    private final ConnectionsController connectionsController;
+
+    private final DownloadController downloadController;
 
     private static final DataBase dataBase;
 
@@ -24,12 +30,20 @@ public class ServerLogic implements ServerHandlerLogic {
 
     static {
         try {
-            connectionsController = new ConnectionsController();
             dataBase = new DataBaseImpl();
             storage = new Storage();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setContext(ChannelHandlerContext context) {
+        this.context = context;
+    }
+
+    public ServerLogic() {
+        this.connectionsController = new ConnectionsController();
+        this.downloadController = new DownloadController();
     }
 
     @Override
@@ -76,6 +90,35 @@ public class ServerLogic implements ServerHandlerLogic {
         sendMessage(new GetListResponse(path.getParent()));
     }
 
+    @Override
+    public void getHandingMetaDataFileRequest(MetaDataFileRequest metaDataFileRequest) {
+        String fileName = metaDataFileRequest.getFileName();
+        long sizeFile = metaDataFileRequest.getSizeFile();
+        String parentPath = metaDataFileRequest.getParentDirectory();
+        Map<Long, String> dstPaths = metaDataFileRequest.getDstPaths();
+
+        downloadController.createCounterFileSize(fileName, sizeFile);
+        downloadController.addParentDirectoryPath(fileName, parentPath);
+        downloadController.createNewFileOutputStreams(fileName, dstPaths);
+        sendMessage(new MetaDataFileResponse(fileName, true));
+    }
+
+    @Override
+    public void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest) {
+        Long idFile = sendPartFileRequest.getId();
+        long sizePart = sendPartFileRequest.getSizePart();
+        byte[] bytes = sendPartFileRequest.getBytes();
+        String fileName = sendPartFileRequest.getFileName();
+
+        downloadController.addSizeBytesInCounter(fileName, sizePart);
+        downloadController.addBytesInFileOutputStream(fileName, idFile, bytes);
+        boolean fileCheckSize = downloadController.sizeFileCheck(fileName);
+        if (fileCheckSize) {
+            String parentDirectoryPath = downloadController.getParentDirectoryPath(fileName);
+            sendMessage(new GetListResponse(Paths.get(parentDirectoryPath)));
+            downloadController.completingTheFileUploader(fileName);
+        }
+    }
 
     public boolean filterSecurity(BasicQuery basicQuery) {
         User user = basicQuery.getUser();
@@ -87,20 +130,12 @@ public class ServerLogic implements ServerHandlerLogic {
         return false;
     }
 
-    public void channelCollector(BasicQuery basicQuery, ChannelHandlerContext context) {
-        if (basicQuery instanceof AuthClientRequest
-                || basicQuery instanceof RegClientRequest) {
-            connectionsController.putChannel(context);
-        }
-    }
-
     public void addConnectionLimit(ChannelHandlerContext context) {
         connectionsController.newConnectionLimit(context);
     }
 
-
     private void sendMessage(BasicQuery basicQuery) {
-        connectionsController.getUserChannel().writeAndFlush(basicQuery);
+        context.writeAndFlush(basicQuery);
     }
 
     private Path startWorkingWithUser(User user) {

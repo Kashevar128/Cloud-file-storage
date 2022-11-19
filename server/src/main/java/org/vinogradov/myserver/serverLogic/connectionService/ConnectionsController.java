@@ -7,21 +7,11 @@ import org.vinogradov.common.commonClasses.User;
 
 public class ConnectionsController {
 
-    private Channel userChannel;
     private ConnectionLimit connectionLimit;
     private User user;
 
-    public Channel getUserChannel() {
-        return userChannel;
-    }
-
-    public void putChannel(ChannelHandlerContext context) {
-        this.userChannel = context.channel();
-    }
-
     public void newConnectionLimit(ChannelHandlerContext context) {
-            Channel channel = context.channel();
-            connectionLimit = new ConnectionLimit(channel);
+            connectionLimit = new ConnectionLimit(context);
     }
 
     public void stopTimerConnectionLimit() {

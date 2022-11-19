@@ -34,7 +34,7 @@ public class NettyClient {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline().addLast(
-                                new ObjectDecoder(Constants.MB_20, ClassResolvers.cacheDisabled(null)),
+                                new ObjectDecoder(Constants.MB_2, ClassResolvers.cacheDisabled(null)),
                                 new ObjectEncoder(),
                                 new ClientHandler(clientLogic)
                         );
@@ -52,11 +52,7 @@ public class NettyClient {
     }
 
     public void send(BasicQuery basic) {
-        try {
-            channel.writeAndFlush(basic).sync();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        channel.writeAndFlush(basic);
     }
 
     public void exitClient() {

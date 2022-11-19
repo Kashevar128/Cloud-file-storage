@@ -1,15 +1,11 @@
 package org.vinogradov.common.commonClasses;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,33 +20,31 @@ public class HelperMethods {
 
     public static List<FileInfo> generateFileInfoList(Path path) {
         try {
-            List<FileInfo> listPaths = Files.list(path).map(FileInfo::new).collect(Collectors.toList());
-            return listPaths;
+            return Files.list(path).map(FileInfo::new).collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static List<String> generatePaths(Path srcPathDirectory, Path dstPathDirectory) {
-        List<String> listPaths = new ArrayList<>();
-        Consumer<Path> pathEntryConsumer = (srcPathEntryFile) -> {
+    public static Map<String, String> creatDstPaths(Path srcPathDirectory, Path dstPathDirectory) {
+        Map<String, String> mapPathsSrcDst = new HashMap<>();
+        Consumer<Path> createDstPathConsumer = (srcPathEntryFile) -> {
             String newDstPathFile = createNewDstPath(srcPathDirectory, srcPathEntryFile, dstPathDirectory);
-            listPaths.add(newDstPathFile);
+            mapPathsSrcDst.put(srcPathEntryFile.toString(), newDstPathFile);
         };
-        filesWalk(srcPathDirectory, pathEntryConsumer);
-        return listPaths;
+        filesWalk(srcPathDirectory, createDstPathConsumer);
+        return mapPathsSrcDst;
     }
 
     public static String editingPath(Path path, String name) {
         String strPath = path.toString();
         int s = strPath.indexOf(name);
-        String newPath = strPath.substring(s);
-        return newPath;
+        return strPath.substring(s);
     }
 
-    public static void split(Path path, Consumer<byte[]> filePartConsumer) {
-        byte[] filePart = new byte[Constants.MB_10];
-        try (FileInputStream fileInputStream = new FileInputStream(path.toFile())) {
+    public static void split(Long id, String path, BiConsumer<Long, byte[]> filePartConsumer) {
+        byte[] filePart = new byte[Constants.MB_1];
+        try (FileInputStream fileInputStream = new FileInputStream(path)) {
             int size;
             while ((size = fileInputStream.read(filePart)) != -1) {
                 if (size < filePart.length) {
@@ -58,11 +52,31 @@ public class HelperMethods {
                 } else {
                     filePart = getNewByteArr(filePart, filePart.length);
                 }
-                filePartConsumer.accept(filePart);
+                filePartConsumer.accept(id, filePart);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static FileOutputStream generateFileOutputStream(String path) {
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = new FileOutputStream(path);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return fileOutputStream;
+    }
+
+    public static FileInputStream generateFileInputStream(String path) {
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(path);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return fileInputStream;
     }
 
     private static void filesWalk(Path directory, Consumer<Path> pathConsumer) {
@@ -89,11 +103,11 @@ public class HelperMethods {
         return newPath;
     }
 
-    public static void createNewDirectoryRecursion(Path path) {
+    public static void createNewDirectoryRecursion(Path pathParentFile) {
         Path pathChild = null;
-        if (!Files.exists(path)) {
-            pathChild = path;
-            createNewDirectoryRecursion(path.getParent());
+        if (!Files.exists(pathParentFile)) {
+            pathChild = pathParentFile;
+            createNewDirectoryRecursion(pathParentFile.getParent());
         }
         try {
             if (pathChild != null) {
@@ -115,16 +129,14 @@ public class HelperMethods {
         }
     }
 
-    public static boolean createNewUserFile(Path srcPath) {
+    public static void createNewUserFile(Path srcPath) {
         if (!srcPath.toFile().exists()) {
             try {
                 Files.createDirectory(srcPath);
-                return true;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return false;
     }
 
     public static long sumSizeFiles(Path directory) {
