@@ -2,11 +2,12 @@ package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.commonClasses.FilePaths;
 import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
-import org.vinogradov.myserver.serverLogic.DownloadService.DownloadController;
+import org.vinogradov.myserver.serverLogic.DownloadService.ReceptionFilesControllerServer;
 import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
@@ -14,7 +15,6 @@ import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
 public class ServerLogic implements ServerHandlerLogic {
 
@@ -22,7 +22,7 @@ public class ServerLogic implements ServerHandlerLogic {
 
     private final ConnectionsController connectionsController;
 
-    private final DownloadController downloadController;
+    private final ReceptionFilesControllerServer receptionFilesControllerServer;
 
     private static final DataBase dataBase;
 
@@ -43,7 +43,7 @@ public class ServerLogic implements ServerHandlerLogic {
 
     public ServerLogic() {
         this.connectionsController = new ConnectionsController();
-        this.downloadController = new DownloadController();
+        this.receptionFilesControllerServer = new ReceptionFilesControllerServer();
     }
 
     @Override
@@ -92,15 +92,15 @@ public class ServerLogic implements ServerHandlerLogic {
 
     @Override
     public void getHandingMetaDataFileRequest(MetaDataFileRequest metaDataFileRequest) {
-        String fileName = metaDataFileRequest.getFileName();
+        String fileOrDirectoryName = metaDataFileRequest.getFileName();
         long sizeFile = metaDataFileRequest.getSizeFile();
         String parentPath = metaDataFileRequest.getParentDirectory();
-        Map<Long, String> dstPaths = metaDataFileRequest.getDstPaths();
+        FilePaths fileDstPaths = metaDataFileRequest.getDstPaths();
 
-        downloadController.createCounterFileSize(fileName, sizeFile);
-        downloadController.addParentDirectoryPath(fileName, parentPath);
-        downloadController.createNewFileOutputStreams(fileName, dstPaths);
-        sendMessage(new MetaDataFileResponse(fileName, true));
+        receptionFilesControllerServer.createCounterFileSize(fileOrDirectoryName, sizeFile);
+        receptionFilesControllerServer.addParentDirectoryPath(parentPath);
+        receptionFilesControllerServer.createNewFileOutputStreamRepository(fileOrDirectoryName, fileDstPaths);
+        sendMessage(new MetaDataFileResponse(fileOrDirectoryName, true));
     }
 
     @Override
@@ -108,15 +108,15 @@ public class ServerLogic implements ServerHandlerLogic {
         Long idFile = sendPartFileRequest.getId();
         long sizePart = sendPartFileRequest.getSizePart();
         byte[] bytes = sendPartFileRequest.getBytes();
-        String fileName = sendPartFileRequest.getFileName();
+        String fileOrDirectoryName = sendPartFileRequest.getFileName();
 
-        downloadController.addSizeBytesInCounter(fileName, sizePart);
-        downloadController.addBytesInFileOutputStream(fileName, idFile, bytes);
-        boolean fileCheckSize = downloadController.sizeFileCheck(fileName);
+        receptionFilesControllerServer.addSizePartInCounter(fileOrDirectoryName, sizePart);
+        receptionFilesControllerServer.addBytesInFileOutputStream(fileOrDirectoryName, idFile, bytes);
+        boolean fileCheckSize = receptionFilesControllerServer.sizeFileCheck(fileOrDirectoryName);
         if (fileCheckSize) {
-            String parentDirectoryPath = downloadController.getParentDirectoryPath(fileName);
+            String parentDirectoryPath = receptionFilesControllerServer.getParentDirectoryPath();
             sendMessage(new GetListResponse(Paths.get(parentDirectoryPath)));
-            downloadController.completingTheFileUploader(fileName);
+            receptionFilesControllerServer.closeAllFileOutputStreamInDirectory(fileOrDirectoryName);
         }
     }
 

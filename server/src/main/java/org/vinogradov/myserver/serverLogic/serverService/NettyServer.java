@@ -24,7 +24,7 @@ public class NettyServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline inbound = socketChannel.pipeline();
                             inbound.addLast(
-                                    new ObjectDecoder(Constants.MB_2, ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(Constants.MB_10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
                                     new ServerHandler()
                             );

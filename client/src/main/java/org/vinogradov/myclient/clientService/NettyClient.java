@@ -34,7 +34,7 @@ public class NettyClient {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline().addLast(
-                                new ObjectDecoder(Constants.MB_2, ClassResolvers.cacheDisabled(null)),
+                                new ObjectDecoder(Constants.MB_10, ClassResolvers.cacheDisabled(null)),
                                 new ObjectEncoder(),
                                 new ClientHandler(clientLogic)
                         );

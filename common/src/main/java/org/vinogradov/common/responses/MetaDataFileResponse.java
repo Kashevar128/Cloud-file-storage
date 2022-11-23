@@ -4,17 +4,17 @@ import org.vinogradov.common.commonClasses.BasicQuery;
 
 public class MetaDataFileResponse implements BasicQuery {
 
-    private final String fileName;
+    private final String fileOrDirectoryName;
 
     private final boolean allowTransmission;
 
-    public MetaDataFileResponse(String fileName, boolean allowTransmission) {
-        this.fileName = fileName;
+    public MetaDataFileResponse(String fileOrDirectoryName, boolean allowTransmission) {
+        this.fileOrDirectoryName = fileOrDirectoryName;
         this.allowTransmission = allowTransmission;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFileOrDirectoryName() {
+        return fileOrDirectoryName;
     }
 
     public boolean isAllowTransmission() {

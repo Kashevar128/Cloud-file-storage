@@ -2,13 +2,15 @@ package org.vinogradov.myserver.serverLogic.DownloadService;
 
 public class CounterFileSize {
 
-    private long referenceSize;
+    private final String fileOrDirectoryName;
+
+    private final long referenceSize;
 
     private long currentSize;
 
-    public CounterFileSize(long referenceSize) {
+    public CounterFileSize(String fileOrDirectoryName, long referenceSize) {
+        this.fileOrDirectoryName = fileOrDirectoryName;
         this.referenceSize = referenceSize;
-        this.currentSize = 0;
     }
 
     public void addSize(long size) {
@@ -17,5 +19,9 @@ public class CounterFileSize {
 
     public boolean getComparisonResult() {
         return referenceSize == currentSize;
+    }
+
+    public String getFileOrDirectoryName() {
+        return fileOrDirectoryName;
     }
 }
