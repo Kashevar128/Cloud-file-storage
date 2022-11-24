@@ -9,17 +9,14 @@ public class SendPartFileRequest implements BasicQuery {
 
     private final Long id;
 
-    private final String fileName;
-
     private final byte[] bytes;
 
     private final long sizePart;
 
-    public SendPartFileRequest(User user, Long id, String fileName, byte[] bytes) {
+    public SendPartFileRequest(User user, Long id, byte[] bytes) {
         this.user = user;
         this.bytes = bytes;
         this.id = id;
-        this.fileName = fileName;
         this.sizePart = bytes.length;
     }
 
@@ -33,10 +30,6 @@ public class SendPartFileRequest implements BasicQuery {
 
     public long getSizePart() {
         return sizePart;
-    }
-
-    public String getFileName() {
-        return fileName;
     }
 
     @Override

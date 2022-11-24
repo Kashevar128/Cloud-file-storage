@@ -1,7 +1,6 @@
 package org.vinogradov.common.requests;
 
 import org.vinogradov.common.commonClasses.BasicQuery;
-import org.vinogradov.common.commonClasses.FilePaths;
 import org.vinogradov.common.commonClasses.User;
 
 import java.util.Map;
@@ -12,16 +11,16 @@ public class MetaDataFileRequest implements BasicQuery {
 
     private final String fileName;
 
-    private final FilePaths fileDstPaths;
+    private final Map<Long, String> dstPathsMap;
 
     private final String parentDirectory;
 
     private final long sizeFile;
 
-    public MetaDataFileRequest(User user, String fileName, FilePaths fileDstPaths, String parentDirectory, long sizeFile) {
+    public MetaDataFileRequest(User user, String fileName, Map<Long, String> dstPathsMap, String parentDirectory, long sizeFile) {
         this.user = user;
         this.fileName = fileName;
-        this.fileDstPaths = fileDstPaths;
+        this.dstPathsMap = dstPathsMap;
         this.parentDirectory = parentDirectory;
         this.sizeFile = sizeFile;
     }
@@ -48,7 +47,7 @@ public class MetaDataFileRequest implements BasicQuery {
         return parentDirectory;
     }
 
-    public FilePaths getDstPaths() {
-        return fileDstPaths;
+    public Map<Long, String> getDstPathsMap() {
+        return dstPathsMap;
     }
 }

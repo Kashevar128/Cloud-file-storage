@@ -1,35 +1,34 @@
 package org.vinogradov.myclient.downloadService;
 
-import org.vinogradov.common.commonClasses.FilePaths;
-
+import java.util.HashMap;
 import java.util.Map;
 
 public class SendFilesControllerClient {
     private final GenerateIdFile generateIdFile;
-    private FilePaths fileSrcPaths;
+    private Map<Long, String> srcPathsMap;
+
+
 
     public SendFilesControllerClient() {
         this.generateIdFile = new GenerateIdFile();
+        this.srcPathsMap = new HashMap<>();
     }
 
     private Long getUniqIdFile() {
         return generateIdFile.getIdFile();
     }
 
-    public void createNewSendFile(String fileOrDirectoryName) {
-        fileSrcPaths = new FilePaths(fileOrDirectoryName);
-    }
-
-    public Map<Long, String> getMapSrcPaths (String fileOrDirectoryName) {
-        if (fileSrcPaths.getFileOrDirectoryName().equals(fileOrDirectoryName)) {
-            return fileSrcPaths.getPaths();
-        }
-        return null;
+    public Map<Long, String> getMapSrcPaths () {
+        return srcPathsMap;
     }
 
     public Long addNewSrcPath(String srcPath) {
         long id = getUniqIdFile();
-        fileSrcPaths.addStringPath(id, srcPath);
+        srcPathsMap.put(id, srcPath);
         return id;
+    }
+
+    public void clearSrcPathsMap() {
+        srcPathsMap = new HashMap<>();
     }
 }

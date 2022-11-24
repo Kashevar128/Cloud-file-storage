@@ -12,6 +12,7 @@ import org.vinogradov.common.responses.*;
 import org.vinogradov.myclient.downloadService.SendFilesControllerClient;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ClientLogic implements ClientHandlerLogic {
@@ -30,7 +31,7 @@ public class ClientLogic implements ClientHandlerLogic {
 
     private User user;
 
-    private SendFilesControllerClient sendFilesControllerClient;
+    private final SendFilesControllerClient sendFilesControllerClient;
 
     public ClientLogic() {
         this.sendFilesControllerClient = new SendFilesControllerClient();
@@ -80,19 +81,19 @@ public class ClientLogic implements ClientHandlerLogic {
 
     @Override
     public void getHandingMetaDataResponse(MetaDataFileResponse metaDataFileResponse) {
-        String fileOrDirectoryName = metaDataFileResponse.getFileOrDirectoryName();
         boolean allowTransmission = metaDataFileResponse.isAllowTransmission();
         if (allowTransmission) {
             BiConsumer<Long, byte[]> biConsumerSendPartFile = (id, bytes) -> {
-                sendMessage(new SendPartFileRequest(user, id, fileOrDirectoryName, bytes));
+                sendMessage(new SendPartFileRequest(user, id, bytes));
             };
-            Map<Long, String> pathsMapFile = sendFilesControllerClient.getMapSrcPaths(fileOrDirectoryName);
+            Map<Long, String> pathsMapFile = sendFilesControllerClient.getMapSrcPaths();
             if (pathsMapFile == null) {
                 throw new RuntimeException("Файл путей источника пуст.");
             }
             for (Map.Entry<Long, String> entry : pathsMapFile.entrySet()) {
                 HelperMethods.split(entry.getKey(), entry.getValue(), biConsumerSendPartFile);
             }
+            sendFilesControllerClient.clearSrcPathsMap();
         }
     }
 
@@ -111,9 +112,8 @@ public class ClientLogic implements ClientHandlerLogic {
     public void createSendFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
         FileInfo.FileType fileType = selectedFile.getType();
         String fileOrDirectoryName = selectedFile.getFilename();
-        sendFilesControllerClient.createNewSendFile(fileOrDirectoryName);
         Path parentDirectory = dstPath.getParent();
-        FilePaths fileDstPaths = new FilePaths(fileOrDirectoryName);
+        Map<Long, String> dstPathsMap = new HashMap<>();
         long sizeFile = 0;
 
         switch (fileType) {
@@ -121,7 +121,7 @@ public class ClientLogic implements ClientHandlerLogic {
             case FILE -> {
                 sizeFile = selectedFile.getSize();
                 Long id = sendFilesControllerClient.addNewSrcPath(srcPath.toString());
-                fileDstPaths.addStringPath(id, dstPath.toString());
+                dstPathsMap.put(id, dstPath.toString());
             }
 
             case DIRECTORY -> {
@@ -129,11 +129,11 @@ public class ClientLogic implements ClientHandlerLogic {
                 Map<String, String> srcDstMap = HelperMethods.creatDstPaths(srcPath, dstPath);
                 for (Map.Entry<String, String> entry : srcDstMap.entrySet()) {
                     Long id = sendFilesControllerClient.addNewSrcPath(entry.getKey());
-                    fileDstPaths.addStringPath(id, entry.getValue());
+                    dstPathsMap.put(id, dstPath.toString());
                 }
             }
         }
-        sendMessage(new MetaDataFileRequest(user, fileOrDirectoryName, fileDstPaths,
+        sendMessage(new MetaDataFileRequest(user, fileOrDirectoryName, dstPathsMap,
                 parentDirectory.toString(), sizeFile));
     }
 
