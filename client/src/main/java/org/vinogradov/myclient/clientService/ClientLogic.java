@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import org.vinogradov.common.commonClasses.*;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.ClientGUI;
+import org.vinogradov.myclient.GUI.ProgressBarSendFile;
 import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
 import org.vinogradov.common.requests.*;
@@ -14,6 +15,7 @@ import org.vinogradov.myclient.downloadService.SendFilesControllerClient;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class ClientLogic implements ClientHandlerLogic {
 
@@ -30,6 +32,8 @@ public class ClientLogic implements ClientHandlerLogic {
     private ClientLogic clientLogic;
 
     private User user;
+
+    private ProgressBarSendFile progressBarSendFile;
 
     private final SendFilesControllerClient sendFilesControllerClient;
 
@@ -83,15 +87,23 @@ public class ClientLogic implements ClientHandlerLogic {
     public void getHandingMetaDataResponse(MetaDataFileResponse metaDataFileResponse) {
         boolean allowTransmission = metaDataFileResponse.isAllowTransmission();
         if (allowTransmission) {
-            BiConsumer<Long, byte[]> biConsumerSendPartFile = (id, bytes) -> {
+            String nameFileOrDirectorySend = sendFilesControllerClient.getNameFileOrDirectorySend();
+            progressBarSendFile.updateFileNameBar(nameFileOrDirectorySend);
+            progressBarSendFile.showProgressBar();
+            MyFunction<Long, byte[], Boolean> myFunctionSendPartFile = (id, bytes) -> {
+                sendFilesControllerClient.addSizePartInCounter(bytes.length);
                 sendMessage(new SendPartFileRequest(user, id, bytes));
+                progressBarSendFile.updateProgressBar(sendFilesControllerClient.getRatioCounter());
+                if (progressBarSendFile.isEnd()) {
+                    progressBarSendFile.setEnd(false);
+                    sendMessage(new DelFileRequest(user, sendFilesControllerClient.getSelectedDstPath()));
+                    return true;
+                }
+                return false;
             };
             Map<Long, String> pathsMapFile = sendFilesControllerClient.getMapSrcPaths();
-            if (pathsMapFile == null) {
-                throw new RuntimeException("Файл путей источника пуст.");
-            }
             for (Map.Entry<Long, String> entry : pathsMapFile.entrySet()) {
-                HelperMethods.split(entry.getKey(), entry.getValue(), biConsumerSendPartFile);
+                HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile);
             }
             sendFilesControllerClient.clearSrcPathsMap();
         }
@@ -112,7 +124,9 @@ public class ClientLogic implements ClientHandlerLogic {
     public void createSendFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
         FileInfo.FileType fileType = selectedFile.getType();
         String fileOrDirectoryName = selectedFile.getFilename();
+        sendFilesControllerClient.setNameFileOrDirectorySend(fileOrDirectoryName);
         Path parentDirectory = dstPath.getParent();
+        sendFilesControllerClient.setSelectedDstPath(dstPath.toString());
         Map<Long, String> dstPathsMap = new HashMap<>();
         long sizeFile = 0;
 
@@ -129,10 +143,12 @@ public class ClientLogic implements ClientHandlerLogic {
                 Map<String, String> srcDstMap = HelperMethods.creatDstPaths(srcPath, dstPath);
                 for (Map.Entry<String, String> entry : srcDstMap.entrySet()) {
                     Long id = sendFilesControllerClient.addNewSrcPath(entry.getKey());
-                    dstPathsMap.put(id, dstPath.toString());
+                    dstPathsMap.put(id, entry.getValue());
                 }
             }
         }
+        clientController.getSendFileButton().setDisable(true);
+        sendFilesControllerClient.createNewCounterFileSize(sizeFile);
         sendMessage(new MetaDataFileRequest(user, fileOrDirectoryName, dstPathsMap,
                 parentDirectory.toString(), sizeFile));
     }
@@ -165,7 +181,9 @@ public class ClientLogic implements ClientHandlerLogic {
         this.clientLogic = clientLogic;
     }
 
-    public void setContext(ChannelHandlerContext context) {this.context = context;}
+    public void setContext(ChannelHandlerContext context) {
+        this.context = context;
+    }
 
     public User getUser() {
         return user;
@@ -184,6 +202,7 @@ public class ClientLogic implements ClientHandlerLogic {
         this.clientController = clientGUI.getClientController();
         clientController.setClientLogic(clientLogic);
         clientController.serverPC.updateList(updatePanel);
+        this.progressBarSendFile = new ProgressBarSendFile(clientController);
     }
 
 

@@ -21,7 +21,7 @@
     </HBox>
 
     <HBox spacing="5">
-        <Button maxWidth="Infinity" focusTraversable="false" text="Загрузить файл" HBox.hgrow="ALWAYS" onAction="#copyBtnAction"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Загрузить файл" HBox.hgrow="ALWAYS" onAction="#copyBtnAction" fx:id="sendFileButton"/>
         <Button maxWidth="Infinity" focusTraversable="false" text="Удалить файл" HBox.hgrow="ALWAYS" onAction="#delBtnAction"/>
         <Button maxWidth="Infinity" focusTraversable="false" text="Новая папка" HBox.hgrow="ALWAYS" onAction="#createPackageBtnAction"/>
         <Button maxWidth="Infinity" focusTraversable="false" text="Обновить страницу" HBox.hgrow="ALWAYS" onAction="#refreshBtnAction"/>

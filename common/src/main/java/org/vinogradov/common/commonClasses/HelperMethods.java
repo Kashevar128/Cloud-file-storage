@@ -4,8 +4,8 @@ package org.vinogradov.common.commonClasses;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,7 +42,7 @@ public class HelperMethods {
         return strPath.substring(s);
     }
 
-    public static void split(Long id, String path, BiConsumer<Long, byte[]> filePartConsumer) {
+    public static void split(Long id, String path, MyFunction<Long, byte[], Boolean> filePartMyFunction) {
         byte[] filePart = new byte[Constants.MB_1];
         try (FileInputStream fileInputStream = new FileInputStream(path)) {
             int size;
@@ -52,7 +52,7 @@ public class HelperMethods {
                 } else {
                     filePart = getNewByteArr(filePart, filePart.length);
                 }
-                filePartConsumer.accept(id, filePart);
+                if (filePartMyFunction.apply(id, filePart)) break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

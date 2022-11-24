@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import org.vinogradov.common.commonClasses.BiConsumer;
 import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.clientService.ClientLogic;
@@ -15,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.myclient.GUI.EnterWindow;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 
 public class ClientController implements Initializable {
 
+    public Button sendFileButton;
     private ClientLogic clientLogic;
 
     private boolean transfer;
@@ -120,5 +122,9 @@ public class ClientController implements Initializable {
 
     public PanelController getSrcPC() {
         return srcPC;
+    }
+
+    public Button getSendFileButton() {
+        return sendFileButton;
     }
 }

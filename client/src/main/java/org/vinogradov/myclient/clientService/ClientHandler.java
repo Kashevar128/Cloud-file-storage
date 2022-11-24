@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
-    private ClientLogic clientLogic;
+    private final ClientLogic clientLogic;
 
     private static  final Map<Class<? extends BasicQuery>, BiConsumer<BasicQuery, ClientHandlerLogic>> RESPONSE_HANDLERS = new HashMap<>();
 

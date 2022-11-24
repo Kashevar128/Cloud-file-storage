@@ -1,5 +1,6 @@
 package org.vinogradov.myclient.GUI;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -40,7 +41,8 @@ public class AlertWindowsClass {
     }
 
     public static void showAuthFalse() {
-        Alert alert = new Alert(Alert.AlertType.ERROR, "Неверный пользователь или пароль.", ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Неверный пользователь " +
+                "или пароль.", ButtonType.OK);
         alert.setHeaderText("Ошибка аутентификации");
         alert.showAndWait();
     }
@@ -52,7 +54,8 @@ public class AlertWindowsClass {
     }
 
     public static void showUpdateListError() {
-        Alert alert = new Alert(Alert.AlertType.ERROR, "Некорректное обновление списка файлов.", ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Некорректное обновление " +
+                "списка файлов.", ButtonType.OK);
         alert.setHeaderText("Ошибка обновления листа файлов");
         alert.showAndWait();
     }
@@ -64,22 +67,31 @@ public class AlertWindowsClass {
     }
 
     public static void showSelectFileAlert() {
-        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите файл, который хотите перенести.", ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите файл, " +
+                "который хотите перенести.", ButtonType.OK);
         alert.setHeaderText("Вы не выбрали файл");
         alert.showAndWait();
     }
 
     public static void showSelectTableAlert() {
-        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите панель сервера или панель клиента для " +
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите панель " +
+                "сервера или панель клиента для " +
                 "создания новой папки.", ButtonType.OK);
         alert.setHeaderText("Вы не выбрали панель");
         alert.showAndWait();
     }
 
     public static void showLengthFolderNameAlert() {
-        Alert alert = new Alert(Alert.AlertType.WARNING, "В названии папки должно быть не больше 50 сиволов", ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.WARNING, "В названии папки должно " +
+                "быть не больше 50 сиволов", ButtonType.OK);
         alert.setHeaderText("Слишком длинное имя папки");
         alert.showAndWait();
+    }
+
+    public static void showInterruptSendFileAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Передача файла прервана, " +
+                "переданная часть файла будет автоматичиски удалена", ButtonType.OK);
+        alert.setHeaderText("Передача прервана!");
     }
 }
 

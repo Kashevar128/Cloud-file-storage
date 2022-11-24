@@ -1,4 +1,4 @@
-package org.vinogradov.myserver.serverLogic.DownloadService;
+package org.vinogradov.common.commonClasses;
 
 public class CounterFileSize {
 
@@ -16,5 +16,9 @@ public class CounterFileSize {
 
     public boolean getComparisonResult() {
         return referenceSize == currentSize;
+    }
+
+    public double getRatio()  {
+        return (double) currentSize / (double) referenceSize;
     }
 }

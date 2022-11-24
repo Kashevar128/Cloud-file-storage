@@ -1,4 +1,5 @@
 package org.vinogradov.myserver.serverLogic.DownloadService;
+import org.vinogradov.common.commonClasses.CounterFileSize;
 import org.vinogradov.common.commonClasses.HelperMethods;
 
 import java.io.FileOutputStream;
