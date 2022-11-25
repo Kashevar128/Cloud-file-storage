@@ -19,6 +19,11 @@ import java.util.Map;
 
 public class ClientLogic implements ClientHandlerLogic {
 
+    private final Runnable runnableRegComplete = AlertWindowsClass::showRegComplete,
+            runnableAuthComplete = AlertWindowsClass::showAuthComplete,
+            runnableRegFalse = AlertWindowsClass::showRegFalse,
+            runnableAuthFalse = AlertWindowsClass::showAuthFalse;
+
     private ChannelHandlerContext context;
 
     private RegAuthGui regAuthGui;
@@ -43,30 +48,18 @@ public class ClientLogic implements ClientHandlerLogic {
 
     @Override
     public void getHandingMessageReg(RegServerResponse responseReg) {
-        if (responseReg.isRegComplete()) {
-            Platform.runLater(() -> {
-                regAuthGui.getStage().close();
-                AlertWindowsClass.showRegComplete();
-                this.user = responseReg.getUser();
-                createClientGUI(responseReg.getUpdatePanel());
-            });
-        } else {
-            Platform.runLater(AlertWindowsClass::showRegFalse);
-        }
+        this.user = responseReg.getUser();
+        UpdatePanel updatePanelReg = responseReg.getUpdatePanel();
+        boolean regComplete = responseReg.isRegComplete();
+        startClientGUI(regComplete, updatePanelReg, runnableRegComplete, runnableRegFalse);
     }
 
     @Override
     public void getHandingMessageAuth(AuthServerResponse responseAuth) {
-        if (responseAuth.isAuthComplete()) {
-            Platform.runLater(() -> {
-                regAuthGui.getStage().close();
-                AlertWindowsClass.showAuthComplete();
-                this.user = responseAuth.getUser();
-                createClientGUI(responseAuth.getUpdatePanel());
-            });
-        } else {
-            Platform.runLater(AlertWindowsClass::showAuthFalse);
-        }
+        this.user = responseAuth.getUser();
+        UpdatePanel updatePanelAuth = responseAuth.getUpdatePanel();
+        boolean authComplete = responseAuth.isAuthComplete();
+       startClientGUI(authComplete, updatePanelAuth, runnableAuthComplete, runnableAuthFalse);
     }
 
     @Override
@@ -104,7 +97,7 @@ public class ClientLogic implements ClientHandlerLogic {
             };
             Map<Long, String> pathsMapFile = sendFilesControllerClient.getMapSrcPaths();
             for (Map.Entry<Long, String> entry : pathsMapFile.entrySet()) {
-                HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile);
+                if (HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile)) break;
             }
             sendFilesControllerClient.clearSrcPathsMap();
         }
@@ -198,12 +191,21 @@ public class ClientLogic implements ClientHandlerLogic {
         return clientController;
     }
 
-    private void createClientGUI(UpdatePanel updatePanel) {
-        this.clientGUI = new ClientGUI(clientLogic);
-        this.clientController = clientGUI.getClientController();
-        clientController.setClientLogic(clientLogic);
-        clientController.serverPC.updateList(updatePanel);
-        this.progressBarSendFile = new ProgressBarSendFile(clientController);
+    private void startClientGUI(boolean complete, UpdatePanel updatePanel,
+                                Runnable runnableComplete, Runnable runnableFalse) {
+        if (complete) {
+            Platform.runLater(() -> {
+                regAuthGui.getStage().close();
+                runnableComplete.run();
+                this.clientGUI = new ClientGUI(clientLogic);
+                this.clientController = clientGUI.getClientController();
+                clientController.setClientLogic(clientLogic);
+                clientController.serverPC.updateList(updatePanel);
+                this.progressBarSendFile = new ProgressBarSendFile(clientController);
+            });
+        } else {
+            runnableFalse.run();
+        }
     }
 
 

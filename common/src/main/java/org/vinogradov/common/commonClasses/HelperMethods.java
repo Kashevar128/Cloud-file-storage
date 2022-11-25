@@ -42,7 +42,7 @@ public class HelperMethods {
         return strPath.substring(s);
     }
 
-    public static void split(Long id, String path, MyFunction<Long, byte[], Boolean> filePartMyFunction) {
+    public static boolean split(Long id, String path, MyFunction<Long, byte[], Boolean> filePartMyFunction) {
         byte[] filePart = new byte[Constants.MB_1];
         try (FileInputStream fileInputStream = new FileInputStream(path)) {
             int size;
@@ -52,11 +52,14 @@ public class HelperMethods {
                 } else {
                     filePart = getNewByteArr(filePart, filePart.length);
                 }
-                if (filePartMyFunction.apply(id, filePart)) break;
+                if (filePartMyFunction.apply(id, filePart)) {
+                    return true;
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return false;
     }
 
     public static FileOutputStream generateFileOutputStream(String path) {
