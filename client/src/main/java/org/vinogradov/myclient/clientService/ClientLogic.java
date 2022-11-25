@@ -89,6 +89,7 @@ public class ClientLogic implements ClientHandlerLogic {
         if (allowTransmission) {
             String nameFileOrDirectorySend = sendFilesControllerClient.getNameFileOrDirectorySend();
             progressBarSendFile.updateFileNameBar(nameFileOrDirectorySend);
+            progressBarSendFile.setCounterFileSize(sendFilesControllerClient.getCounterFileSize());
             progressBarSendFile.showProgressBar();
             MyFunction<Long, byte[], Boolean> myFunctionSendPartFile = (id, bytes) -> {
                 sendFilesControllerClient.addSizePartInCounter(bytes.length);

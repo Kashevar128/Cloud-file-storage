@@ -55,6 +55,10 @@ public class SendFilesControllerClient {
         return counterFileSize.getRatio();
     }
 
+    public CounterFileSize getCounterFileSize() {
+        return counterFileSize;
+    }
+
     public String getNameFileOrDirectorySend() {
         return nameFileOrDirectorySend;
     }

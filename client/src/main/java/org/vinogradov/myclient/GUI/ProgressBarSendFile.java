@@ -11,14 +11,15 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.vinogradov.common.commonClasses.CounterFileSize;
 import org.vinogradov.myclient.controllers.ClientController;
 
 public class ProgressBarSendFile {
 
     private boolean end;
+    private CounterFileSize counterFileSize;
     private final ClientController clientController;
     private final Stage primaryStage;
     private final ProgressBar progressBar;
@@ -29,6 +30,7 @@ public class ProgressBarSendFile {
     public ProgressBarSendFile(ClientController clientController) {
         this.end = false;
 
+        this.counterFileSize = counterFileSize;
         this.clientController = clientController;
         this.primaryStage = new Stage();
         this.progressBar = new ProgressBar(0);
@@ -45,7 +47,9 @@ public class ProgressBarSendFile {
         cancelButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                setEnd(true);
+                if (!checkSize()) {
+                    setEnd(true);
+                }
                 primaryStage.close();
                 clientController.getSendFileButton().setDisable(false);
             }
@@ -80,6 +84,10 @@ public class ProgressBarSendFile {
         Platform.runLater(() -> statusLabel.setText("SEND FILE: " + fileName));
     }
 
+    private boolean checkSize() {
+        return counterFileSize.getComparisonResult();
+    }
+
     public void showProgressBar() {
         Platform.runLater(primaryStage::show);
     }
@@ -88,7 +96,11 @@ public class ProgressBarSendFile {
         return end;
     }
 
-    public void setEnd(boolean end) {
-        this.end = end;
+    public void setEnd(boolean flag) {
+        this.end = flag;
+    }
+
+    public void setCounterFileSize(CounterFileSize counterFileSize) {
+        this.counterFileSize = counterFileSize;
     }
 }
