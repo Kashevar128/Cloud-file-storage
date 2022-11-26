@@ -36,8 +36,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             clientHandlerLogic.getHandingConnectionLimit();
         });
 
-        RESPONSE_HANDLERS.put(MetaDataFileResponse.class, (basicQuery, clientHandlerLogic) -> {
-            clientHandlerLogic.getHandingMetaDataResponse((MetaDataFileResponse) basicQuery);
+        RESPONSE_HANDLERS.put(PermissionToTransferResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingPermissionToTransferResponse((PermissionToTransferResponse) basicQuery);
+        });
+
+        RESPONSE_HANDLERS.put(MetaDataResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingMetaDataResponse((MetaDataResponse) basicQuery);
+        });
+
+        RESPONSE_HANDLERS.put(SendPartFileResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingSendPartFileResponse((SendPartFileResponse) basicQuery);
         });
     }
 

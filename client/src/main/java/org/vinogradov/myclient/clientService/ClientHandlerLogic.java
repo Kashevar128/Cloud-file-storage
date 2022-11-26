@@ -1,9 +1,6 @@
 package org.vinogradov.myclient.clientService;
 
-import org.vinogradov.common.responses.AuthServerResponse;
-import org.vinogradov.common.responses.GetListResponse;
-import org.vinogradov.common.responses.MetaDataFileResponse;
-import org.vinogradov.common.responses.RegServerResponse;
+import org.vinogradov.common.responses.*;
 
 public interface ClientHandlerLogic {
 
@@ -15,5 +12,9 @@ public interface ClientHandlerLogic {
 
     void getHandingConnectionLimit();
 
-    void getHandingMetaDataResponse(MetaDataFileResponse metaDataFileResponse);
+    void getHandingPermissionToTransferResponse(PermissionToTransferResponse permissionToTransferResponse);
+
+    void getHandingMetaDataResponse(MetaDataResponse metaDataResponse);
+
+    void getHandingSendPartFileResponse(SendPartFileResponse sendPartFileResponse);
 }

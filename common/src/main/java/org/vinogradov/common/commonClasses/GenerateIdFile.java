@@ -1,4 +1,4 @@
-package org.vinogradov.myclient.downloadService;
+package org.vinogradov.common.commonClasses;
 
 public class GenerateIdFile {
 

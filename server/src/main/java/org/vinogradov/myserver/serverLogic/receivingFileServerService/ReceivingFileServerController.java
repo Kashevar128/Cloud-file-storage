@@ -1,4 +1,5 @@
-package org.vinogradov.myserver.serverLogic.DownloadService;
+package org.vinogradov.myserver.serverLogic.receivingFileServerService;
+
 import org.vinogradov.common.commonClasses.CounterFileSize;
 import org.vinogradov.common.commonClasses.HelperMethods;
 
@@ -8,16 +9,16 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReceptionFilesControllerServer {
+public class ReceivingFileServerController {
     Map<Long, FileOutputStream> fileOutputStreamMap;
     CounterFileSize counterFileSize;
     String parentDirectoryFile;
 
-    public ReceptionFilesControllerServer() {
+    public ReceivingFileServerController() {
         fileOutputStreamMap = new HashMap<>();
     }
 
-    public void addFileOutputStreamRepository(Map<Long,String> dstPathsMap) {
+    public void addFileOutputStreamMap(Map<Long, String> dstPathsMap) {
         for (Map.Entry<Long, String> entry : dstPathsMap.entrySet()) {
             HelperMethods.createNewDirectoryRecursion(Paths.get(entry.getValue()).getParent());
             FileOutputStream fileOutputStream =
@@ -27,12 +28,12 @@ public class ReceptionFilesControllerServer {
     }
 
     public void addBytesInFileOutputStream(Long id, byte[] bytes) {
-            FileOutputStream fileOutputStream = fileOutputStreamMap.get(id);
-            try {
-                fileOutputStream.write(bytes);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        FileOutputStream fileOutputStream = fileOutputStreamMap.get(id);
+        try {
+            fileOutputStream.write(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createCounterFileSize(long referenceSize) {
@@ -40,11 +41,11 @@ public class ReceptionFilesControllerServer {
     }
 
     public void addSizePartInCounter(long sizePart) {
-            counterFileSize.addSize(sizePart);
+        counterFileSize.addSize(sizePart);
     }
 
     public boolean sizeFileCheck() {
-            return counterFileSize.getComparisonResult();
+        return counterFileSize.getComparisonResult();
     }
 
     public void addParentDirectoryPath(String dstPath) {
@@ -55,14 +56,15 @@ public class ReceptionFilesControllerServer {
         return parentDirectoryFile;
     }
 
-    public void closeAllFileOutputStreamInDirectory() {
-            fileOutputStreamMap.forEach((key, value) -> {
-                try {
-                    value.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            fileOutputStreamMap = new HashMap<>();
+    public void closeAllFileOutputStreams() {
+        if (fileOutputStreamMap.isEmpty()) return;
+        fileOutputStreamMap.forEach((key, value) -> {
+            try {
+                value.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        fileOutputStreamMap = new HashMap<>();
     }
 }

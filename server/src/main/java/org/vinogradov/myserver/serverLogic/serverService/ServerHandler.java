@@ -48,6 +48,17 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         REQUEST_HANDLERS.put(SendPartFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingSendPartFileRequest((SendPartFileRequest) basicQuery);
         }));
+
+        REQUEST_HANDLERS.put(ClearFileOutputStreamsRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingClearFileOutputStreams((ClearFileOutputStreamsRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(GetFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingGetFileRequest((GetFileRequest) basicQuery);
+        }));
+        REQUEST_HANDLERS.put(PermissionToTransferRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingPermissionToTransferRequest((PermissionToTransferRequest) basicQuery);
+        }));
     }
 
 

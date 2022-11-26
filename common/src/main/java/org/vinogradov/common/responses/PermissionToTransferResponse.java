@@ -2,11 +2,11 @@ package org.vinogradov.common.responses;
 
 import org.vinogradov.common.commonClasses.BasicQuery;
 
-public class MetaDataFileResponse implements BasicQuery {
+public class PermissionToTransferResponse implements BasicQuery {
 
     private final boolean allowTransmission;
 
-    public MetaDataFileResponse(boolean allowTransmission) {
+    public PermissionToTransferResponse(boolean allowTransmission) {
         this.allowTransmission = allowTransmission;
     }
 
@@ -16,6 +16,6 @@ public class MetaDataFileResponse implements BasicQuery {
 
     @Override
     public String getType() {
-        return MetaDataFileResponse.class.toString();
+        return PermissionToTransferResponse.class.toString();
     }
 }

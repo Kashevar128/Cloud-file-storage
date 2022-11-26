@@ -10,9 +10,11 @@ import org.vinogradov.myclient.GUI.RegAuthGui;
 import org.vinogradov.myclient.controllers.ClientController;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
-import org.vinogradov.myclient.downloadService.SendFilesControllerClient;
+import org.vinogradov.myclient.receivingFileClientService.ReceivingFileClientController;
+import org.vinogradov.myclient.sendFileClientService.SendFileClientController;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,10 +42,13 @@ public class ClientLogic implements ClientHandlerLogic {
 
     private ProgressBarSendFile progressBarSendFile;
 
-    private final SendFilesControllerClient sendFilesControllerClient;
+    private final SendFileClientController sendFileClientController;
+
+    private final ReceivingFileClientController receivingFileClientController;
 
     public ClientLogic() {
-        this.sendFilesControllerClient = new SendFilesControllerClient();
+        this.receivingFileClientController = new ReceivingFileClientController();
+        this.sendFileClientController = new SendFileClientController();
     }
 
     @Override
@@ -77,29 +82,54 @@ public class ClientLogic implements ClientHandlerLogic {
     }
 
     @Override
-    public void getHandingMetaDataResponse(MetaDataFileResponse metaDataFileResponse) {
-        boolean allowTransmission = metaDataFileResponse.isAllowTransmission();
+    public void getHandingPermissionToTransferResponse(PermissionToTransferResponse permissionToTransferResponse) {
+        boolean allowTransmission = permissionToTransferResponse.isAllowTransmission();
         if (allowTransmission) {
-            String nameFileOrDirectorySend = sendFilesControllerClient.getNameFileOrDirectorySend();
+            String nameFileOrDirectorySend = sendFileClientController.getNameFileOrDirectorySend();
             progressBarSendFile.updateFileNameBar(nameFileOrDirectorySend);
-            progressBarSendFile.setCounterFileSize(sendFilesControllerClient.getCounterFileSize());
+            progressBarSendFile.setCounterFileSize(sendFileClientController.getCounterFileSize());
             progressBarSendFile.showProgressBar();
             MyFunction<Long, byte[], Boolean> myFunctionSendPartFile = (id, bytes) -> {
-                sendFilesControllerClient.addSizePartInCounter(bytes.length);
+                sendFileClientController.addSizePartInCounter(bytes.length);
                 sendMessage(new SendPartFileRequest(user, id, bytes));
-                progressBarSendFile.updateProgressBar(sendFilesControllerClient.getRatioCounter());
+                progressBarSendFile.updateProgressBar(sendFileClientController.getRatioCounter());
                 if (progressBarSendFile.isEnd()) {
                     progressBarSendFile.setEnd(false);
-                    sendMessage(new DelFileRequest(user, sendFilesControllerClient.getSelectedDstPath()));
+                    sendMessage(new DelFileRequest(user, sendFileClientController.getSelectedDstPath()));
+                    sendMessage(new ClearFileOutputStreamsRequest(user));
                     return true;
                 }
                 return false;
             };
-            Map<Long, String> pathsMapFile = sendFilesControllerClient.getMapSrcPaths();
+            Map<Long, String> pathsMapFile = sendFileClientController.getMapSrcPaths();
             for (Map.Entry<Long, String> entry : pathsMapFile.entrySet()) {
                 if (HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile)) break;
             }
-            sendFilesControllerClient.clearSrcPathsMap();
+            sendFileClientController.clearSrcPathsMap();
+        }
+    }
+
+    @Override
+    public void getHandingMetaDataResponse(MetaDataResponse metaDataResponse) {
+        long sizeFile = metaDataResponse.getSizeFile();
+        Map<Long, String> dstPaths = metaDataResponse.getDstPaths();
+        receivingFileClientController.addFileOutputStreamMap(dstPaths);
+        receivingFileClientController.createCounterFileSize(sizeFile);
+        sendMessage(new PermissionToTransferRequest(user, true));
+    }
+
+    @Override
+    public void getHandingSendPartFileResponse(SendPartFileResponse sendPartFileResponse) {
+        long sizePart = sendPartFileResponse.getSizePart();
+        Long id = sendPartFileResponse.getId();
+        byte[] bytes = sendPartFileResponse.getBytes();
+        Path parentFilePath = Paths.get(receivingFileClientController.getDstPath()).getParent();
+        receivingFileClientController.addSizePartInCounter(sizePart);
+        receivingFileClientController.addBytesInFileOutputStream(id, bytes);
+        boolean sizeFileCheck = receivingFileClientController.sizeFileCheck();
+        if (sizeFileCheck) {
+            receivingFileClientController.closeAllFileOutputStreams();
+            clientController.clientPC.updateList(parentFilePath);
         }
     }
 
@@ -118,9 +148,9 @@ public class ClientLogic implements ClientHandlerLogic {
     public void createSendFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
         FileInfo.FileType fileType = selectedFile.getType();
         String fileOrDirectoryName = selectedFile.getFilename();
-        sendFilesControllerClient.setNameFileOrDirectorySend(fileOrDirectoryName);
+        sendFileClientController.setNameFileOrDirectorySend(fileOrDirectoryName);
         Path parentDirectory = dstPath.getParent();
-        sendFilesControllerClient.setSelectedDstPath(dstPath.toString());
+        sendFileClientController.setSelectedDstPath(dstPath.toString());
         Map<Long, String> dstPathsMap = new HashMap<>();
         long sizeFile = 0;
 
@@ -128,7 +158,7 @@ public class ClientLogic implements ClientHandlerLogic {
 
             case FILE -> {
                 sizeFile = selectedFile.getSize();
-                Long id = sendFilesControllerClient.addNewSrcPath(srcPath.toString());
+                Long id = sendFileClientController.addNewSrcPath(srcPath.toString());
                 dstPathsMap.put(id, dstPath.toString());
             }
 
@@ -136,14 +166,14 @@ public class ClientLogic implements ClientHandlerLogic {
                 sizeFile = HelperMethods.sumSizeFiles(srcPath);
                 Map<String, String> srcDstMap = HelperMethods.creatDstPaths(srcPath, dstPath);
                 for (Map.Entry<String, String> entry : srcDstMap.entrySet()) {
-                    Long id = sendFilesControllerClient.addNewSrcPath(entry.getKey());
+                    Long id = sendFileClientController.addNewSrcPath(entry.getKey());
                     dstPathsMap.put(id, entry.getValue());
                 }
             }
         }
         clientController.getSendFileButton().setDisable(true);
-        sendFilesControllerClient.createNewCounterFileSize(sizeFile);
-        sendMessage(new MetaDataFileRequest(user, fileOrDirectoryName, dstPathsMap,
+        sendFileClientController.createNewCounterFileSize(sizeFile);
+        sendMessage(new MetaDataFileRequest(user, dstPathsMap,
                 parentDirectory.toString(), sizeFile));
     }
 
@@ -157,6 +187,11 @@ public class ClientLogic implements ClientHandlerLogic {
 
     public void createUserFolder(Path path) {
         sendMessage(new CreateNewFolderRequest(user, path.toString()));
+    }
+
+    public void createGetFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
+        receivingFileClientController.setDstPath(dstPath.toString());
+        sendMessage(new GetFileRequest(user, selectedFile.getType(), srcPath.toString(), dstPath.toString()));
     }
 
     public void sendMessage(BasicQuery basicQuery) {

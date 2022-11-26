@@ -9,17 +9,14 @@ public class MetaDataFileRequest implements BasicQuery {
 
     private final User user;
 
-    private final String fileName;
-
     private final Map<Long, String> dstPathsMap;
 
     private final String parentDirectory;
 
     private final long sizeFile;
 
-    public MetaDataFileRequest(User user, String fileName, Map<Long, String> dstPathsMap, String parentDirectory, long sizeFile) {
+    public MetaDataFileRequest(User user, Map<Long, String> dstPathsMap, String parentDirectory, long sizeFile) {
         this.user = user;
-        this.fileName = fileName;
         this.dstPathsMap = dstPathsMap;
         this.parentDirectory = parentDirectory;
         this.sizeFile = sizeFile;
@@ -33,10 +30,6 @@ public class MetaDataFileRequest implements BasicQuery {
     @Override
     public User getUser() {
         return user;
-    }
-
-    public String getFileName() {
-        return fileName;
     }
 
     public long getSizeFile() {

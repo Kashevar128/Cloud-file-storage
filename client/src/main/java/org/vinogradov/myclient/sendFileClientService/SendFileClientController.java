@@ -1,18 +1,19 @@
-package org.vinogradov.myclient.downloadService;
+package org.vinogradov.myclient.sendFileClientService;
 
 import org.vinogradov.common.commonClasses.CounterFileSize;
+import org.vinogradov.common.commonClasses.GenerateIdFile;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SendFilesControllerClient {
+public class SendFileClientController {
     private final GenerateIdFile generateIdFile;
     private Map<Long, String> srcPathsMap;
     private String nameFileOrDirectorySend;
     private String SelectedDstPath;
     private CounterFileSize counterFileSize;
 
-    public SendFilesControllerClient() {
+    public SendFileClientController() {
         this.generateIdFile = new GenerateIdFile();
         this.srcPathsMap = new HashMap<>();
     }

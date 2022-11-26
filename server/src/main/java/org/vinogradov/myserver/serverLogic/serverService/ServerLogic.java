@@ -1,19 +1,21 @@
 package org.vinogradov.myserver.serverLogic.serverService;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.vinogradov.common.commonClasses.BasicQuery;
-import org.vinogradov.common.commonClasses.HelperMethods;
-import org.vinogradov.common.commonClasses.User;
+import org.vinogradov.common.commonClasses.*;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
-import org.vinogradov.myserver.serverLogic.DownloadService.ReceptionFilesControllerServer;
+import org.vinogradov.myserver.serverLogic.receivingFileServerService.ReceivingFileServerController;
 import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
+import org.vinogradov.myserver.serverLogic.sendFileServerService.SendFileServerController;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ServerLogic implements ServerHandlerLogic {
@@ -22,7 +24,9 @@ public class ServerLogic implements ServerHandlerLogic {
 
     private final ConnectionsController connectionsController;
 
-    private final ReceptionFilesControllerServer receptionFilesControllerServer;
+    private final ReceivingFileServerController receivingFileServerController;
+
+    private final SendFileServerController sendFileServerController;
 
     private static final DataBase dataBase;
 
@@ -43,7 +47,8 @@ public class ServerLogic implements ServerHandlerLogic {
 
     public ServerLogic() {
         this.connectionsController = new ConnectionsController();
-        this.receptionFilesControllerServer = new ReceptionFilesControllerServer();
+        this.receivingFileServerController = new ReceivingFileServerController();
+        this.sendFileServerController = new SendFileServerController();
     }
 
     @Override
@@ -79,6 +84,7 @@ public class ServerLogic implements ServerHandlerLogic {
     @Override
     public void getHandingDelFileRequest(DelFileRequest delFileRequest) {
         Path delFilePath = Paths.get(delFileRequest.getDelFilePath());
+        if (!Files.exists(delFilePath)) return;
         HelperMethods.deleteUserFile(delFilePath);
         sendMessage(new GetListResponse(delFilePath.getParent()));
     }
@@ -92,15 +98,14 @@ public class ServerLogic implements ServerHandlerLogic {
 
     @Override
     public void getHandingMetaDataFileRequest(MetaDataFileRequest metaDataFileRequest) {
-        String fileOrDirectoryName = metaDataFileRequest.getFileName();
         long sizeFile = metaDataFileRequest.getSizeFile();
         String parentPath = metaDataFileRequest.getParentDirectory();
         Map<Long, String> dstPathsMap = metaDataFileRequest.getDstPathsMap();
 
-        receptionFilesControllerServer.createCounterFileSize(sizeFile);
-        receptionFilesControllerServer.addParentDirectoryPath(parentPath);
-        receptionFilesControllerServer.addFileOutputStreamRepository(dstPathsMap);
-        sendMessage(new MetaDataFileResponse(true));
+        receivingFileServerController.createCounterFileSize(sizeFile);
+        receivingFileServerController.addParentDirectoryPath(parentPath);
+        receivingFileServerController.addFileOutputStreamMap(dstPathsMap);
+        sendMessage(new PermissionToTransferResponse(true));
     }
 
     @Override
@@ -109,13 +114,66 @@ public class ServerLogic implements ServerHandlerLogic {
         long sizePart = sendPartFileRequest.getSizePart();
         byte[] bytes = sendPartFileRequest.getBytes();
 
-        receptionFilesControllerServer.addSizePartInCounter(sizePart);
-        receptionFilesControllerServer.addBytesInFileOutputStream(idFile, bytes);
-        boolean fileCheckSize = receptionFilesControllerServer.sizeFileCheck();
+        receivingFileServerController.addSizePartInCounter(sizePart);
+        receivingFileServerController.addBytesInFileOutputStream(idFile, bytes);
+        boolean fileCheckSize = receivingFileServerController.sizeFileCheck();
         if (fileCheckSize) {
-            String parentDirectoryPath = receptionFilesControllerServer.getParentDirectoryPath();
+            String parentDirectoryPath = receivingFileServerController.getParentDirectoryPath();
             sendMessage(new GetListResponse(Paths.get(parentDirectoryPath)));
-            receptionFilesControllerServer.closeAllFileOutputStreamInDirectory();
+            receivingFileServerController.closeAllFileOutputStreams();
+        }
+    }
+
+    @Override
+    public void getHandingClearFileOutputStreams(ClearFileOutputStreamsRequest clearFileOutputStreamsRequest) {
+        receivingFileServerController.closeAllFileOutputStreams();
+    }
+
+    @Override
+    public void getHandingGetFileRequest(GetFileRequest getFileRequest) {
+        FileInfo.FileType fileType = getFileRequest.getFileType();
+        String srcPathString = getFileRequest.getSrcPath();
+        String dstPathString = getFileRequest.getDstPath();
+        Path srcPath = Paths.get(srcPathString);
+        Path dstPath = Paths.get(dstPathString);
+        Map<Long, String> dstPathsMap = new HashMap<>();
+        long size = 0;
+        switch (fileType) {
+            case FILE -> {
+                try {
+                    size = Files.size(srcPath);
+                    long id = sendFileServerController.addNewSrcPath(srcPathString);
+                    dstPathsMap.put(id, dstPathString);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case DIRECTORY -> {
+                Map<String, String> srcDstPaths = new HashMap<>();
+                size = HelperMethods.sumSizeFiles(srcPath);
+                srcDstPaths = HelperMethods.creatDstPaths(srcPath, dstPath);
+                for (Map.Entry<String, String> entry : srcDstPaths.entrySet()) {
+                    long id = sendFileServerController.addNewSrcPath(entry.getKey());
+                    dstPathsMap.put(id, entry.getValue());
+                }
+            }
+        }
+        sendMessage(new MetaDataResponse(dstPathsMap, size));
+    }
+
+    @Override
+    public void getHandingPermissionToTransferRequest(PermissionToTransferRequest permissionToTransferRequest) {
+        boolean allowTransmission = permissionToTransferRequest.isAllowTransmission();
+        if (allowTransmission) {
+            MyFunction<Long, byte[], Boolean> myFunctionSendPartFile = (id, bytes) -> {
+                sendMessage(new SendPartFileResponse(id, bytes));
+                return false;
+            };
+            Map<Long, String> srcPathsMap = sendFileServerController.getSrcPathsMap();
+            for (Map.Entry<Long, String> entry : srcPathsMap.entrySet()) {
+                HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile);
+            }
+            sendFileServerController.clearSrcPathsMap();
         }
     }
 

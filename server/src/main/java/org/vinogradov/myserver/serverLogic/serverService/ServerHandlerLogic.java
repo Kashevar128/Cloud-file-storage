@@ -17,4 +17,10 @@ public interface ServerHandlerLogic {
     void getHandingMetaDataFileRequest(MetaDataFileRequest metaDataFileRequest);
 
     void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest);
+
+    void getHandingClearFileOutputStreams(ClearFileOutputStreamsRequest clearFileOutputStreamsRequest);
+
+    void getHandingGetFileRequest(GetFileRequest getFileRequest);
+
+    void getHandingPermissionToTransferRequest(PermissionToTransferRequest permissionToTransferRequest);
 }

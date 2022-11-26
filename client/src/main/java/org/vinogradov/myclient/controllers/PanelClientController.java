@@ -1,6 +1,7 @@
 package org.vinogradov.myclient.controllers;
 
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -124,7 +125,7 @@ public class PanelClientController implements Initializable, PanelController<Pat
             filesTable.getItems().addAll(Files.list(pathNorm).map(FileInfo::new).collect(Collectors.toList()));
             filesTable.sort();
         } catch (IOException e) {
-            AlertWindowsClass.showUpdateListError();
+            Platform.runLater(AlertWindowsClass::showUpdateListError);
             e.printStackTrace();
         }
     }
