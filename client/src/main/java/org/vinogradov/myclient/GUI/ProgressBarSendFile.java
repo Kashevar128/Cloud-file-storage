@@ -80,8 +80,8 @@ public class ProgressBarSendFile {
         progressIndicator.setProgress(progressMeaning);
     }
 
-    public void updateFileNameBar(String fileName) {
-        Platform.runLater(() -> statusLabel.setText("SEND FILE: " + fileName));
+    public void updateFileNameBar(String fileName, String direction) {
+        Platform.runLater(() -> statusLabel.setText(direction + fileName));
     }
 
     private boolean checkSize() {

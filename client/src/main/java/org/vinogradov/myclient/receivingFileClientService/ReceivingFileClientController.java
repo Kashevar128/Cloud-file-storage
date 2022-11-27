@@ -13,6 +13,8 @@ public class ReceivingFileClientController {
 
     private String dstPath;
 
+    private String fileName;
+
     private Map<Long, FileOutputStream> fileOutputStreamMap;
 
     private CounterFileSize counterFileSize;
@@ -69,5 +71,21 @@ public class ReceivingFileClientController {
 
     public boolean sizeFileCheck() {
         return counterFileSize.getComparisonResult();
+    }
+
+    public double getRatioCounter() {
+        return counterFileSize.getRatio();
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public CounterFileSize getCounterFileSize() {
+        return counterFileSize;
     }
 }

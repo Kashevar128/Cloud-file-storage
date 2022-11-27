@@ -23,4 +23,6 @@ public interface ServerHandlerLogic {
     void getHandingGetFileRequest(GetFileRequest getFileRequest);
 
     void getHandingPermissionToTransferRequest(PermissionToTransferRequest permissionToTransferRequest);
+
+    void getHandingStopTransmissionRequest(StopTransmissionRequest stopTransmissionRequest);
 }

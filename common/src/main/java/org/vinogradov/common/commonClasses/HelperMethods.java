@@ -5,7 +5,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -70,16 +69,6 @@ public class HelperMethods {
             throw new RuntimeException(e);
         }
         return fileOutputStream;
-    }
-
-    public static FileInputStream generateFileInputStream(String path) {
-        FileInputStream fileInputStream;
-        try {
-            fileInputStream = new FileInputStream(path);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return fileInputStream;
     }
 
     private static void filesWalk(Path directory, Consumer<Path> pathConsumer) {

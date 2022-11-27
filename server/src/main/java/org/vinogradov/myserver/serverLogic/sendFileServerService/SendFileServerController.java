@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class SendFileServerController {
 
+    private boolean stopTransmission;
+
     private final GenerateIdFile generateIdFile;
 
     private Map<Long, String> srcPathsMap;
@@ -14,6 +16,7 @@ public class SendFileServerController {
     public SendFileServerController() {
         this.generateIdFile = new GenerateIdFile();
         this.srcPathsMap = new HashMap<>();
+        this.stopTransmission = false;
     }
 
     public long addNewSrcPath(String srcPath) {
@@ -28,5 +31,13 @@ public class SendFileServerController {
 
     public void clearSrcPathsMap() {
         srcPathsMap = new HashMap<>();
+    }
+
+    public boolean isStopTransmission() {
+        return stopTransmission;
+    }
+
+    public void setStopTransmission(boolean stopTransmission) {
+        this.stopTransmission = stopTransmission;
     }
 }

@@ -86,7 +86,7 @@ public class ClientLogic implements ClientHandlerLogic {
         boolean allowTransmission = permissionToTransferResponse.isAllowTransmission();
         if (allowTransmission) {
             String nameFileOrDirectorySend = sendFileClientController.getNameFileOrDirectorySend();
-            progressBarSendFile.updateFileNameBar(nameFileOrDirectorySend);
+            progressBarSendFile.updateFileNameBar(nameFileOrDirectorySend, Constants.SEND);
             progressBarSendFile.setCounterFileSize(sendFileClientController.getCounterFileSize());
             progressBarSendFile.showProgressBar();
             MyFunction<Long, byte[], Boolean> myFunctionSendPartFile = (id, bytes) -> {
@@ -115,6 +115,9 @@ public class ClientLogic implements ClientHandlerLogic {
         Map<Long, String> dstPaths = metaDataResponse.getDstPaths();
         receivingFileClientController.addFileOutputStreamMap(dstPaths);
         receivingFileClientController.createCounterFileSize(sizeFile);
+        progressBarSendFile.setCounterFileSize(receivingFileClientController.getCounterFileSize());
+        progressBarSendFile.showProgressBar();
+        clientController.getSendFileButton().setDisable(true);
         sendMessage(new PermissionToTransferRequest(user, true));
     }
 
@@ -123,11 +126,20 @@ public class ClientLogic implements ClientHandlerLogic {
         long sizePart = sendPartFileResponse.getSizePart();
         Long id = sendPartFileResponse.getId();
         byte[] bytes = sendPartFileResponse.getBytes();
-        Path parentFilePath = Paths.get(receivingFileClientController.getDstPath()).getParent();
         receivingFileClientController.addSizePartInCounter(sizePart);
+        double ratioCounter = receivingFileClientController.getRatioCounter();
+        progressBarSendFile.updateFileNameBar(receivingFileClientController.getFileName(), Constants.DOWNLOAD);
+        progressBarSendFile.updateProgressBar(ratioCounter);
         receivingFileClientController.addBytesInFileOutputStream(id, bytes);
         boolean sizeFileCheck = receivingFileClientController.sizeFileCheck();
+        boolean end = progressBarSendFile.isEnd();
+        if (end) {
+            progressBarSendFile.setEnd(false);
+            sendMessage(new StopTransmissionRequest());
+            clientController.clientPC.delFile(Paths.get(receivingFileClientController.getDstPath()));
+        }
         if (sizeFileCheck) {
+            Path parentFilePath = Paths.get(receivingFileClientController.getDstPath()).getParent();
             receivingFileClientController.closeAllFileOutputStreams();
             clientController.clientPC.updateList(parentFilePath);
         }
@@ -191,6 +203,7 @@ public class ClientLogic implements ClientHandlerLogic {
 
     public void createGetFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
         receivingFileClientController.setDstPath(dstPath.toString());
+        receivingFileClientController.setFileName(selectedFile.getFilename());
         sendMessage(new GetFileRequest(user, selectedFile.getType(), srcPath.toString(), dstPath.toString()));
     }
 
