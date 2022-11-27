@@ -52,23 +52,28 @@ public class ClientLogic implements ClientHandlerLogic {
     }
 
     @Override
-    public void getHandingMessageReg(RegServerResponse responseReg) {
-        this.user = responseReg.getUser();
-        UpdatePanel updatePanelReg = responseReg.getUpdatePanel();
-        boolean regComplete = responseReg.isRegComplete();
-        startClientGUI(regComplete, updatePanelReg, runnableRegComplete, runnableRegFalse);
+    public void getHandingRegOrAuthResponse(RegOrAuthServerResponse regOrAuthServerResponse) {
+        boolean regOrAuthComplete = regOrAuthServerResponse.isRegOrAuthComplete();
+        this.user = regOrAuthServerResponse.getUser();
+        UpdatePanel updatePanel = regOrAuthServerResponse.getUpdatePanel();
+        StatusUser statusUser = regOrAuthServerResponse.getStatusUser();
+        Runnable runnableComplete = null;
+        Runnable runnableFalse = null;
+        switch (statusUser) {
+            case AUTH -> {
+                runnableComplete = runnableAuthComplete;
+                runnableFalse = runnableAuthFalse;
+            }
+            case REG -> {
+                runnableComplete = runnableRegComplete;
+                runnableFalse = runnableRegFalse;
+            }
+        }
+        startClientGUI(regOrAuthComplete, updatePanel, runnableComplete, runnableFalse);
     }
 
     @Override
-    public void getHandingMessageAuth(AuthServerResponse responseAuth) {
-        this.user = responseAuth.getUser();
-        UpdatePanel updatePanelAuth = responseAuth.getUpdatePanel();
-        boolean authComplete = responseAuth.isAuthComplete();
-       startClientGUI(authComplete, updatePanelAuth, runnableAuthComplete, runnableAuthFalse);
-    }
-
-    @Override
-    public void getHandingMessageList(GetListResponse responseList) {
+    public void getHandingGetListResponse(GetListResponse responseList) {
         UpdatePanel updatePanel = responseList.getUpdatePanel();
         clientController.serverPC.updateList(updatePanel);
     }
@@ -145,16 +150,27 @@ public class ClientLogic implements ClientHandlerLogic {
         }
     }
 
+    @Override
+    public void getHandingPatternMatchingResponse(PatternMatchingResponse patternMatchingResponse) {
+        Field field = patternMatchingResponse.getField();
+        if (field == null) {
+            User user = patternMatchingResponse.getUser();
+            StatusUser statusUser = patternMatchingResponse.getStatusUser();
+            createRegOrAuthClientRequest(user, statusUser);
+        } else {
+            switch (field) {
+                case PASSWORD -> Platform.runLater(AlertWindowsClass::showIncorrectPasswordAlert);
+                case USER_NAME -> Platform.runLater(AlertWindowsClass::showIncorrectUserNameAlert);
+            }
+        }
+    }
+
     public void closeClient() {
         nettyClient.exitClient();
     }
 
-    public void createRegClientRequest(String name, String pass) {
-        sendMessage(new RegClientRequest(new User(name, pass)));
-    }
-
-    public void createAuthClientRequest(String name, String pass) {
-        sendMessage(new AuthClientRequest(new User(name, pass)));
+    public void createRegOrAuthClientRequest(User user, StatusUser statusUser) {
+        sendMessage(new RegOrAuthClientRequest(user, statusUser));
     }
 
     public void createSendFileRequest(Path srcPath, Path dstPath, FileInfo selectedFile) {
@@ -239,8 +255,7 @@ public class ClientLogic implements ClientHandlerLogic {
         return clientController;
     }
 
-    private void startClientGUI(boolean complete, UpdatePanel updatePanel,
-                                Runnable runnableComplete, Runnable runnableFalse) {
+    private void startClientGUI(boolean complete, UpdatePanel updatePanel, Runnable runnableComplete, Runnable runnableFalse) {
         if (complete) {
             Platform.runLater(() -> {
                 regAuthGui.getStage().close();
@@ -252,7 +267,7 @@ public class ClientLogic implements ClientHandlerLogic {
                 this.progressBarSendFile = new ProgressBarSendFile(clientController);
             });
         } else {
-            runnableFalse.run();
+            Platform.runLater(runnableFalse);
         }
     }
 

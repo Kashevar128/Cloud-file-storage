@@ -21,16 +21,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     static {
 
-        REQUEST_HANDLERS.put(RegClientRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.sendRegServerResponse((RegClientRequest) basicQuery);
-        }));
-
-        REQUEST_HANDLERS.put(AuthClientRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.sendAuthServerResponse((AuthClientRequest) basicQuery);
+        REQUEST_HANDLERS.put(RegOrAuthClientRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingRegOrAuthClientRequest((RegOrAuthClientRequest) basicQuery);
         }));
 
         REQUEST_HANDLERS.put(GetListRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.sendListResponse((GetListRequest) basicQuery);
+            serverHandlerLogic.getHandingGetListRequest((GetListRequest) basicQuery);
         }));
 
         REQUEST_HANDLERS.put(DelFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
@@ -50,14 +46,23 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         }));
 
         REQUEST_HANDLERS.put(ClearFileOutputStreamsRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.getHandingClearFileOutputStreams((ClearFileOutputStreamsRequest) basicQuery);
+            serverHandlerLogic.getHandingClearFileOutputStreamsRequest((ClearFileOutputStreamsRequest) basicQuery);
         }));
 
         REQUEST_HANDLERS.put(GetFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingGetFileRequest((GetFileRequest) basicQuery);
         }));
+
         REQUEST_HANDLERS.put(PermissionToTransferRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingPermissionToTransferRequest((PermissionToTransferRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(StopTransmissionRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingStopTransmissionRequest((StopTransmissionRequest) basicQuery);
+        }));
+
+        REQUEST_HANDLERS.put(PatternMatchingRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingPatternMatchingRequest((PatternMatchingRequest) basicQuery);
         }));
     }
 

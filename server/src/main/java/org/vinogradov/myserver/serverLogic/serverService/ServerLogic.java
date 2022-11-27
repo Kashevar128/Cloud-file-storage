@@ -52,31 +52,20 @@ public class ServerLogic implements ServerHandlerLogic {
     }
 
     @Override
-    public void sendRegServerResponse(RegClientRequest regClient) {
-        User user = regClient.getUser();
-        boolean regComplete = dataBase.createUser(user);
-        if (regComplete) {
-            Path startList = startWorkingWithUser(user);
-            sendMessage(new RegServerResponse(true, startList, user));
-            return;
+    public void getHandingRegOrAuthClientRequest(RegOrAuthClientRequest regOrAuthClientRequest) {
+        User user = regOrAuthClientRequest.getUser();
+        StatusUser statusUser = regOrAuthClientRequest.getStatusUser();
+        boolean complete = false;
+        switch (statusUser) {
+            case REG -> complete = dataBase.createUser(user);
+            case AUTH -> complete = dataBase.auth(user);
         }
-        sendMessage(new RegServerResponse(false));
+        Path startList = startWorkingWithUser(user);
+        sendMessage(new RegOrAuthServerResponse(complete, startList, statusUser, user));
     }
 
     @Override
-    public void sendAuthServerResponse(AuthClientRequest authClient) {
-        User user = authClient.getUser();
-        boolean authComplete = dataBase.auth(user);
-        if (authComplete) {
-            Path startList = startWorkingWithUser(user);
-            sendMessage(new AuthServerResponse(true, startList, user));
-            return;
-        }
-        sendMessage(new AuthServerResponse(false));
-    }
-
-    @Override
-    public void sendListResponse(GetListRequest listRequest) {
+    public void getHandingGetListRequest(GetListRequest listRequest) {
         Path path = Paths.get(listRequest.getPath());
         sendMessage(new GetListResponse(path));
     }
@@ -125,7 +114,7 @@ public class ServerLogic implements ServerHandlerLogic {
     }
 
     @Override
-    public void getHandingClearFileOutputStreams(ClearFileOutputStreamsRequest clearFileOutputStreamsRequest) {
+    public void getHandingClearFileOutputStreamsRequest(ClearFileOutputStreamsRequest clearFileOutputStreamsRequest) {
         receivingFileServerController.closeAllFileOutputStreams();
     }
 
@@ -183,10 +172,20 @@ public class ServerLogic implements ServerHandlerLogic {
         sendFileServerController.setStopTransmission(true);
     }
 
+    @Override
+    public void getHandingPatternMatchingRequest(PatternMatchingRequest patternMatchingRequest) {
+        User user = patternMatchingRequest.getUser();
+        Field field = connectionsController.patternMatching(user.getNameUser(), user.getPassword());
+        StatusUser statusUser = patternMatchingRequest.getStatusUser();
+        if (field == null) {
+            sendMessage(new PatternMatchingResponse(field, user, statusUser));
+        } else sendMessage(new PatternMatchingResponse(field));
+    }
+
     public boolean filterSecurity(BasicQuery basicQuery) {
         User user = basicQuery.getUser();
-        if (basicQuery instanceof AuthClientRequest
-                || basicQuery instanceof RegClientRequest) return true;
+        if (basicQuery instanceof RegOrAuthClientRequest
+                || basicQuery instanceof PatternMatchingRequest) return true;
         if (connectionsController.security(user)) {
             return true;
         }

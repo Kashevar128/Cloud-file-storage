@@ -4,11 +4,9 @@ import org.vinogradov.common.requests.*;
 
 public interface ServerHandlerLogic {
 
-    void sendRegServerResponse(RegClientRequest regClient);
+    void getHandingRegOrAuthClientRequest(RegOrAuthClientRequest authClient);
 
-    void sendAuthServerResponse(AuthClientRequest authClient);
-
-    void sendListResponse(GetListRequest listRequest);
+    void getHandingGetListRequest(GetListRequest listRequest);
 
     void getHandingDelFileRequest(DelFileRequest delFileRequest);
 
@@ -18,11 +16,13 @@ public interface ServerHandlerLogic {
 
     void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest);
 
-    void getHandingClearFileOutputStreams(ClearFileOutputStreamsRequest clearFileOutputStreamsRequest);
+    void getHandingClearFileOutputStreamsRequest(ClearFileOutputStreamsRequest clearFileOutputStreamsRequest);
 
     void getHandingGetFileRequest(GetFileRequest getFileRequest);
 
     void getHandingPermissionToTransferRequest(PermissionToTransferRequest permissionToTransferRequest);
 
     void getHandingStopTransmissionRequest(StopTransmissionRequest stopTransmissionRequest);
+
+    void getHandingPatternMatchingRequest(PatternMatchingRequest patternMatchingRequest);
 }

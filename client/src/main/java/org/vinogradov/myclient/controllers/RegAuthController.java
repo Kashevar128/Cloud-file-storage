@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.vinogradov.common.commonClasses.HelperMethods;
-import org.vinogradov.myclient.GUI.AlertWindowsClass;
+import org.vinogradov.common.commonClasses.StatusUser;
+import org.vinogradov.common.commonClasses.User;
+import org.vinogradov.common.requests.PatternMatchingRequest;
 import org.vinogradov.myclient.clientService.ClientLogic;
 
 import java.io.*;
@@ -14,9 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegAuthController {
 
@@ -26,10 +25,6 @@ public class RegAuthController {
 
     private List<String> authFields;
 
-    private final BiConsumer<String, String> regConsumer = (name, pass) -> clientLogic.createRegClientRequest(name, pass);
-
-    private final BiConsumer<String, String> authConsumer = (name, pass) -> clientLogic.createAuthClientRequest(name, pass);
-
     @FXML
     public TextField userField;
 
@@ -37,13 +32,13 @@ public class RegAuthController {
     public PasswordField passwordField;
 
     @FXML
-    public void regUser() {
-        getStarted(regConsumer);
+    public void authUser(ActionEvent actionEvent) {
+        getStarted(StatusUser.AUTH);
     }
 
     @FXML
-    public void authUser() {
-        getStarted(authConsumer);
+    public void regUser(ActionEvent actionEvent) {
+        getStarted(StatusUser.REG);
     }
 
     @FXML
@@ -59,27 +54,8 @@ public class RegAuthController {
         }
     }
 
-    private boolean filter(String userField, String passwordField) {
-        if (userField.isBlank() || passwordField.isBlank()) {
-            return false;
-        }
-
-        Pattern patternNameUser = Pattern.compile("^[a-zA-Z0-9_.]{1,30}$");
-        Pattern patternPassword = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}$");
-        Matcher matcherNameUser = patternNameUser.matcher(userField);
-        Matcher matcherPassword = patternPassword.matcher(passwordField);
-
-        if (!matcherNameUser.matches()) {
-            AlertWindowsClass.showIncorrectUserNameAlert();
-            return false;
-        }
-
-        if (!matcherPassword.matches()) {
-            AlertWindowsClass.showIncorrectPasswordAlert();
-            return false;
-        }
-
-        return true;
+    private boolean fieldsBlank(String userField, String passwordField) {
+        return userField.isBlank() && passwordField.isBlank();
     }
 
     public ClientLogic getClientLogic() {
@@ -119,14 +95,12 @@ public class RegAuthController {
         }
     }
 
-    private void getStarted(BiConsumer<String, String> startConsumer) {
+    private void getStarted(StatusUser statusUser) {
         String name = HelperMethods.delSpace(userField.getText());
         String pass = HelperMethods.delSpace(passwordField.getText());
-        if (filter(name, pass)) {
-            startConsumer.accept(name, pass);
-            saveFields(name, pass);
-        }
+        User user = new User(name, pass);
+        if (fieldsBlank(name, pass)) return;
+        saveFields(name, pass);
+        clientLogic.sendMessage(new PatternMatchingRequest(user, statusUser));
     }
-
-
 }

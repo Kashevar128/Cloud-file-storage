@@ -4,11 +4,9 @@ import org.vinogradov.common.responses.*;
 
 public interface ClientHandlerLogic {
 
-    void getHandingMessageReg(RegServerResponse responseReg);
+    void getHandingRegOrAuthResponse(RegOrAuthServerResponse responseAuth);
 
-    void getHandingMessageAuth(AuthServerResponse responseAuth);
-
-    void getHandingMessageList(GetListResponse responseList);
+    void getHandingGetListResponse(GetListResponse responseList);
 
     void getHandingConnectionLimit();
 
@@ -17,4 +15,6 @@ public interface ClientHandlerLogic {
     void getHandingMetaDataResponse(MetaDataResponse metaDataResponse);
 
     void getHandingSendPartFileResponse(SendPartFileResponse sendPartFileResponse);
+
+    void getHandingPatternMatchingResponse(PatternMatchingResponse patternMatchingResponse);
 }

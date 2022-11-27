@@ -71,7 +71,7 @@ public class ProgressBarSendFile {
         primaryStage.setResizable(false);
 
         Scene scene = new Scene(root, 500, 120, Color.WHITE);
-        primaryStage.setTitle("Send files");
+        primaryStage.setTitle("Transfer files");
         primaryStage.setScene(scene);
     }
 

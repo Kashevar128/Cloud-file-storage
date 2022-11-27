@@ -20,16 +20,13 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     static {
-        RESPONSE_HANDLERS.put(RegServerResponse.class, (basicQuery, clientHandlerLogic) -> {
-            clientHandlerLogic.getHandingMessageReg((RegServerResponse) basicQuery);
-        });
 
-        RESPONSE_HANDLERS.put(AuthServerResponse.class, (basicQuery, clientHandlerLogic) -> {
-            clientHandlerLogic.getHandingMessageAuth((AuthServerResponse) basicQuery);
+        RESPONSE_HANDLERS.put(RegOrAuthServerResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingRegOrAuthResponse((RegOrAuthServerResponse) basicQuery);
         });
 
         RESPONSE_HANDLERS.put(GetListResponse.class, (basicQuery, clientHandlerLogic) -> {
-            clientHandlerLogic.getHandingMessageList((GetListResponse) basicQuery);
+            clientHandlerLogic.getHandingGetListResponse((GetListResponse) basicQuery);
         });
 
         RESPONSE_HANDLERS.put(ConnectionLimitResponse.class, (basicQuery, clientHandlerLogic) -> {
@@ -46,6 +43,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
         RESPONSE_HANDLERS.put(SendPartFileResponse.class, (basicQuery, clientHandlerLogic) -> {
             clientHandlerLogic.getHandingSendPartFileResponse((SendPartFileResponse) basicQuery);
+        });
+
+        RESPONSE_HANDLERS.put(PatternMatchingResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingPatternMatchingResponse((PatternMatchingResponse) basicQuery);
         });
     }
 
