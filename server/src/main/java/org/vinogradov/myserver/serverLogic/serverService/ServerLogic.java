@@ -155,21 +155,15 @@ public class ServerLogic implements ServerHandlerLogic {
         boolean allowTransmission = permissionToTransferRequest.isAllowTransmission();
         if (allowTransmission) {
             MyFunction<Long, byte[], Boolean> myFunctionSendPartFile = (id, bytes) -> {
-                if (sendFileServerController.isStopTransmission()) return true;
                 sendMessage(new SendPartFileResponse(id, bytes));
                 return false;
             };
             Map<Long, String> srcPathsMap = sendFileServerController.getSrcPathsMap();
             for (Map.Entry<Long, String> entry : srcPathsMap.entrySet()) {
-                if (HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile)) break;
+                HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile);
             }
             sendFileServerController.clearSrcPathsMap();
         }
-    }
-
-    @Override
-    public void getHandingStopTransmissionRequest(StopTransmissionRequest stopTransmissionRequest) {
-        sendFileServerController.setStopTransmission(true);
     }
 
     @Override

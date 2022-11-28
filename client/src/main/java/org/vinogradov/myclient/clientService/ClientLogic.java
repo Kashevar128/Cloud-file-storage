@@ -140,7 +140,6 @@ public class ClientLogic implements ClientHandlerLogic {
         boolean end = progressBarSendFile.isEnd();
         if (end) {
             progressBarSendFile.setEnd(false);
-            sendMessage(new StopTransmissionRequest());
             clientController.clientPC.delFile(Paths.get(receivingFileClientController.getDstPath()));
         }
         if (sizeFileCheck) {

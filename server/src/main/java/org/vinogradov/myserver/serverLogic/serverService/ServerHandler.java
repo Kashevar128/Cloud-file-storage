@@ -57,10 +57,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             serverHandlerLogic.getHandingPermissionToTransferRequest((PermissionToTransferRequest) basicQuery);
         }));
 
-        REQUEST_HANDLERS.put(StopTransmissionRequest.class, ((serverHandlerLogic, basicQuery) -> {
-            serverHandlerLogic.getHandingStopTransmissionRequest((StopTransmissionRequest) basicQuery);
-        }));
-
         REQUEST_HANDLERS.put(PatternMatchingRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingPatternMatchingRequest((PatternMatchingRequest) basicQuery);
         }));

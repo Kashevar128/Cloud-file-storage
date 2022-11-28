@@ -22,7 +22,5 @@ public interface ServerHandlerLogic {
 
     void getHandingPermissionToTransferRequest(PermissionToTransferRequest permissionToTransferRequest);
 
-    void getHandingStopTransmissionRequest(StopTransmissionRequest stopTransmissionRequest);
-
     void getHandingPatternMatchingRequest(PatternMatchingRequest patternMatchingRequest);
 }
