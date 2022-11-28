@@ -106,7 +106,7 @@ public class ClientLogic implements ClientHandlerLogic {
                 }
                 return false;
             };
-            Map<Long, String> pathsMapFile = sendFileClientController.getMapSrcPaths();
+            Map<Long, String> pathsMapFile = sendFileClientController.getSrcPathsMap();
             for (Map.Entry<Long, String> entry : pathsMapFile.entrySet()) {
                 if (HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile)) break;
             }

@@ -2,6 +2,7 @@ package org.vinogradov.myclient.receivingFileClientService;
 
 import org.vinogradov.common.commonClasses.CounterFileSize;
 import org.vinogradov.common.commonClasses.HelperMethods;
+import org.vinogradov.common.commonClasses.ReceivingController;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReceivingFileClientController {
+public class ReceivingFileClientController implements ReceivingController {
 
     private String dstPath;
 
@@ -23,14 +24,7 @@ public class ReceivingFileClientController {
         this.fileOutputStreamMap = new HashMap<>();
     }
 
-    public String getDstPath() {
-        return dstPath;
-    }
-
-    public void setDstPath(String dstPath) {
-        this.dstPath = dstPath;
-    }
-
+    @Override
     public void addFileOutputStreamMap(Map<Long, String> dstPathsMap) {
         for (Map.Entry<Long, String> entry : dstPathsMap.entrySet()) {
             HelperMethods.createNewDirectoryRecursion(Paths.get(entry.getValue()).getParent());
@@ -40,6 +34,7 @@ public class ReceivingFileClientController {
         }
     }
 
+    @Override
     public void addBytesInFileOutputStream(Long id, byte[] bytes) {
         FileOutputStream fileOutputStream = fileOutputStreamMap.get(id);
         try {
@@ -49,6 +44,7 @@ public class ReceivingFileClientController {
         }
     }
 
+    @Override
     public void closeAllFileOutputStreams() {
         if (fileOutputStreamMap.isEmpty()) return;
         fileOutputStreamMap.forEach((key, value) -> {
@@ -61,14 +57,17 @@ public class ReceivingFileClientController {
         fileOutputStreamMap = new HashMap<>();
     }
 
+    @Override
     public void createCounterFileSize(long referenceSize) {
         counterFileSize = new CounterFileSize(referenceSize);
     }
 
+    @Override
     public void addSizePartInCounter(long sizePart) {
         counterFileSize.addSize(sizePart);
     }
 
+    @Override
     public boolean sizeFileCheck() {
         return counterFileSize.getComparisonResult();
     }
@@ -87,5 +86,13 @@ public class ReceivingFileClientController {
 
     public CounterFileSize getCounterFileSize() {
         return counterFileSize;
+    }
+
+    public String getDstPath() {
+        return dstPath;
+    }
+
+    public void setDstPath(String dstPath) {
+        this.dstPath = dstPath;
     }
 }

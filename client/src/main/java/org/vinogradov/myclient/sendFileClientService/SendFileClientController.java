@@ -2,11 +2,12 @@ package org.vinogradov.myclient.sendFileClientService;
 
 import org.vinogradov.common.commonClasses.CounterFileSize;
 import org.vinogradov.common.commonClasses.GenerateIdFile;
+import org.vinogradov.common.commonClasses.SendController;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SendFileClientController {
+public class SendFileClientController implements SendController {
     private final GenerateIdFile generateIdFile;
     private Map<Long, String> srcPathsMap;
     private String nameFileOrDirectorySend;
@@ -22,16 +23,19 @@ public class SendFileClientController {
         return generateIdFile.getIdFile();
     }
 
-    public Map<Long, String> getMapSrcPaths () {
+    @Override
+    public Map<Long, String> getSrcPathsMap() {
         return srcPathsMap;
     }
 
-    public Long addNewSrcPath(String srcPath) {
+    @Override
+    public long addNewSrcPath(String srcPath) {
         long id = getUniqIdFile();
         srcPathsMap.put(id, srcPath);
         return id;
     }
 
+    @Override
     public void clearSrcPathsMap() {
         srcPathsMap = new HashMap<>();
     }
