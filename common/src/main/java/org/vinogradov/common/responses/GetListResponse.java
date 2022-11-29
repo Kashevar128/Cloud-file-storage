@@ -1,7 +1,6 @@
 package org.vinogradov.common.responses;
 
 import org.vinogradov.common.commonClasses.BasicQuery;
-import org.vinogradov.common.commonClasses.FileInfo;
 import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.common.commonClasses.UpdatePanel;
 
@@ -11,9 +10,9 @@ public class GetListResponse implements BasicQuery {
 
     private final UpdatePanel updatePanel;
 
-    public GetListResponse(Path path) {
-        updatePanel = new UpdatePanel(path.toString(),
-                HelperMethods.generateFileInfoList(path));
+    public GetListResponse(String clientPath, Path serverPath) {
+        updatePanel = new UpdatePanel(clientPath,
+                HelperMethods.generateFileInfoList(serverPath));
     }
 
     @Override

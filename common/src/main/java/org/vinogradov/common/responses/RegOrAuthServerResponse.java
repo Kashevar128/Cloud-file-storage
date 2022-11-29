@@ -14,9 +14,9 @@ public class RegOrAuthServerResponse implements BasicQuery {
 
     private final User user;
 
-    public RegOrAuthServerResponse(boolean regOrAuthComplete, Path path,StatusUser statusUser , User user) {
+    public RegOrAuthServerResponse(boolean regOrAuthComplete, String pathEdit, Path path, StatusUser statusUser , User user) {
         this.regOrAuthComplete = regOrAuthComplete;
-        this.updatePanel = new UpdatePanel(path.toString(),
+        this.updatePanel = new UpdatePanel(pathEdit,
                 HelperMethods.generateFileInfoList(path));
         this.statusUser = statusUser;
         this.user = user;

@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.common.commonClasses.*;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
+import org.vinogradov.myserver.serverLogic.connectionService.ConverterPath;
 import org.vinogradov.myserver.serverLogic.receivingFileServerService.ReceivingFileServerController;
 import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.sendFileServerService.SendFileServerController;
@@ -61,28 +62,39 @@ public class ServerLogic implements ServerHandlerLogic {
             case AUTH -> complete = dataBase.auth(user);
         }
         Path startList = startWorkingWithUser(user);
-        sendMessage(new RegOrAuthServerResponse(complete, startList, statusUser, user));
+        ConverterPath converterPath = connectionsController.getConverterPath();
+        converterPath.setPath(startList.toString(), false);
+        String pathStartListEdit = converterPath.getClientPathString();
+        sendMessage(new RegOrAuthServerResponse(complete, pathStartListEdit, startList, statusUser, user));
     }
 
     @Override
     public void getHandingGetListRequest(GetListRequest listRequest) {
-        Path path = Paths.get(listRequest.getPath());
-        sendMessage(new GetListResponse(path));
+        String clientPath = listRequest.getPath();
+        ConverterPath converterPath = connectionsController.getConverterPath();
+        converterPath.setPath(clientPath, true);
+        sendMessage(new GetListResponse(converterPath.getClientPathString(), converterPath.getServerPathToPath()));
     }
 
     @Override
     public void getHandingDelFileRequest(DelFileRequest delFileRequest) {
-        Path delFilePath = Paths.get(delFileRequest.getDelFilePath());
-        if (!Files.exists(delFilePath)) return;
-        HelperMethods.deleteUserFile(delFilePath);
-        sendMessage(new GetListResponse(delFilePath.getParent()));
+        String clientDelFilePath = delFileRequest.getDelFilePath();
+        ConverterPath converterPath = connectionsController.getConverterPath();
+        converterPath.setPath(clientDelFilePath, true);
+        if (!Files.exists(converterPath.getServerPathToPath())) return;
+        HelperMethods.deleteUserFile(converterPath.getServerPathToPath());
+        sendMessage(new GetListResponse(converterPath.getParentClientPathString(),
+                converterPath.getParentServerPathToPath()));
     }
 
     @Override
     public void getHandingCreateNewFolderRequest(CreateNewFolderRequest createNewFolderRequest) {
-        Path path = Paths.get(createNewFolderRequest.getPathFolder());
-        HelperMethods.createNewUserFile(path);
-        sendMessage(new GetListResponse(path.getParent()));
+        String clientPathFolder = createNewFolderRequest.getPathFolder();
+        ConverterPath converterPath = connectionsController.getConverterPath();
+        converterPath.setPath(clientPathFolder, true);
+        HelperMethods.createNewUserFile(converterPath.getServerPathToPath());
+        sendMessage(new GetListResponse(converterPath.getParentClientPathString(),
+                converterPath.getParentServerPathToPath()));
     }
 
     @Override
@@ -93,7 +105,9 @@ public class ServerLogic implements ServerHandlerLogic {
 
         receivingFileServerController.createCounterFileSize(sizeFile);
         receivingFileServerController.addParentDirectoryPath(parentPath);
-        receivingFileServerController.addFileOutputStreamMap(dstPathsMap);
+        ConverterPath converterPath = connectionsController.getConverterPath();
+        converterPath.setPathsMap(dstPathsMap, true);
+        receivingFileServerController.addFileOutputStreamMap(converterPath.getServerPathsMap());
         sendMessage(new PermissionToTransferResponse(true));
     }
 
@@ -108,7 +122,10 @@ public class ServerLogic implements ServerHandlerLogic {
         boolean fileCheckSize = receivingFileServerController.sizeFileCheck();
         if (fileCheckSize) {
             String parentDirectoryPath = receivingFileServerController.getParentDirectoryPath();
-            sendMessage(new GetListResponse(Paths.get(parentDirectoryPath)));
+            ConverterPath converterPath = connectionsController.getConverterPath();
+            converterPath.setPath(parentDirectoryPath, true);
+            sendMessage(new GetListResponse(converterPath.getClientPathString(),
+                    converterPath.getServerPathToPath()));
             receivingFileServerController.closeAllFileOutputStreams();
         }
     }
@@ -197,7 +214,9 @@ public class ServerLogic implements ServerHandlerLogic {
     private Path startWorkingWithUser(User user) {
         connectionsController.stopTimerConnectionLimit();
         connectionsController.addDataUser(user);
-        return storage.createUserRepository(user.getNameUser());
+        Path userPath = storage.createUserRepository(user.getNameUser());
+        connectionsController.setConverterPath(userPath.toString());
+        return userPath;
     }
 
     public static void unConnectDataBase() {

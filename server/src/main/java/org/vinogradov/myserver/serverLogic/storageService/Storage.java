@@ -16,7 +16,7 @@ public class Storage {
 
     public Path createUserRepository(String nameClient) {
 
-        Path path = Paths.get("./server/Data_Storage/" + nameClient);
+        Path path = Paths.get("./server/Data_Storage/" + "$$$" + nameClient + "$$$");
         if(!Files.exists(path)) {
             try {
                 Files.createDirectories(path);
@@ -27,5 +27,9 @@ public class Storage {
         listUserRepositories.put(nameClient, path);
         System.out.println(listUserRepositories);
         return path;
+    }
+
+    public Path getRootPath(String name) {
+        return listUserRepositories.get(name);
     }
 }

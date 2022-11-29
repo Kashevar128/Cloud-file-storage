@@ -35,12 +35,6 @@ public class HelperMethods {
         return mapPathsSrcDst;
     }
 
-    public static String editingPath(Path path, String name) {
-        String strPath = path.toString();
-        int s = strPath.indexOf(name);
-        return strPath.substring(s);
-    }
-
     public static boolean split(Long id, String path, MyFunction<Long, byte[], Boolean> filePartMyFunction) {
         byte[] filePart = new byte[Constants.MB_1];
         try (FileInputStream fileInputStream = new FileInputStream(path)) {

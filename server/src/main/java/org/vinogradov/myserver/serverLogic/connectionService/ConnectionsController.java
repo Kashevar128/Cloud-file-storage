@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public class ConnectionsController {
 
     private ConnectionLimit connectionLimit;
+    private ConverterPath converterPath;
     private User user;
 
     public void newConnectionLimit(ChannelHandlerContext context) {
@@ -45,5 +46,11 @@ public class ConnectionsController {
         else return null;
     }
 
+    public ConverterPath getConverterPath() {
+        return converterPath;
+    }
 
+    public void setConverterPath(String rootDirectoryPath) {
+        this.converterPath = new ConverterPath(rootDirectoryPath);
+    }
 }

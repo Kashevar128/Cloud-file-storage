@@ -84,7 +84,7 @@ public class PanelServerController implements Initializable, PanelController<Upd
                 FileInfo selectedFile = filesTable.getSelectionModel().getSelectedItem();
                 if (mouseEvent.getClickCount() == 2 && selectedFile != null) {
                     Path path = Paths.get(getCurrentPath()).resolve(selectedFile.getFilename());
-                    if (Files.isDirectory(path)) {
+                    if (selectedFile.getType() == FileInfo.FileType.DIRECTORY) {
                         clientLogic.createGetListRequest(path.toString());
                     }
                 }
@@ -112,10 +112,10 @@ public class PanelServerController implements Initializable, PanelController<Upd
 
     @Override
     public void updateList(UpdatePanel updatePanel) {
-        Path currentPath = Paths.get(updatePanel.getPath()).normalize().toAbsolutePath();
+        String currentPath = updatePanel.getPath();
         List<FileInfo> fileInfos = updatePanel.getListInfo();
-        pathField.setText(HelperMethods.editingPath(currentPath, clientLogic.getUser().getNameUser()));
-        stringCurrentPath = currentPath.toString();
+        pathField.setText(currentPath);
+        stringCurrentPath = currentPath;
         filesTable.getItems().clear();
         filesTable.getItems().addAll(fileInfos);
         filesTable.sort();
