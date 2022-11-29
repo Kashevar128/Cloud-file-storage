@@ -113,7 +113,7 @@ public class PanelClientController implements Initializable, PanelController<Pat
             updateList(path.getParent());
             return;
         }
-        AlertWindowsClass.showDelFileError();
+        Platform.runLater(AlertWindowsClass::showDelFileError);
     }
 
     @Override

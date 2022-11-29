@@ -1,5 +1,6 @@
 package org.vinogradov.myclient.controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -32,7 +33,7 @@ public class EnterWindowController {
             return false;
         }
         if (nameFolder.length() > 50){
-            AlertWindowsClass.showLengthFolderNameAlert();
+            Platform.runLater(AlertWindowsClass::showLengthFolderNameAlert);
             nameFolderField.clear();
             return false;
         }

@@ -12,7 +12,7 @@ public class CloudUser {
 
     public CloudUser(String pathCloud) {
         this.pathCloud = pathCloud;
-        this.maxSize = Constants.GB_2;
+        this.maxSize = Constants.GB_10;
         this.sizeCloud = 0;
     }
 

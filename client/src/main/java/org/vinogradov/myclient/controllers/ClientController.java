@@ -78,7 +78,7 @@ public class ClientController implements Initializable {
     private FileInfo selectFile() {
 
         if (clientPC.getSelectedFileInfo() == null && serverPC.getSelectedFileInfo() == null) {
-            AlertWindowsClass.showSelectFileAlert();
+            Platform.runLater(AlertWindowsClass::showSelectFileAlert);
             return null;
         }
 
@@ -92,7 +92,7 @@ public class ClientController implements Initializable {
 
     private boolean selectTable() {
         if (!clientPC.getSelectedTable() && !serverPC.getSelectedTable()) {
-            AlertWindowsClass.showSelectTableAlert();
+            Platform.runLater(AlertWindowsClass::showSelectTableAlert);
             return false;
         }
 
