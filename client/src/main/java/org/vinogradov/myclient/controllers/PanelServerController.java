@@ -136,7 +136,7 @@ public class PanelServerController implements Initializable, PanelController<Upd
 
     public void btnPathBack(ActionEvent actionEvent) {
         Path backPath = Paths.get(getCurrentPath()).getParent();
-        if (backPath != null && !backPath.toString().endsWith("Data_Storage")) {
+        if (backPath != null) {
             clientLogic.createGetListRequest(backPath.toString());
         }
     }

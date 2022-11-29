@@ -123,4 +123,8 @@ public class ConverterPath {
     public Path getParentServerPathToPath() {
         return parentServerPathToPath;
     }
+
+    public String getNameRootDirectoryUser() {
+        return nameRootDirectoryUser;
+    }
 }

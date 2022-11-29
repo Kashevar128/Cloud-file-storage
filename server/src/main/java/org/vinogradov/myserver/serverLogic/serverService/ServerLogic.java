@@ -73,6 +73,8 @@ public class ServerLogic implements ServerHandlerLogic {
         String clientPath = listRequest.getPath();
         ConverterPath converterPath = connectionsController.getConverterPath();
         converterPath.setPath(clientPath, true);
+        String pathRestoring = converterPath.getServerPathString();
+        if (!pathRestoring.contains(converterPath.getNameRootDirectoryUser())) return;
         sendMessage(new GetListResponse(converterPath.getClientPathString(), converterPath.getServerPathToPath()));
     }
 
