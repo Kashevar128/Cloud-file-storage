@@ -8,11 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class Storage {
-    private static ConcurrentMap<String, Path> listUserRepositories = new ConcurrentHashMap<>();
-
-    public static ConcurrentMap<String, Path> getListUserRepositories() {
-        return listUserRepositories;
-    }
+    private static ConcurrentMap<String, CloudUser> listUserRepositories = new ConcurrentHashMap<>();
 
     public Path createUserRepository(String nameClient) {
 
@@ -24,12 +20,17 @@ public class Storage {
                 throw  new RuntimeException(e);
             }
         }
-        listUserRepositories.put(nameClient, path);
+        CloudUser cloudUser = new CloudUser(path.toString());
+        listUserRepositories.put(nameClient, cloudUser);
         System.out.println(listUserRepositories);
         return path;
     }
 
-    public Path getRootPath(String name) {
+    public CloudUser getCloudUser(String name) {
         return listUserRepositories.get(name);
+    }
+
+    public static ConcurrentMap<String, CloudUser> getListUserRepositories() {
+        return listUserRepositories;
     }
 }

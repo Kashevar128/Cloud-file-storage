@@ -102,6 +102,13 @@ public class ServerLogic implements ServerHandlerLogic {
     @Override
     public void getHandingMetaDataFileRequest(MetaDataFileRequest metaDataFileRequest) {
         long sizeFile = metaDataFileRequest.getSizeFile();
+        boolean notEnoughSpace = connectionsController.predictTheSizeCloud(sizeFile);
+        if (notEnoughSpace) {
+            sendMessage(new PermissionToTransferResponse(false));
+            sendMessage(new ClearClientMapResponse());
+            return;
+        }
+        connectionsController.addSizeCloud(sizeFile);
         String parentPath = metaDataFileRequest.getParentDirectory();
         Map<Long, String> dstPathsMap = metaDataFileRequest.getDstPathsMap();
 
@@ -220,6 +227,7 @@ public class ServerLogic implements ServerHandlerLogic {
         connectionsController.addDataUser(user);
         Path userPath = storage.createUserRepository(user.getNameUser());
         connectionsController.setConverterPath(userPath.toString());
+        connectionsController.setCloudUser(storage.getCloudUser(user.getNameUser()));
         return userPath;
     }
 

@@ -48,6 +48,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         RESPONSE_HANDLERS.put(PatternMatchingResponse.class, (basicQuery, clientHandlerLogic) -> {
             clientHandlerLogic.getHandingPatternMatchingResponse((PatternMatchingResponse) basicQuery);
         });
+
+        RESPONSE_HANDLERS.put(ClearClientMapResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingClearClientMapResponse((ClearClientMapResponse) basicQuery);
+        });
     }
 
     @Override

@@ -20,21 +20,19 @@ public class ProgressBarSendFile {
 
     private boolean end;
     private CounterFileSize counterFileSize;
-    private final ClientController clientController;
     private final Stage primaryStage;
     private final ProgressBar progressBar;
     private final Label statusLabel;
-    private final ProgressIndicator progressIndicator;
+  //  private final ProgressIndicator progressIndicator;
     private final Button cancelButton;
 
-    public ProgressBarSendFile(ClientController clientController) {
+    public ProgressBarSendFile() {
         this.end = false;
 
         this.counterFileSize = counterFileSize;
-        this.clientController = clientController;
         this.primaryStage = new Stage();
         this.progressBar = new ProgressBar(0);
-        this.progressIndicator = new ProgressIndicator(0);
+ //       this.progressIndicator = new ProgressIndicator(0);
         final Label label = new Label("Copy files:");
 
         cancelButton = new Button("Cancel");
@@ -51,7 +49,6 @@ public class ProgressBarSendFile {
                     setEnd(true);
                 }
                 primaryStage.close();
-                clientController.getSendFileButton().setDisable(false);
             }
         });
 
@@ -59,7 +56,7 @@ public class ProgressBarSendFile {
         root.setPadding(new Insets(10));
         root.setHgap(10);
 
-        root.getChildren().addAll(label, progressBar, progressIndicator, //
+        root.getChildren().addAll(label, progressBar, //
                 statusLabel, cancelButton);
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -77,7 +74,6 @@ public class ProgressBarSendFile {
 
     public void updateProgressBar(double progressMeaning) {
         progressBar.setProgress(progressMeaning);
-        progressIndicator.setProgress(progressMeaning);
     }
 
     public void updateFileNameBar(String fileName, String direction) {

@@ -111,6 +111,8 @@ public class ClientLogic implements ClientHandlerLogic {
                 if (HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile)) break;
             }
             sendFileClientController.clearSrcPathsMap();
+        } else {
+            Platform.runLater(AlertWindowsClass::showSizeCloudAlert);
         }
     }
 
@@ -122,7 +124,6 @@ public class ClientLogic implements ClientHandlerLogic {
         receivingFileClientController.createCounterFileSize(sizeFile);
         progressBarSendFile.setCounterFileSize(receivingFileClientController.getCounterFileSize());
         progressBarSendFile.showProgressBar();
-        clientController.getSendFileButton().setDisable(true);
         sendMessage(new PermissionToTransferRequest(user, true));
     }
 
@@ -164,6 +165,11 @@ public class ClientLogic implements ClientHandlerLogic {
         }
     }
 
+    @Override
+    public void getHandingClearClientMapResponse(ClearClientMapResponse clearClientMapResponse) {
+        sendFileClientController.clearSrcPathsMap();
+    }
+
     public void closeClient() {
         nettyClient.exitClient();
     }
@@ -198,7 +204,6 @@ public class ClientLogic implements ClientHandlerLogic {
                 }
             }
         }
-        clientController.getSendFileButton().setDisable(true);
         sendFileClientController.createNewCounterFileSize(sizeFile);
         sendMessage(new MetaDataFileRequest(user, dstPathsMap,
                 parentDirectory.toString(), sizeFile));
@@ -263,8 +268,8 @@ public class ClientLogic implements ClientHandlerLogic {
                 this.clientController = clientGUI.getClientController();
                 clientController.setClientLogic(clientLogic);
                 clientController.serverPC.updateList(updatePanel);
-                this.progressBarSendFile = new ProgressBarSendFile(clientController);
             });
+            Platform.runLater(() -> this.progressBarSendFile = new ProgressBarSendFile());
         } else {
             Platform.runLater(runnableFalse);
         }

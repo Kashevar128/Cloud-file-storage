@@ -92,6 +92,13 @@ public class AlertWindowsClass {
         Alert alert = new Alert(Alert.AlertType.WARNING, "Передача файла прервана, " +
                 "переданная часть файла будет автоматичиски удалена", ButtonType.OK);
         alert.setHeaderText("Передача прервана!");
+        alert.showAndWait();
+    }
+
+    public static void showSizeCloudAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Не хватает места в хранилище", ButtonType.OK);
+        alert.setHeaderText("Передача прервана!");
+        alert.showAndWait();
     }
 }
 

@@ -17,4 +17,6 @@ public interface ClientHandlerLogic {
     void getHandingSendPartFileResponse(SendPartFileResponse sendPartFileResponse);
 
     void getHandingPatternMatchingResponse(PatternMatchingResponse patternMatchingResponse);
+
+    void getHandingClearClientMapResponse(ClearClientMapResponse clearClientMapResponse);
 }
