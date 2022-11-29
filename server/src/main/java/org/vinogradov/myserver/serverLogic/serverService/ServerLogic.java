@@ -139,8 +139,10 @@ public class ServerLogic implements ServerHandlerLogic {
     public void getHandingGetFileRequest(GetFileRequest getFileRequest) {
         FileInfo.FileType fileType = getFileRequest.getFileType();
         String srcPathString = getFileRequest.getSrcPath();
+        ConverterPath converterPath = connectionsController.getConverterPath();
+        converterPath.setPath(srcPathString, true);
         String dstPathString = getFileRequest.getDstPath();
-        Path srcPath = Paths.get(srcPathString);
+        Path srcPath = converterPath.getServerPathToPath();
         Path dstPath = Paths.get(dstPathString);
         Map<Long, String> dstPathsMap = new HashMap<>();
         long size = 0;
@@ -148,7 +150,7 @@ public class ServerLogic implements ServerHandlerLogic {
             case FILE -> {
                 try {
                     size = Files.size(srcPath);
-                    long id = sendFileServerController.addNewSrcPath(srcPathString);
+                    long id = sendFileServerController.addNewSrcPath(converterPath.getServerPathString());
                     dstPathsMap.put(id, dstPathString);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
