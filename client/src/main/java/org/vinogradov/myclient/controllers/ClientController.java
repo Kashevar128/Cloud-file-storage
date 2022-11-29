@@ -50,6 +50,7 @@ public class ClientController implements Initializable {
     public void copyBtnAction(ActionEvent actionEvent) {
 
         FileInfo selectedFile = selectFile();
+        if (selectedFile == null) return;
 
         if (transfer) {
             clientLogic.createSendFileRequest(srcPath, dstPath, selectedFile);
@@ -58,7 +59,8 @@ public class ClientController implements Initializable {
 
     @FXML
     public void delBtnAction(ActionEvent actionEvent) {
-        selectFile();
+        FileInfo selectedFile = selectFile();
+        if (selectedFile == null) return;
         srcPC.delFile(srcPath);
     }
 

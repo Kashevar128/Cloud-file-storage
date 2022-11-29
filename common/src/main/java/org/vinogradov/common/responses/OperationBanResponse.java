@@ -6,8 +6,8 @@ import org.vinogradov.common.commonClasses.BasicQuery;
 public class OperationBanResponse implements BasicQuery {
 
     @Override
-    public String getType() {
-        return "operation ban";
+    public String getClassName() {
+        return OperationBanResponse.class.getName();
     }
 
 }

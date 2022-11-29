@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public interface BasicQuery extends Serializable {
 
-    String getType();
+    String getClassName();
 
     default User getUser() {
         return null;

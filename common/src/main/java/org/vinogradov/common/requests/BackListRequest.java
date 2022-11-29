@@ -12,8 +12,8 @@ public class BackListRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return "Back list";
+    public String getClassName() {
+        return BackListRequest.class.getName();
     }
 
     @Override

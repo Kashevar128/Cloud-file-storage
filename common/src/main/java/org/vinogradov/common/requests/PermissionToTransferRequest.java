@@ -16,8 +16,8 @@ public class PermissionToTransferRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return PermissionToTransferRequest.class.toString();
+    public String getClassName() {
+        return PermissionToTransferRequest.class.getName();
     }
 
     @Override

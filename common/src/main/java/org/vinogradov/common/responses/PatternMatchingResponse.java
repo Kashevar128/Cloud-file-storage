@@ -32,8 +32,8 @@ public class PatternMatchingResponse implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return PatternMatchingResponse.class.toString();
+    public String getClassName() {
+        return PatternMatchingResponse.class.getName();
     }
 
     @Override

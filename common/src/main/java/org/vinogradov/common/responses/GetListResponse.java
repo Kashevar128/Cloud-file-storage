@@ -16,8 +16,8 @@ public class GetListResponse implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return "this new list";
+    public String getClassName() {
+        return GetListResponse.class.getName();
     }
 
     public UpdatePanel getUpdatePanel() {

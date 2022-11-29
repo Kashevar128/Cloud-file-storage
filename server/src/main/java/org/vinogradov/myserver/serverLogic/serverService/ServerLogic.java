@@ -94,6 +94,12 @@ public class ServerLogic implements ServerHandlerLogic {
         String clientPathFolder = createNewFolderRequest.getPathFolder();
         ConverterPath converterPath = connectionsController.getConverterPath();
         converterPath.setPath(clientPathFolder, true);
+        boolean youCanCreateTheFollowingDirectory = HelperMethods.
+                countNextDirectory(converterPath.getClientPathString());
+        if (!youCanCreateTheFollowingDirectory) {
+            sendMessage(new NotCreateNewPathResponse());
+            return;
+        }
         HelperMethods.createNewUserFile(converterPath.getServerPathToPath());
         sendMessage(new GetListResponse(converterPath.getParentClientPathString(),
                 converterPath.getParentServerPathToPath()));

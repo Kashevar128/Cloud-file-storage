@@ -15,8 +15,8 @@ public class DelFileRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return "Удаление файла";
+    public String getClassName() {
+        return DelFileRequest.class.getName();
     }
 
     @Override

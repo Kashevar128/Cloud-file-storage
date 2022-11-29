@@ -15,7 +15,7 @@ public class PermissionToTransferResponse implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return PermissionToTransferResponse.class.toString();
+    public String getClassName() {
+        return PermissionToTransferResponse.class.getName();
     }
 }

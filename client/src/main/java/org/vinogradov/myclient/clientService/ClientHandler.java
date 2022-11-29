@@ -30,7 +30,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         });
 
         RESPONSE_HANDLERS.put(ConnectionLimitResponse.class, (basicQuery, clientHandlerLogic) -> {
-            clientHandlerLogic.getHandingConnectionLimit();
+            clientHandlerLogic.getHandingConnectionLimit((ConnectionLimitResponse) basicQuery);
         });
 
         RESPONSE_HANDLERS.put(PermissionToTransferResponse.class, (basicQuery, clientHandlerLogic) -> {
@@ -52,6 +52,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         RESPONSE_HANDLERS.put(ClearClientMapResponse.class, (basicQuery, clientHandlerLogic) -> {
             clientHandlerLogic.getHandingClearClientMapResponse((ClearClientMapResponse) basicQuery);
         });
+
+        RESPONSE_HANDLERS.put(NotCreateNewPathResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingNotCreateNewPathResponse((NotCreateNewPathResponse) basicQuery);
+        });
     }
 
     @Override
@@ -63,7 +67,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery response = (BasicQuery) msg;
-        System.out.println(response.getType());
+        System.out.println(response.getClassName());
         BiConsumer<BasicQuery, ClientHandlerLogic> channelClientHandlerContextConsumer = RESPONSE_HANDLERS.get(response.getClass());
         channelClientHandlerContextConsumer.accept(response, clientLogic);
     }

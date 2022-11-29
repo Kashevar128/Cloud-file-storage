@@ -10,10 +10,10 @@ public class CloudUser {
 
     private long sizeCloud;
 
-    public CloudUser(String pathCloud) {
+    public CloudUser(String pathCloud, long sizeCloud) {
         this.pathCloud = pathCloud;
         this.maxSize = Constants.GB_10;
-        this.sizeCloud = 0;
+        this.sizeCloud = sizeCloud;
     }
 
     public void addSize(long size) {

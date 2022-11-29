@@ -23,8 +23,8 @@ public class RegOrAuthServerResponse implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return "Server auth";
+    public String getClassName() {
+        return RegOrAuthServerResponse.class.getName();
     }
 
     public boolean isRegOrAuthComplete() {

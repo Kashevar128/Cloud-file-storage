@@ -35,6 +35,14 @@ public class HelperMethods {
         return mapPathsSrcDst;
     }
 
+    public static boolean countNextDirectory(String path) {
+        int counter = 0;
+        for (char ch : path.toCharArray()) {
+            if (ch == '/') counter++;
+        }
+        return counter <= 5;
+    }
+
     public static boolean split(Long id, String path, MyFunction<Long, byte[], Boolean> filePartMyFunction) {
         byte[] filePart = new byte[Constants.MB_1];
         try (FileInputStream fileInputStream = new FileInputStream(path)) {

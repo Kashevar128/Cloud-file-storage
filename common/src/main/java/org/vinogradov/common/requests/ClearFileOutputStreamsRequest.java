@@ -12,8 +12,8 @@ public class ClearFileOutputStreamsRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return ClearFileOutputStreamsRequest.class.toString();
+    public String getClassName() {
+        return ClearFileOutputStreamsRequest.class.getName();
     }
 
     @Override

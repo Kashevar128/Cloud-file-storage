@@ -79,7 +79,7 @@ public class ClientLogic implements ClientHandlerLogic {
     }
 
     @Override
-    public void getHandingConnectionLimit() {
+    public void getHandingConnectionLimit(ConnectionLimitResponse connectionLimitResponse) {
         Platform.runLater(() -> {
             AlertWindowsClass.showConnectionLimit();
             regAuthGui.getStage().close();
@@ -168,6 +168,11 @@ public class ClientLogic implements ClientHandlerLogic {
     @Override
     public void getHandingClearClientMapResponse(ClearClientMapResponse clearClientMapResponse) {
         sendFileClientController.clearSrcPathsMap();
+    }
+
+    @Override
+    public void getHandingNotCreateNewPathResponse(NotCreateNewPathResponse notCreateNewPathResponse) {
+        Platform.runLater(AlertWindowsClass::showNotCreateNextDirectory);
     }
 
     public void closeClient() {

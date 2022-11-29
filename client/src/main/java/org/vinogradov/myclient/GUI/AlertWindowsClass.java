@@ -68,7 +68,7 @@ public class AlertWindowsClass {
 
     public static void showSelectFileAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING, "Выберите файл, " +
-                "который хотите перенести.", ButtonType.OK);
+                "который хотите перенести или удалить.", ButtonType.OK);
         alert.setHeaderText("Вы не выбрали файл");
         alert.showAndWait();
     }
@@ -98,6 +98,13 @@ public class AlertWindowsClass {
     public static void showSizeCloudAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING, "Не хватает места в хранилище", ButtonType.OK);
         alert.setHeaderText("Передача прервана!");
+        alert.showAndWait();
+    }
+
+    public static void showNotCreateNextDirectory () {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Вы превысили " +
+                "допустимую вложенность директорий", ButtonType.OK);
+        alert.setHeaderText("Папка не создана!");
         alert.showAndWait();
     }
 }

@@ -24,7 +24,7 @@ public class MetaDataResponse implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return MetaDataResponse.class.toString();
+    public String getClassName() {
+        return MetaDataResponse.class.getName();
     }
 }

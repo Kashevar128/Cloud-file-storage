@@ -8,8 +8,8 @@ public class GetListRequest implements BasicQuery {
     String path;
 
     @Override
-    public String getType() {
-        return "Get list...";
+    public String getClassName() {
+        return GetListRequest.class.getName();
     }
 
     public GetListRequest(User user, String path) {

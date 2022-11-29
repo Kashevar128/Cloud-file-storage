@@ -15,8 +15,8 @@ public class CreateNewFolderRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return "Создать папку";
+    public String getClassName() {
+        return CreateNewFolderRequest.class.getName();
     }
 
     @Override

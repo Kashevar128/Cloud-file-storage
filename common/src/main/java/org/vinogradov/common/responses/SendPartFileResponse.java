@@ -30,8 +30,8 @@ public class SendPartFileResponse implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return SendPartFileRequest.class.toString();
+    public String getClassName() {
+        return SendPartFileRequest.class.getName();
     }
 
 }

@@ -22,8 +22,8 @@ public class GetFileRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return GetFileRequest.class.toString();
+    public String getClassName() {
+        return GetFileRequest.class.getName();
     }
 
     @Override

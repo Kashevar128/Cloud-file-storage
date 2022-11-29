@@ -20,8 +20,8 @@ public class RegOrAuthClientRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return "Client connect: " + user.getNameUser();
+    public String getClassName() {
+        return RegOrAuthClientRequest.class.getName();
     }
 
     @Override

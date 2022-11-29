@@ -8,7 +8,7 @@ public interface ClientHandlerLogic {
 
     void getHandingGetListResponse(GetListResponse responseList);
 
-    void getHandingConnectionLimit();
+    void getHandingConnectionLimit(ConnectionLimitResponse connectionLimitResponse);
 
     void getHandingPermissionToTransferResponse(PermissionToTransferResponse permissionToTransferResponse);
 
@@ -19,4 +19,6 @@ public interface ClientHandlerLogic {
     void getHandingPatternMatchingResponse(PatternMatchingResponse patternMatchingResponse);
 
     void getHandingClearClientMapResponse(ClearClientMapResponse clearClientMapResponse);
+
+    void getHandingNotCreateNewPathResponse(NotCreateNewPathResponse notCreateNewPathResponse);
 }

@@ -75,7 +75,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
         if (!serverLogic.filterSecurity(request)) return;
 
-        System.out.println(request.getType());
+        System.out.println(request.getClassName());
         BiConsumer<ServerHandlerLogic, BasicQuery> channelServerHandlerContextConsumer = REQUEST_HANDLERS.get(request.getClass());
         channelServerHandlerContextConsumer.accept(serverLogic, request);
     }

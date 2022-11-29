@@ -23,8 +23,8 @@ public class MetaDataFileRequest implements BasicQuery {
     }
 
     @Override
-    public String getType() {
-        return MetaDataFileRequest.class.toString();
+    public String getClassName() {
+        return MetaDataFileRequest.class.getName();
     }
 
     @Override
