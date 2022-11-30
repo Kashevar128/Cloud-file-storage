@@ -6,6 +6,8 @@ import org.vinogradov.common.commonClasses.Field;
 import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.myserver.serverLogic.storageService.CloudUser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,10 +17,9 @@ public class ConnectionsController {
     private ConverterPath converterPath;
     private CloudUser cloudUser;
     private User user;
-    private boolean userOnline;
 
     public void newConnectionLimit(ChannelHandlerContext context) {
-            connectionLimit = new ConnectionLimit(context);
+        connectionLimit = new ConnectionLimit(context);
     }
 
     public void stopTimerConnectionLimit() {
@@ -27,14 +28,14 @@ public class ConnectionsController {
 
     public void addDataUser(User user) {
         String name = user.getNameUser();
-        String encryptedPassword =  DigestUtils.md5Hex(user.getPassword());
+        String encryptedPassword = DigestUtils.md5Hex(user.getPassword());
         this.user = new User(name, encryptedPassword);
     }
 
     public boolean security(User user) {
         String name = user.getNameUser();
         String encryptedPassword = DigestUtils.md5Hex(user.getPassword());
-        return  (name.equals(this.user.getNameUser()) && encryptedPassword.equals(this.user.getPassword()));
+        return (name.equals(this.user.getNameUser()) && encryptedPassword.equals(this.user.getPassword()));
     }
 
     public Field patternMatching(String userName, String password) {

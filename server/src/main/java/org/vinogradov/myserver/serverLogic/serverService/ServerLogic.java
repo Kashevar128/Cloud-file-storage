@@ -61,6 +61,14 @@ public class ServerLogic implements ServerHandlerLogic {
             case REG -> complete = dataBase.createUser(user);
             case AUTH -> complete = dataBase.auth(user);
         }
+        if (complete) {
+            boolean addUser = NettyServer.getUserContextRepository()
+                    .addUserChannelHandlerContextMap(user.getNameUser(), context);
+            if (!addUser) {
+                sendMessage(new TheUserIsAlreadyLoggedIn());
+                return;
+            }
+        }
         Path startList = startWorkingWithUser(user);
         ConverterPath converterPath = connectionsController.getConverterPath();
         converterPath.setPath(startList.toString(), false);
@@ -210,13 +218,10 @@ public class ServerLogic implements ServerHandlerLogic {
         } else sendMessage(new PatternMatchingResponse(field));
     }
 
-    public boolean filterSecurity(BasicQuery basicQuery, ChannelHandlerContext context) {
+    public boolean filterSecurity(BasicQuery basicQuery) {
         User user = basicQuery.getUser();
-        if (basicQuery instanceof RegOrAuthClientRequest) {
-            NettyServer.userContextRepository.addUserChannelHandlerContextMap(user, context);
-            return true;
-        }
-        if(basicQuery instanceof PatternMatchingRequest) return true;
+        if(basicQuery instanceof PatternMatchingRequest
+                || basicQuery instanceof RegOrAuthClientRequest) return true;
         if (connectionsController.security(user)) {
             return true;
         }

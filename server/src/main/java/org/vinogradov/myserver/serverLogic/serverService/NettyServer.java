@@ -12,7 +12,7 @@ import org.vinogradov.common.commonClasses.Constants;
 
 public class NettyServer {
 
-    static final UserContextRepository userContextRepository;
+    private static final UserContextRepository userContextRepository;
 
     static {
         userContextRepository = new UserContextRepository();
@@ -44,6 +44,10 @@ public class NettyServer {
             bossGroup.shutdownGracefully();
             ServerLogic.unConnectDataBase();
         }
+    }
+
+    public static UserContextRepository getUserContextRepository() {
+        return userContextRepository;
     }
 
 
