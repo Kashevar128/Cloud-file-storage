@@ -3,6 +3,8 @@ package org.vinogradov.myclient.GUI;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.util.Optional;
+
 public class AlertWindowsClass {
 
     public static void showIncorrectPasswordAlert() {
@@ -112,6 +114,14 @@ public class AlertWindowsClass {
                 "Пользователь с вашими данными уже online", ButtonType.OK);
         alert.setHeaderText("Вы уже вошли");
         alert.showAndWait();
+    }
+
+    public static boolean showOnTheClientFileExistingAlert() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "На клиенте такой файл существует. Хотите его перезаписать?");
+        alert.setHeaderText("Перезапись файла на клиенте");
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.OK;
     }
 
 }

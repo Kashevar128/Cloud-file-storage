@@ -13,6 +13,7 @@ import org.vinogradov.common.responses.*;
 import org.vinogradov.myclient.receivingFileClientService.ReceivingFileClientController;
 import org.vinogradov.myclient.sendFileClientService.SendFileClientController;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -235,6 +236,16 @@ public class ClientLogic implements ClientHandlerLogic {
         receivingFileClientController.setDstPath(dstPath.toString());
         receivingFileClientController.setFileName(selectedFile.getFilename());
         sendMessage(new GetFileRequest(user, selectedFile.getType(), srcPath.toString(), dstPath.toString()));
+    }
+
+    public boolean overwriteTheClientFile(Path dstPath) {
+        boolean exists = Files.exists(dstPath);
+        if (exists) {
+            boolean continuation = AlertWindowsClass.showOnTheClientFileExistingAlert();
+            if (continuation) return true;
+            else return false;
+        }
+        return true;
     }
 
     public void sendMessage(BasicQuery basicQuery) {

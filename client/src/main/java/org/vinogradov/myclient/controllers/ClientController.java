@@ -54,7 +54,10 @@ public class ClientController implements Initializable {
 
         if (transfer) {
             clientLogic.createSendFileRequest(srcPath, dstPath, selectedFile);
-        } else clientLogic.createGetFileRequest(srcPath, dstPath, selectedFile);
+        } else {
+            if (clientLogic.overwriteTheClientFile(dstPath))
+            clientLogic.createGetFileRequest(srcPath, dstPath, selectedFile);
+        }
     }
 
     @FXML
