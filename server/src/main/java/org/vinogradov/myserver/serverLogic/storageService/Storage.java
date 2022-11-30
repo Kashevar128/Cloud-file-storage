@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class Storage {
-    private static ConcurrentMap<String, CloudUser> listUserRepositories = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, CloudUser> listUserRepositories = new ConcurrentHashMap<>();
 
     public Path createUserRepository(String nameClient) {
 
@@ -35,7 +35,7 @@ public class Storage {
         return listUserRepositories.get(name);
     }
 
-    public static ConcurrentMap<String, CloudUser> getListUserRepositories() {
+    public ConcurrentMap<String, CloudUser> getListUserRepositories() {
         return listUserRepositories;
     }
 }

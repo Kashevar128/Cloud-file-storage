@@ -210,10 +210,13 @@ public class ServerLogic implements ServerHandlerLogic {
         } else sendMessage(new PatternMatchingResponse(field));
     }
 
-    public boolean filterSecurity(BasicQuery basicQuery) {
+    public boolean filterSecurity(BasicQuery basicQuery, ChannelHandlerContext context) {
         User user = basicQuery.getUser();
-        if (basicQuery instanceof RegOrAuthClientRequest
-                || basicQuery instanceof PatternMatchingRequest) return true;
+        if (basicQuery instanceof RegOrAuthClientRequest) {
+            NettyServer.userContextRepository.addUserChannelHandlerContextMap(user, context);
+            return true;
+        }
+        if(basicQuery instanceof PatternMatchingRequest) return true;
         if (connectionsController.security(user)) {
             return true;
         }
@@ -222,6 +225,10 @@ public class ServerLogic implements ServerHandlerLogic {
 
     public void addConnectionLimit(ChannelHandlerContext context) {
         connectionsController.newConnectionLimit(context);
+    }
+
+    public void createTheUserIsAlreadyLoggedIn() {
+        sendMessage(new TheUserIsAlreadyLoggedIn());
     }
 
     private void sendMessage(BasicQuery basicQuery) {

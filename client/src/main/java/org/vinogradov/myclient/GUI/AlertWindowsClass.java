@@ -1,6 +1,5 @@
 package org.vinogradov.myclient.GUI;
 
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -101,11 +100,19 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
-    public static void showNotCreateNextDirectory () {
+    public static void showNotCreateNextDirectoryAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING, "Вы превысили " +
                 "допустимую вложенность директорий", ButtonType.OK);
         alert.setHeaderText("Папка не создана!");
         alert.showAndWait();
     }
+
+    public static void showTheUserIsAlreadyLoggedInAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING,
+                "Пользователь с вашими данными уже online", ButtonType.OK);
+        alert.setHeaderText("Вы уже вошли");
+        alert.showAndWait();
+    }
+
 }
 

@@ -21,4 +21,6 @@ public interface ClientHandlerLogic {
     void getHandingClearClientMapResponse(ClearClientMapResponse clearClientMapResponse);
 
     void getHandingNotCreateNewPathResponse(NotCreateNewPathResponse notCreateNewPathResponse);
+
+    void getHandingTheUserIsAlreadyLoggedIn(TheUserIsAlreadyLoggedIn theUserIsAlreadyLoggedIn);
 }

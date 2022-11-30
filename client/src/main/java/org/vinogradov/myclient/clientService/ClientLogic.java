@@ -172,7 +172,12 @@ public class ClientLogic implements ClientHandlerLogic {
 
     @Override
     public void getHandingNotCreateNewPathResponse(NotCreateNewPathResponse notCreateNewPathResponse) {
-        Platform.runLater(AlertWindowsClass::showNotCreateNextDirectory);
+        Platform.runLater(AlertWindowsClass::showNotCreateNextDirectoryAlert);
+    }
+
+    @Override
+    public void getHandingTheUserIsAlreadyLoggedIn(TheUserIsAlreadyLoggedIn theUserIsAlreadyLoggedIn) {
+        Platform.runLater(AlertWindowsClass::showTheUserIsAlreadyLoggedInAlert);
     }
 
     public void closeClient() {

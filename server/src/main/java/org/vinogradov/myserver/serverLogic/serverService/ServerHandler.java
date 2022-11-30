@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.vinogradov.common.commonClasses.BasicQuery;
 import org.vinogradov.common.requests.*;
+import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,10 +71,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        NettyServer.userContextRepository.deleteUserContext(ctx);
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {;
         BasicQuery request = (BasicQuery) msg;
 
-        if (!serverLogic.filterSecurity(request)) return;
+        if (!serverLogic.filterSecurity(request, ctx)) return;
 
         System.out.println(request.getClassName());
         BiConsumer<ServerHandlerLogic, BasicQuery> channelServerHandlerContextConsumer = REQUEST_HANDLERS.get(request.getClass());

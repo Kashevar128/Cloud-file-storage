@@ -1,6 +1,5 @@
 package org.vinogradov.myserver.serverLogic.connectionService;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.vinogradov.common.commonClasses.Field;
@@ -16,6 +15,7 @@ public class ConnectionsController {
     private ConverterPath converterPath;
     private CloudUser cloudUser;
     private User user;
+    private boolean userOnline;
 
     public void newConnectionLimit(ChannelHandlerContext context) {
             connectionLimit = new ConnectionLimit(context);
@@ -69,5 +69,13 @@ public class ConnectionsController {
 
     public void setCloudUser(CloudUser cloudUser) {
         this.cloudUser = cloudUser;
+    }
+
+    public ConnectionLimit getConnectionLimit() {
+        return connectionLimit;
+    }
+
+    public void setConnectionLimit(ConnectionLimit connectionLimit) {
+        this.connectionLimit = connectionLimit;
     }
 }

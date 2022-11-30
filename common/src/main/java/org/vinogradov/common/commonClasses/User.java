@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private String nameUser;
+    private final String nameUser;
 
-    private String password;
+    private final String password;
 
     public User(String nameUser, String password) {
         this.nameUser = nameUser;
@@ -19,5 +19,13 @@ public class User implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof User user)) return false;
+        return user.getNameUser().equals(this.getNameUser())
+                && user.getPassword().equals(this.getPassword());
     }
 }

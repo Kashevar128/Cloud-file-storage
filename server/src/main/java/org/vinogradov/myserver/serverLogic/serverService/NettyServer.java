@@ -12,6 +12,12 @@ import org.vinogradov.common.commonClasses.Constants;
 
 public class NettyServer {
 
+    static final UserContextRepository userContextRepository;
+
+    static {
+        userContextRepository = new UserContextRepository();
+    }
+
     public NettyServer() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -39,5 +45,7 @@ public class NettyServer {
             ServerLogic.unConnectDataBase();
         }
     }
+
+
 
 }

@@ -56,6 +56,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         RESPONSE_HANDLERS.put(NotCreateNewPathResponse.class, (basicQuery, clientHandlerLogic) -> {
             clientHandlerLogic.getHandingNotCreateNewPathResponse((NotCreateNewPathResponse) basicQuery);
         });
+
+        RESPONSE_HANDLERS.put(TheUserIsAlreadyLoggedIn.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingTheUserIsAlreadyLoggedIn((TheUserIsAlreadyLoggedIn) basicQuery);
+        });
     }
 
     @Override
