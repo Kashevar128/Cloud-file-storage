@@ -47,6 +47,7 @@ public class ProgressBarSendFile {
             public void handle(ActionEvent event) {
                 if (!checkSize()) {
                     setEnd(true);
+                    Platform.runLater(AlertWindowsClass::showInterruptedFileTransferAlert);
                 }
                 primaryStage.close();
             }

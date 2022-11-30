@@ -12,12 +12,16 @@ public class CloudUser {
 
     public CloudUser(String pathCloud, long sizeCloud) {
         this.pathCloud = pathCloud;
-        this.maxSize = Constants.GB_10;
+        this.maxSize = Constants.GB_20;
         this.sizeCloud = sizeCloud;
     }
 
     public void addSize(long size) {
         sizeCloud += size;
+    }
+
+    public void takeAwaySize(long size) {
+        sizeCloud -= size;
     }
 
     public boolean predictTheSize(long size) {

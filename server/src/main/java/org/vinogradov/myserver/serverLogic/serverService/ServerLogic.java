@@ -89,9 +89,20 @@ public class ServerLogic implements ServerHandlerLogic {
     @Override
     public void getHandingDelFileRequest(DelFileRequest delFileRequest) {
         String clientDelFilePath = delFileRequest.getDelFilePath();
+        long sizeFile;
         ConverterPath converterPath = connectionsController.getConverterPath();
         converterPath.setPath(clientDelFilePath, true);
-        if (!Files.exists(converterPath.getServerPathToPath())) return;
+        Path serverPath = converterPath.getServerPathToPath();
+        if (!Files.exists(serverPath)) return;
+        if (Files.isDirectory(serverPath)) sizeFile = HelperMethods.sumSizeFiles(serverPath);
+        else {
+            try {
+                sizeFile = Files.size(serverPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        connectionsController.getCloudUser().takeAwaySize(sizeFile);
         HelperMethods.deleteUserFile(converterPath.getServerPathToPath());
         sendMessage(new GetListResponse(converterPath.getParentClientPathString(),
                 converterPath.getParentServerPathToPath()));

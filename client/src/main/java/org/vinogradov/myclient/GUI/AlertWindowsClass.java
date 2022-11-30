@@ -146,5 +146,12 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
+    public static void showInterruptedFileTransferAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING,
+                "Передача файла прервана. Уже переданные данные будут удалены", ButtonType.OK);
+        alert.setHeaderText("Передача файла прервана!");
+        alert.showAndWait();
+    }
+
 }
 

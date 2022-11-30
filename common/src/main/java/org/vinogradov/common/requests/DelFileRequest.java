@@ -5,9 +5,9 @@ import org.vinogradov.common.commonClasses.User;
 
 public class DelFileRequest implements BasicQuery {
 
-    User user;
+    private final User user;
 
-    String delFilePath;
+    private final String delFilePath;
 
     public DelFileRequest(User user, String delFilePath) {
         this.user = user;

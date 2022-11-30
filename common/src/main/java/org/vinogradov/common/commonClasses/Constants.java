@@ -12,6 +12,8 @@ public class Constants {
 
       public static final long GB_10 = 10_000_000_000L;
 
+      public static final long GB_20 = 20_000_000_000L;
+
       public static String SEND = "SEND FILE: ";
 
       public static String DOWNLOAD = "DOWNLOAD FILE: ";
