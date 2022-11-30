@@ -61,6 +61,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         REQUEST_HANDLERS.put(PatternMatchingRequest.class, ((serverHandlerLogic, basicQuery) -> {
             serverHandlerLogic.getHandingPatternMatchingRequest((PatternMatchingRequest) basicQuery);
         }));
+
+        REQUEST_HANDLERS.put(OverwriteFileRequest.class, ((serverHandlerLogic, basicQuery) -> {
+            serverHandlerLogic.getHandingOverwriteFileRequest((OverwriteFileRequest) basicQuery);
+        }));
     }
 
 

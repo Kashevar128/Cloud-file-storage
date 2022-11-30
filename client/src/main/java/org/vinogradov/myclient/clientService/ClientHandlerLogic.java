@@ -23,4 +23,6 @@ public interface ClientHandlerLogic {
     void getHandingNotCreateNewPathResponse(NotCreateNewPathResponse notCreateNewPathResponse);
 
     void getHandingTheUserIsAlreadyLoggedIn(TheUserIsAlreadyLoggedIn theUserIsAlreadyLoggedIn);
+
+    void getHandingOverwriteFileResponse(OverwriteFileResponse overwriteFileResponse);
 }

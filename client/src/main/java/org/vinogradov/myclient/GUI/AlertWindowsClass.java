@@ -116,10 +116,18 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
-    public static boolean showOnTheClientFileExistingAlert() {
+    public static boolean showOnTheClientFileExistingConfirmation() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                 "На клиенте такой файл существует. Хотите его перезаписать?");
         alert.setHeaderText("Перезапись файла на клиенте");
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.OK;
+    }
+
+    public static boolean showOnTheServerFileExistingConfirmation() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "На сервере такой файл существует. Хотите его перезаписать?");
+        alert.setHeaderText("Перезапись файла на сервере");
         Optional<ButtonType> result = alert.showAndWait();
         return result.get() == ButtonType.OK;
     }

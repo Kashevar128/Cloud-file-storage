@@ -218,6 +218,16 @@ public class ServerLogic implements ServerHandlerLogic {
         } else sendMessage(new PatternMatchingResponse(field));
     }
 
+    @Override
+    public void getHandingOverwriteFileRequest(OverwriteFileRequest overwriteFileRequest) {
+        String dstPath = overwriteFileRequest.getDstPath();
+        ConverterPath converterPath = connectionsController.getConverterPath();
+        converterPath.setPath(dstPath, true);
+        boolean exists = Files.exists(converterPath.getServerPathToPath());
+        if (exists) sendMessage(new OverwriteFileResponse(true));
+        else sendMessage(new OverwriteFileResponse(false));
+    }
+
     public boolean filterSecurity(BasicQuery basicQuery) {
         User user = basicQuery.getUser();
         if(basicQuery instanceof PatternMatchingRequest

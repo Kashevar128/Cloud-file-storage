@@ -23,4 +23,6 @@ public interface ServerHandlerLogic {
     void getHandingPermissionToTransferRequest(PermissionToTransferRequest permissionToTransferRequest);
 
     void getHandingPatternMatchingRequest(PatternMatchingRequest patternMatchingRequest);
+
+    void getHandingOverwriteFileRequest(OverwriteFileRequest overwriteFileRequest);
 }

@@ -60,6 +60,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         RESPONSE_HANDLERS.put(TheUserIsAlreadyLoggedIn.class, (basicQuery, clientHandlerLogic) -> {
             clientHandlerLogic.getHandingTheUserIsAlreadyLoggedIn((TheUserIsAlreadyLoggedIn) basicQuery);
         });
+
+        RESPONSE_HANDLERS.put(OverwriteFileResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingOverwriteFileResponse((OverwriteFileResponse) basicQuery);
+        });
     }
 
     @Override

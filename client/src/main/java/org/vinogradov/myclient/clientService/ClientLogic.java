@@ -181,6 +181,20 @@ public class ClientLogic implements ClientHandlerLogic {
         Platform.runLater(AlertWindowsClass::showTheUserIsAlreadyLoggedInAlert);
     }
 
+    @Override
+    public void getHandingOverwriteFileResponse(OverwriteFileResponse overwriteFileResponse) {
+        Platform.runLater(() -> {
+            Runnable runnableCreateSendFileRequest = () -> createSendFileRequest(clientController.getSrcPath(),
+                    clientController.getDstPath(), clientController.getSelectedFile());
+            boolean existsFile = overwriteFileResponse.isExistsFile();
+            if (existsFile) {
+                boolean continuation = AlertWindowsClass.showOnTheServerFileExistingConfirmation();
+                if (continuation) runnableCreateSendFileRequest.run();
+            } else runnableCreateSendFileRequest.run();
+        });
+
+    }
+
     public void closeClient() {
         nettyClient.exitClient();
     }
@@ -241,11 +255,15 @@ public class ClientLogic implements ClientHandlerLogic {
     public boolean overwriteTheClientFile(Path dstPath) {
         boolean exists = Files.exists(dstPath);
         if (exists) {
-            boolean continuation = AlertWindowsClass.showOnTheClientFileExistingAlert();
+            boolean continuation = AlertWindowsClass.showOnTheClientFileExistingConfirmation();
             if (continuation) return true;
             else return false;
         }
         return true;
+    }
+
+    public void createOverwriteTheServerFile(Path dstPath) {
+        sendMessage(new OverwriteFileRequest(user, dstPath.toString()));
     }
 
     public void sendMessage(BasicQuery basicQuery) {

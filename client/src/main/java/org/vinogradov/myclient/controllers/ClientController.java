@@ -28,6 +28,8 @@ public class ClientController implements Initializable {
 
     private Path srcPath = null, dstPath = null;
 
+    private FileInfo selectedFile = null;
+
     @FXML
     public VBox clientPanel, serverPanel;
 
@@ -49,11 +51,11 @@ public class ClientController implements Initializable {
     @FXML
     public void copyBtnAction(ActionEvent actionEvent) {
 
-        FileInfo selectedFile = selectFile();
+        selectedFile = selectFile();
         if (selectedFile == null) return;
 
         if (transfer) {
-            clientLogic.createSendFileRequest(srcPath, dstPath, selectedFile);
+            clientLogic.createOverwriteTheServerFile(dstPath);
         } else {
             if (clientLogic.overwriteTheClientFile(dstPath))
             clientLogic.createGetFileRequest(srcPath, dstPath, selectedFile);
@@ -62,7 +64,7 @@ public class ClientController implements Initializable {
 
     @FXML
     public void delBtnAction(ActionEvent actionEvent) {
-        FileInfo selectedFile = selectFile();
+        selectedFile = selectFile();
         if (selectedFile == null) return;
         srcPC.delFile(srcPath);
     }
@@ -131,5 +133,17 @@ public class ClientController implements Initializable {
 
     public Button getSendFileButton() {
         return sendFileButton;
+    }
+
+    public Path getSrcPath() {
+        return srcPath;
+    }
+
+    public Path getDstPath() {
+        return dstPath;
+    }
+
+    public FileInfo getSelectedFile() {
+        return selectedFile;
     }
 }
