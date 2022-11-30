@@ -298,6 +298,25 @@ public class ClientLogic implements ClientHandlerLogic {
         return clientController;
     }
 
+    public ReceivingFileClientController getReceivingFileClientController() {
+        return receivingFileClientController;
+    }
+
+    public void lossOfConnectionToTheServer() {
+        Platform.runLater(() -> {
+            if(regAuthGui != null) regAuthGui.getStage().close();
+            if(clientGUI != null) clientGUI.getStage().close();
+            AlertWindowsClass.showLossOfConnectionAlert();
+        });
+        closeClient();
+    }
+
+    public void closeRegAuthGui() {
+        Platform.runLater(() -> {
+            if(regAuthGui != null) regAuthGui.getStage().close();
+        });
+    }
+
     private void startClientGUI(boolean complete, UpdatePanel updatePanel, Runnable runnableComplete, Runnable runnableFalse) {
         if (complete) {
             Platform.runLater(() -> {

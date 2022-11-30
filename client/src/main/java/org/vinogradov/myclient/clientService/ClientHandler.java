@@ -73,6 +73,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        clientLogic.getReceivingFileClientController().closeAllFileOutputStreams();
+        clientLogic.lossOfConnectionToTheServer();
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery response = (BasicQuery) msg;
         System.out.println(response.getClassName());

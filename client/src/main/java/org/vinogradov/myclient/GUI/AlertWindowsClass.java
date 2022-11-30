@@ -132,5 +132,19 @@ public class AlertWindowsClass {
         return result.get() == ButtonType.OK;
     }
 
+    public static void showLossOfConnectionAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING,
+                "Соединение с сервером разорвано", ButtonType.OK);
+        alert.setHeaderText("Потеря соединения!");
+        alert.showAndWait();
+    }
+
+    public static void showFallsConnectAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING,
+                "Отсутствует соединение с сервером, программа будет закрыта", ButtonType.OK);
+        alert.setHeaderText("Нет соединеня!");
+        alert.showAndWait();
+    }
+
 }
 

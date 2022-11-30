@@ -77,6 +77,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         NettyServer.getUserContextRepository().deleteUserContext(ctx);
+        serverLogic.getReceivingFileServerController().closeAllFileOutputStreams();
+        serverLogic.getSendFileServerController().clearSrcPathsMap();
     }
 
     @Override

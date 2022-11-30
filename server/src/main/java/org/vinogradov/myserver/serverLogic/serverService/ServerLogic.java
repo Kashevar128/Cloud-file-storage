@@ -263,4 +263,11 @@ public class ServerLogic implements ServerHandlerLogic {
         dataBase.closeDataBase();
     }
 
+    public ReceivingFileServerController getReceivingFileServerController() {
+        return receivingFileServerController;
+    }
+
+    public SendFileServerController getSendFileServerController() {
+        return sendFileServerController;
+    }
 }
