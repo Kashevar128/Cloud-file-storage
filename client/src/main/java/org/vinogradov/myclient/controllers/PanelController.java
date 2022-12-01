@@ -1,6 +1,6 @@
 package org.vinogradov.myclient.controllers;
 
-import org.vinogradov.mydto.commonClasses.FileInfo;
+import org.vinogradov.common.commonClasses.FileInfo;
 
 import java.nio.file.Path;
 
@@ -15,5 +15,7 @@ public interface PanelController<T> {
 
     void updateList(T t);
 
-    String[] getStringListFiles();
+    void createNewPackage(String nameFolder);
+
+    boolean getSelectedTable();
 }

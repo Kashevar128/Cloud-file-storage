@@ -8,11 +8,15 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.vinogradov.mysupport.Constants;
+import org.vinogradov.common.commonClasses.Constants;
 
 public class NettyServer {
 
-    private ServerLogic serverLogic = new ServerLogic();
+    private static final UserContextRepository userContextRepository;
+
+    static {
+        userContextRepository = new UserContextRepository();
+    }
 
     public NettyServer() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -26,9 +30,9 @@ public class NettyServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline inbound = socketChannel.pipeline();
                             inbound.addLast(
-                                    new ObjectDecoder(Constants.MB_200, ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(Constants.MB_10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ServerHandler(serverLogic)
+                                    new ServerHandler()
                             );
                         }
                     });
@@ -38,8 +42,14 @@ public class NettyServer {
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            serverLogic.unConnectDataBase();
+            ServerLogic.unConnectDataBase();
         }
     }
+
+    public static UserContextRepository getUserContextRepository() {
+        return userContextRepository;
+    }
+
+
 
 }

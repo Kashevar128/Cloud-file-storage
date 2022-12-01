@@ -11,9 +11,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
-import org.vinogradov.mydto.commonClasses.BasicQuery;
-import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mysupport.Constants;
+import javafx.application.Platform;
+import org.vinogradov.common.commonClasses.BasicQuery;
+import org.vinogradov.common.commonClasses.Constants;
+import org.vinogradov.myclient.GUI.AlertWindowsClass;
 
 public class NettyClient {
 
@@ -35,7 +36,7 @@ public class NettyClient {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline().addLast(
-                                new ObjectDecoder(Constants.MB_200, ClassResolvers.cacheDisabled(null)),
+                                new ObjectDecoder(Constants.MB_10, ClassResolvers.cacheDisabled(null)),
                                 new ObjectEncoder(),
                                 new ClientHandler(clientLogic)
                         );
@@ -45,15 +46,14 @@ public class NettyClient {
                 channel = channelFuture.channel();
                 channelFuture.channel().closeFuture().sync();
             } catch (Exception e) {
+                clientLogic.closeRegAuthGui();
+                Platform.runLater(AlertWindowsClass::showFallsConnectAlert);
                 e.printStackTrace();
             } finally {
+                assert eventLoopGroup != null;
                 eventLoopGroup.shutdownGracefully();
             }
         }).start();
-    }
-
-    public void send(BasicQuery basic) {
-        channel.writeAndFlush(basic);
     }
 
     public void exitClient() {

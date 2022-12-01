@@ -1,18 +1,28 @@
 package org.vinogradov.myserver.serverLogic.serverService;
 
-import io.netty.channel.ChannelHandlerContext;
-import org.vinogradov.mydto.requests.*;
-import org.vinogradov.mydto.responses.AuthServerResponse;
-import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.RegServerResponse;
+import org.vinogradov.common.requests.*;
 
 public interface ServerHandlerLogic {
 
-    void sendRegServerResponse(RegClientRequest regClient);
+    void getHandingRegOrAuthClientRequest(RegOrAuthClientRequest authClient);
 
-    void sendAuthServerResponse(AuthClientRequest authClient);
+    void getHandingGetListRequest(GetListRequest listRequest);
 
-    void sendListResponse(GetListRequest listRequest);
+    void getHandingDelFileRequest(DelFileRequest delFileRequest);
 
-    void getHandingSendFileRequest(SendFileRequest sendFileRequest);
+    void getHandingCreateNewFolderRequest(CreateNewFolderRequest createNewFolderRequest);
+
+    void getHandingMetaDataFileRequest(MetaDataFileRequest metaDataFileRequest);
+
+    void getHandingSendPartFileRequest(SendPartFileRequest sendPartFileRequest);
+
+    void getHandingClearFileOutputStreamsRequest(ClearFileOutputStreamsRequest clearFileOutputStreamsRequest);
+
+    void getHandingGetFileRequest(GetFileRequest getFileRequest);
+
+    void getHandingPermissionToTransferRequest(PermissionToTransferRequest permissionToTransferRequest);
+
+    void getHandingPatternMatchingRequest(PatternMatchingRequest patternMatchingRequest);
+
+    void getHandingOverwriteFileRequest(OverwriteFileRequest overwriteFileRequest);
 }

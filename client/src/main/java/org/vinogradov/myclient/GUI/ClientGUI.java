@@ -18,16 +18,18 @@ public class ClientGUI {
 
     private ClientController clientController;
 
+    private Stage stage;
+
     public ClientGUI(ClientLogic clientLogic) {
         try {
-            Stage stage = new Stage();
+            stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/clientWindow.fxml"));
             Parent root = loader.load();
             clientController = loader.getController();
             stage.setTitle("Java File Storage");
             stage.setScene(new Scene(root, 1000, 600));
             stage.setOnCloseRequest(windowEvent -> {
-               clientLogic.exitUserClient();
+               clientLogic.closeClient();
             });
             stage.show();
         } catch (IOException e) {
@@ -37,5 +39,9 @@ public class ClientGUI {
 
     public ClientController getClientController() {
         return clientController;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

@@ -7,6 +7,10 @@
 <VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="org.vinogradov.myclient.controllers.ClientController">
     <MenuBar>
         <Menu text="Файл">
+            <MenuItem text="Загрузить файл" onAction="#copyBtnAction"/>
+            <MenuItem text="Удалить файл" onAction="#delBtnAction"/>
+            <MenuItem text="Новая папка" onAction="#createPackageBtnAction"/>
+            <MenuItem text="Обновить страницу" onAction="#refreshBtnAction"/>
             <MenuItem text="Выйти из программы" onAction="#exitBtnAction"/>
         </Menu>
     </MenuBar>
@@ -17,9 +21,11 @@
     </HBox>
 
     <HBox spacing="5">
-        <Button maxWidth="Infinity" focusTraversable="false" text="Загрузить файл" HBox.hgrow="ALWAYS" onAction="#copyBtnAction"/>
-        <Button maxWidth="Infinity" focusTraversable="false" text="Удалить" HBox.hgrow="ALWAYS" onAction="#delBtnAction"/>
-        <Button maxWidth="Infinity" focusTraversable="false" text="Обновить" HBox.hgrow="ALWAYS" onAction="#refresh"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Загрузить файл" HBox.hgrow="ALWAYS" onAction="#copyBtnAction" fx:id="sendFileButton"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Удалить файл" HBox.hgrow="ALWAYS" onAction="#delBtnAction"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Новая папка" HBox.hgrow="ALWAYS" onAction="#createPackageBtnAction"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Обновить страницу" HBox.hgrow="ALWAYS" onAction="#refreshBtnAction"/>
+        <Button maxWidth="Infinity" focusTraversable="false" text="Выход" HBox.hgrow="ALWAYS" onAction="#exitBtnAction"/>
         <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
         </padding>

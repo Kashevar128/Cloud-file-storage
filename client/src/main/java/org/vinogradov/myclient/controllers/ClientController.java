@@ -5,24 +5,21 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
+import org.vinogradov.myclient.GUI.EnterWindow;
 import org.vinogradov.myclient.clientService.ClientLogic;
-import org.vinogradov.myclient.clientService.NettyClient;
-import org.vinogradov.mydto.commonClasses.FileInfo;
-import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mydto.requests.GetListRequest;
-import org.vinogradov.mydto.requests.SendFileRequest;
-import org.vinogradov.mysupport.HelperMethods;
+import org.vinogradov.common.commonClasses.FileInfo;
 
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class ClientController implements Initializable {
 
+    public Button sendFileButton;
     private ClientLogic clientLogic;
 
     private boolean transfer;
@@ -30,6 +27,8 @@ public class ClientController implements Initializable {
     private PanelController srcPC = null, dstPC = null;
 
     private Path srcPath = null, dstPath = null;
+
+    private FileInfo selectedFile = null;
 
     @FXML
     public VBox clientPanel, serverPanel;
@@ -46,50 +45,105 @@ public class ClientController implements Initializable {
     @FXML
     public void exitBtnAction(ActionEvent actionEvent) {
         Platform.exit();
-        clientLogic.exitUserClient();
+        clientLogic.closeClient();
     }
 
     @FXML
     public void copyBtnAction(ActionEvent actionEvent) {
 
-        if (clientPC.getSelectedFileInfo() == null && serverPC.getSelectedFileInfo() == null) {
-            AlertWindowsClass.showSelectFileAlert();
-            return;
-        }
-
-        if (clientPC.getSelectedFileInfo() != null) {
-            srcPC = clientPC;
-            dstPC = serverPC;
-            transfer = true;
-        }
-
-        if (serverPC.getSelectedFileInfo() != null) {
-            srcPC = serverPC;
-            dstPC = clientPC;
-            transfer = false;
-        }
-
-        FileInfo selectedFile = srcPC.getSelectedFileInfo();
-        srcPath = Paths.get(srcPC.getCurrentPath(), selectedFile.getFilename());
-        dstPath = Paths.get(dstPC.getCurrentPath(), selectedFile.getFilename());
+        selectedFile = selectFile();
+        if (selectedFile == null) return;
 
         if (transfer) {
-            clientLogic.createSendFileRequest(dstPath, srcPath, selectedFile);
+            clientLogic.createOverwriteTheServerFile(dstPath);
+        } else {
+            if (clientLogic.overwriteTheClientFile(dstPath))
+            clientLogic.createGetFileRequest(srcPath, dstPath, selectedFile);
         }
     }
 
     @FXML
     public void delBtnAction(ActionEvent actionEvent) {
+        selectedFile = selectFile();
+        if (selectedFile == null) return;
+        srcPC.delFile(srcPath);
     }
 
     @FXML
-    public void refresh(ActionEvent actionEvent) {
+    public void refreshBtnAction(ActionEvent actionEvent) {
         clientPC.updateList(Paths.get(clientPC.getCurrentPath()));
         clientLogic.createGetListRequest(serverPC.getCurrentPath());
+    }
+
+    @FXML
+    public void createPackageBtnAction(ActionEvent actionEvent) {
+        if (selectTable()) {
+            Platform.runLater(() -> new EnterWindow(clientLogic.getClientController(), clientLogic.getClientGUI()));
+        }
+    }
+
+    private FileInfo selectFile() {
+
+        if (clientPC.getSelectedFileInfo() == null && serverPC.getSelectedFileInfo() == null) {
+            Platform.runLater(AlertWindowsClass::showSelectFileAlert);
+            return null;
+        }
+
+        panelDistribution();
+
+        FileInfo selectedFile = srcPC.getSelectedFileInfo();
+        srcPath = Paths.get(srcPC.getCurrentPath(), selectedFile.getFilename());
+        dstPath = Paths.get(dstPC.getCurrentPath(), selectedFile.getFilename());
+        return selectedFile;
+    }
+
+    private boolean selectTable() {
+        if (!clientPC.getSelectedTable() && !serverPC.getSelectedTable()) {
+            Platform.runLater(AlertWindowsClass::showSelectTableAlert);
+            return false;
+        }
+
+        panelDistribution();
+
+        return true;
+    }
+
+    private void panelDistribution() {
+        if (clientPC.getSelectedTable()) {
+            srcPC = clientPC;
+            dstPC = serverPC;
+            transfer = true;
+        }
+
+        if (serverPC.getSelectedTable()) {
+            srcPC = serverPC;
+            dstPC = clientPC;
+            transfer = false;
+        }
     }
 
     public void setClientLogic(ClientLogic clientLogic) {
         this.clientLogic = clientLogic;
         serverPC.setClientLogic(clientLogic);
+    }
+
+    public PanelController getSrcPC() {
+        return srcPC;
+    }
+
+    public Button getSendFileButton() {
+        return sendFileButton;
+    }
+
+    public Path getSrcPath() {
+        return srcPath;
+    }
+
+    public Path getDstPath() {
+        return dstPath;
+    }
+
+    public FileInfo getSelectedFile() {
+        return selectedFile;
     }
 }

@@ -1,6 +1,7 @@
 package org.vinogradov.myclient.controllers;
 
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -10,9 +11,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
-import org.vinogradov.mydto.commonClasses.FileInfo;
+import org.vinogradov.common.commonClasses.FileInfo;
+import org.vinogradov.common.commonClasses.HelperMethods;
+import org.vinogradov.myclient.GUI.ByteConverter;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
@@ -20,14 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PanelClientController implements Initializable, PanelController<Path> {
-    
+
     @FXML
     public TableView<FileInfo> filesTable;
     public ComboBox<String> disksBox;
@@ -55,7 +54,8 @@ public class PanelClientController implements Initializable, PanelController<Pat
                         setText(null);
                         setStyle("");
                     } else {
-                        String text = String.format("%,d bytes", item);
+                        ByteConverter byteConverter = new ByteConverter(item);
+                        String text = byteConverter.getSizeFileStringFormat();
                         if (item == -1L) {
                             text = "[DIR]";
                         }
@@ -83,8 +83,9 @@ public class PanelClientController implements Initializable, PanelController<Pat
         filesTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 2) {
-                    Path path = Paths.get(pathField.getText()).resolve(filesTable.getSelectionModel().getSelectedItem().getFilename());
+                FileInfo selectedFile = filesTable.getSelectionModel().getSelectedItem();
+                if (mouseEvent.getClickCount() == 2 && selectedFile != null ) {
+                    Path path = Paths.get(pathField.getText()).resolve(selectedFile.getFilename());
                     if (Files.isDirectory(path)) {
                         updateList(path);
                     }
@@ -110,34 +111,38 @@ public class PanelClientController implements Initializable, PanelController<Pat
 
     @Override
     public void delFile(Path path) {
-        try(Stream<Path> walk = Files.walk(path)) {
-            walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        } catch (IOException e) {
-            AlertWindowsClass.showDelFileError();
-            e.printStackTrace();
+        if (HelperMethods.deleteUserFile(path)) {
+            updateList(path.getParent());
+            return;
         }
-        System.out.println("Удаленный файл или папка: " + path);
+        Platform.runLater(AlertWindowsClass::showDelFileError);
     }
 
     @Override
     public void updateList(Path path) {
         try {
-            pathField.setText(path.normalize().toAbsolutePath().toString());
+            Path pathNorm = path.toAbsolutePath().normalize();
+            pathField.setText(pathNorm.toString());
             filesTable.getItems().clear();
-            filesTable.getItems().addAll(Files.list(path).map(FileInfo::new).collect(Collectors.toList()));
+            filesTable.getItems().addAll(Files.list(pathNorm).map(FileInfo::new).collect(Collectors.toList()));
             filesTable.sort();
         } catch (IOException e) {
-            AlertWindowsClass.showUpdateListError();
+            Platform.runLater(AlertWindowsClass::showUpdateListError);
             e.printStackTrace();
         }
     }
 
     @Override
-    public String[] getStringListFiles() {
-        String[] string = filesTable.getItems().stream().map(FileInfo::getFilename).
-                collect(Collectors.toList()).toArray(String[]::new);
-        System.out.println(Arrays.deepToString(string));
-        return string;
+    public void createNewPackage(String nameFolder) {
+        Path path = Paths.get(getCurrentPath()).resolve(nameFolder);
+        HelperMethods.createNewUserFile(path);
+        updateList(Paths.get(getCurrentPath()));
+    }
+
+    @Override
+    public boolean getSelectedTable() {
+        if (!filesTable.isFocused()) return false;
+        return true;
     }
 
     @FXML

@@ -1,10 +1,10 @@
 module client {
     requires javafx.fxml;
     requires javafx.controls;
-    requires dto;
-    requires support;
+    requires common;
     requires io.netty.transport;
     requires io.netty.codec;
+    requires support;
 
     exports org.vinogradov.myclient.controllers;
     exports org.vinogradov.myclient.GUI;

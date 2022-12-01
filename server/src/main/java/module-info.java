@@ -1,8 +1,7 @@
 module server {
-    requires support;
     requires io.netty.transport;
     requires io.netty.codec;
-    requires dto;
+    requires common;
     requires java.sql;
     requires org.apache.commons.codec;
 }

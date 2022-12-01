@@ -1,8 +1,7 @@
 package org.vinogradov.myserver.serverLogic.dataBaseService;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.vinogradov.mydto.commonClasses.User;
-import org.vinogradov.mysupport.HelperMethods;
+import org.vinogradov.common.commonClasses.User;
 
 import java.sql.*;
 

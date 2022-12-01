@@ -1,16 +1,28 @@
 package org.vinogradov.myclient.clientService;
 
-import org.vinogradov.mydto.responses.AuthServerResponse;
-import org.vinogradov.mydto.responses.GetListResponse;
-import org.vinogradov.mydto.responses.RegServerResponse;
+import org.vinogradov.common.responses.*;
 
 public interface ClientHandlerLogic {
 
-    void getHandingMessageReg(RegServerResponse responseReg);
+    void getHandingRegOrAuthResponse(RegOrAuthServerResponse responseAuth);
 
-    void getHandingMessageAuth(AuthServerResponse responseAuth);
+    void getHandingGetListResponse(GetListResponse responseList);
 
-    void getHandingMessageList(GetListResponse responseList);
+    void getHandingConnectionLimit(ConnectionLimitResponse connectionLimitResponse);
 
-    void getHandingConnectionLimit();
+    void getHandingPermissionToTransferResponse(PermissionToTransferResponse permissionToTransferResponse);
+
+    void getHandingMetaDataResponse(MetaDataResponse metaDataResponse);
+
+    void getHandingSendPartFileResponse(SendPartFileResponse sendPartFileResponse);
+
+    void getHandingPatternMatchingResponse(PatternMatchingResponse patternMatchingResponse);
+
+    void getHandingClearClientMapResponse(ClearClientMapResponse clearClientMapResponse);
+
+    void getHandingNotCreateNewPathResponse(NotCreateNewPathResponse notCreateNewPathResponse);
+
+    void getHandingTheUserIsAlreadyLoggedIn(TheUserIsAlreadyLoggedIn theUserIsAlreadyLoggedIn);
+
+    void getHandingOverwriteFileResponse(OverwriteFileResponse overwriteFileResponse);
 }

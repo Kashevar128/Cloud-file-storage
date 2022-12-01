@@ -20,7 +20,7 @@ public class RegAuthGui {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/vinogradov/fxml/reg_auth.fxml"));
         Parent auth = loader.load();
         regAuthController = loader.getController();
-        regAuthController.regUser();
+        regAuthController.fillInTheFields();
         stage = new Stage();
         stage.setTitle("Авторизация");
         stage.setScene(new Scene(auth));
