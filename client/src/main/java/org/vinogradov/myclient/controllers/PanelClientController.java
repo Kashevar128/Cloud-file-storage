@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.common.commonClasses.FileInfo;
 import org.vinogradov.common.commonClasses.HelperMethods;
+import org.vinogradov.myclient.GUI.ByteConverter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -53,7 +54,8 @@ public class PanelClientController implements Initializable, PanelController<Pat
                         setText(null);
                         setStyle("");
                     } else {
-                        String text = String.format("%,d bytes", item);
+                        ByteConverter byteConverter = new ByteConverter(item);
+                        String text = byteConverter.getSizeFileStringFormat();
                         if (item == -1L) {
                             text = "[DIR]";
                         }

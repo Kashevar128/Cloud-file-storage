@@ -9,8 +9,9 @@ public class AlertWindowsClass {
 
     public static void showIncorrectPasswordAlert() {
         Alert alert = new Alert(Alert.AlertType.ERROR, "Неверный формат пароля." +
-                " Допускаются не менее 1 латинской буквы в нижним регистре, верхнем регистре," +
-                " цифры, количество символов от 8 до 20.", ButtonType.OK);
+                " Допускаются не менее 1 латинской буквы в нижним регистре, не менее" +
+                " 1 латинскй буквы в верхнем регистре" +
+                " , не менее 1 цифры, общее количество символов должно быть от 8 до 20.", ButtonType.OK);
         alert.setHeaderText("Попробуйте еще раз");
         alert.showAndWait();
     }
@@ -85,14 +86,7 @@ public class AlertWindowsClass {
     public static void showLengthFolderNameAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING, "В названии папки должно " +
                 "быть не больше 50 сиволов", ButtonType.OK);
-        alert.setHeaderText("Слишком длинное имя папки");
-        alert.showAndWait();
-    }
-
-    public static void showInterruptSendFileAlert() {
-        Alert alert = new Alert(Alert.AlertType.WARNING, "Передача файла прервана, " +
-                "переданная часть файла будет автоматичиски удалена", ButtonType.OK);
-        alert.setHeaderText("Передача прервана!");
+        alert.setHeaderText("Слишком длинное имя папки.");
         alert.showAndWait();
     }
 
@@ -112,14 +106,14 @@ public class AlertWindowsClass {
     public static void showTheUserIsAlreadyLoggedInAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING,
                 "Пользователь с вашими данными уже online", ButtonType.OK);
-        alert.setHeaderText("Вы уже вошли");
+        alert.setHeaderText("Вы уже вошли.");
         alert.showAndWait();
     }
 
     public static boolean showOnTheClientFileExistingConfirmation() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                 "На клиенте такой файл существует. Хотите его перезаписать?");
-        alert.setHeaderText("Перезапись файла на клиенте");
+        alert.setHeaderText("Запись файла на клиенте.");
         Optional<ButtonType> result = alert.showAndWait();
         return result.get() == ButtonType.OK;
     }
@@ -127,7 +121,7 @@ public class AlertWindowsClass {
     public static boolean showOnTheServerFileExistingConfirmation() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                 "На сервере такой файл существует. Хотите его перезаписать?");
-        alert.setHeaderText("Перезапись файла на сервере");
+        alert.setHeaderText("Запись файла на сервере.");
         Optional<ButtonType> result = alert.showAndWait();
         return result.get() == ButtonType.OK;
     }

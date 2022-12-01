@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.common.commonClasses.UpdatePanel;
 import org.vinogradov.common.responses.GetListResponse;
+import org.vinogradov.myclient.GUI.ByteConverter;
 import org.vinogradov.myclient.clientService.ClientLogic;
 import org.vinogradov.common.commonClasses.FileInfo;
 import org.vinogradov.common.commonClasses.HelperMethods;
@@ -59,7 +60,8 @@ public class PanelServerController implements Initializable, PanelController<Upd
                         setText(null);
                         setStyle("");
                     } else {
-                        String text = String.format("%,d bytes", item);
+                        ByteConverter byteConverter = new ByteConverter(item);
+                        String text = byteConverter.getSizeFileStringFormat();
                         if (item == -1L) {
                             text = "[DIR]";
                         }
