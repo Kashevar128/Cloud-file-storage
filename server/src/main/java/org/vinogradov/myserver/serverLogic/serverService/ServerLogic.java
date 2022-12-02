@@ -5,6 +5,7 @@ import org.vinogradov.common.commonClasses.*;
 import org.vinogradov.common.requests.*;
 import org.vinogradov.common.responses.*;
 import org.vinogradov.myserver.serverLogic.connectionService.ConverterPath;
+import org.vinogradov.myserver.serverLogic.consoleService.ServerConsole;
 import org.vinogradov.myserver.serverLogic.receivingFileServerService.ReceivingFileServerController;
 import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.sendFileServerService.SendFileServerController;

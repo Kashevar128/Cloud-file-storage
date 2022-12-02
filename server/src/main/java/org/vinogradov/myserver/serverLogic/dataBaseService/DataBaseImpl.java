@@ -21,7 +21,7 @@ public class DataBaseImpl implements DataBase {
     public DataBaseImpl() throws Exception {
         Class.forName("org.sqlite.JDBC");
         this.connection = DriverManager.getConnection("jdbc:sqlite:users.sqlite");
-        System.out.println("База данных подключена");
+        System.out.println("The database is connected");
         createTable();
     }
 
