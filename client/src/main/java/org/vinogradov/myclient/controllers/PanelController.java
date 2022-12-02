@@ -18,4 +18,6 @@ public interface PanelController<T> {
     void createNewPackage(String nameFolder);
 
     boolean getSelectedTable();
+
+    void copyPathInBuffer(String srcPath);
 }

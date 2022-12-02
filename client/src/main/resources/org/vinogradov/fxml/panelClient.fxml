@@ -3,8 +3,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.text.Font?>
 <VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.vinogradov.myclient.controllers.PanelClientController">
+    <Label text="Your PC" textFill="brown" >
+        <font>
+            <Font size="15.0"/>
+        </font>
+    </Label>
     <HBox>
         <ComboBox fx:id="disksBox" onAction="#selectDiskAction"/>
         <TextField fx:id="pathField" editable="false" HBox.hgrow="ALWAYS"/>
