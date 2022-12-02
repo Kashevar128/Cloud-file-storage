@@ -1,31 +1,36 @@
 package org.vinogradov.myclient.controllers;
 
-
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
 import org.vinogradov.common.commonClasses.FileInfo;
 import org.vinogradov.common.commonClasses.HelperMethods;
-import org.vinogradov.myclient.GUI.ByteConverter;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class PanelClientController implements Initializable, PanelController<Path> {
+
+    private ClientController clientController;
+
+    PanelBuilder panelBuilder;
+
+    private String currentPath;
+
+    public void setClientController(ClientController clientController) {
+        this.clientController = clientController;
+        panelBuilder.setClientController(clientController);
+    }
 
     @FXML
     public TableView<FileInfo> filesTable;
@@ -35,44 +40,8 @@ public class PanelClientController implements Initializable, PanelController<Pat
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        TableColumn<FileInfo, String> fileTypeColumn = new TableColumn<>();
-        fileTypeColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType().getName()));
-        fileTypeColumn.setPrefWidth(24);
-
-        TableColumn<FileInfo, String> fileNameColumn = new TableColumn<>("Имя");
-        fileNameColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFilename()));
-        fileNameColumn.setPrefWidth(140);
-
-        TableColumn<FileInfo, Long> fileSizeColumn = new TableColumn<>("Размер");
-        fileSizeColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getSize()));
-        fileSizeColumn.setCellFactory(column -> {
-            return new TableCell<FileInfo, Long>() {
-                @Override
-                protected void updateItem(Long item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item == null || empty) {
-                        setText(null);
-                        setStyle("");
-                    } else {
-                        ByteConverter byteConverter = new ByteConverter(item);
-                        String text = byteConverter.getSizeFileStringFormat();
-                        if (item == -1L) {
-                            text = "[DIR]";
-                        }
-                        setText(text);
-                    }
-                }
-            };
-        });
-        fileSizeColumn.setPrefWidth(120);
-
-        DateTimeFormatter dft = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        TableColumn<FileInfo, String> fileDateColumn = new TableColumn<>("Дата изменения");
-        fileDateColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getLastModified().format(dft)));
-        fileDateColumn.setPrefWidth(120);
-
-        filesTable.getColumns().addAll(fileTypeColumn, fileNameColumn, fileSizeColumn, fileDateColumn);
-        filesTable.getSortOrder().add(fileTypeColumn);
+        panelBuilder = new PanelBuilder();
+        panelBuilder.buildTable(filesTable);
 
         disksBox.getItems().clear();
         for (Path p : FileSystems.getDefault().getRootDirectories()) {
@@ -80,18 +49,16 @@ public class PanelClientController implements Initializable, PanelController<Pat
         }
         disksBox.getSelectionModel().select(0);
 
-        filesTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                FileInfo selectedFile = filesTable.getSelectionModel().getSelectedItem();
-                if (mouseEvent.getClickCount() == 2 && selectedFile != null ) {
-                    Path path = Paths.get(pathField.getText()).resolve(selectedFile.getFilename());
-                    if (Files.isDirectory(path)) {
-                        updateList(path);
-                    }
-                }
+        Consumer<FileInfo> consumerMouseClient = (selectedFile) -> {
+            Path path = Paths.get(getCurrentPath()).resolve(selectedFile.getFilename());
+            if (Files.isDirectory(path)) {
+                updateList(path);
             }
-        });
+        };
+
+        panelBuilder.buildMouseHandler(consumerMouseClient, filesTable);
+
+        panelBuilder.buildActions(filesTable);
 
         updateList(Paths.get(System.clearProperty("user.home")));
     }
@@ -106,7 +73,7 @@ public class PanelClientController implements Initializable, PanelController<Pat
 
     @Override
     public String getCurrentPath() {
-        return pathField.getText();
+        return currentPath;
     }
 
     @Override
@@ -123,6 +90,7 @@ public class PanelClientController implements Initializable, PanelController<Pat
         try {
             Path pathNorm = path.toAbsolutePath().normalize();
             pathField.setText(pathNorm.toString());
+            currentPath = pathNorm.toString();
             filesTable.getItems().clear();
             filesTable.getItems().addAll(Files.list(pathNorm).map(FileInfo::new).collect(Collectors.toList()));
             filesTable.sort();
@@ -145,6 +113,13 @@ public class PanelClientController implements Initializable, PanelController<Pat
         return true;
     }
 
+    @Override
+    public void copyPathInBuffer(String srcPath) {
+        ClipboardContent content = new ClipboardContent();
+        content.putString(srcPath);
+        Clipboard.getSystemClipboard().setContent(content);
+    }
+
     @FXML
     public void selectDiskAction(ActionEvent actionEvent) {
         ComboBox<String> element = (ComboBox<String>) actionEvent.getSource();
@@ -158,4 +133,6 @@ public class PanelClientController implements Initializable, PanelController<Pat
             updateList(backPath);
         }
     }
+
+
 }

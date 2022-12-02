@@ -10,6 +10,9 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.vinogradov.common.commonClasses.UpdatePanel;
 import org.vinogradov.common.responses.GetListResponse;
@@ -25,13 +28,23 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class PanelServerController implements Initializable, PanelController<UpdatePanel> {
 
+    private ClientController clientController;
+
     private String stringCurrentPath;
 
     private ClientLogic clientLogic;
+
+    private PanelBuilder panelBuilder;
+
+    public void setClientController(ClientController clientController) {
+        this.clientController = clientController;
+        panelBuilder.setClientController(clientController);
+    }
 
     @FXML
     public TableView<FileInfo> filesTable;
@@ -41,57 +54,19 @@ public class PanelServerController implements Initializable, PanelController<Upd
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        TableColumn<FileInfo, String> fileTypeColumn = new TableColumn<>();
-        fileTypeColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType().getName()));
-        fileTypeColumn.setPrefWidth(24);
+        panelBuilder = new PanelBuilder();
+        panelBuilder.buildTable(filesTable);
 
-        TableColumn<FileInfo, String> fileNameColumn = new TableColumn<>("Имя");
-        fileNameColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFilename()));
-        fileNameColumn.setPrefWidth(140);
-
-        TableColumn<FileInfo, Long> fileSizeColumn = new TableColumn<>("Размер");
-        fileSizeColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getSize()));
-        fileSizeColumn.setCellFactory(column -> {
-            return new TableCell<FileInfo, Long>() {
-                @Override
-                protected void updateItem(Long item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item == null || empty) {
-                        setText(null);
-                        setStyle("");
-                    } else {
-                        ByteConverter byteConverter = new ByteConverter(item);
-                        String text = byteConverter.getSizeFileStringFormat();
-                        if (item == -1L) {
-                            text = "[DIR]";
-                        }
-                        setText(text);
-                    }
-                }
-            };
-        });
-        fileSizeColumn.setPrefWidth(120);
-
-        DateTimeFormatter dft = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        TableColumn<FileInfo, String> fileDateColumn = new TableColumn<>("Дата изменения");
-        fileDateColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getLastModified().format(dft)));
-        fileDateColumn.setPrefWidth(120);
-
-        filesTable.getColumns().addAll(fileTypeColumn, fileNameColumn, fileSizeColumn, fileDateColumn);
-        filesTable.getSortOrder().add(fileTypeColumn);
-
-        filesTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                FileInfo selectedFile = filesTable.getSelectionModel().getSelectedItem();
-                if (mouseEvent.getClickCount() == 2 && selectedFile != null) {
-                    Path path = Paths.get(getCurrentPath()).resolve(selectedFile.getFilename());
-                    if (selectedFile.getType() == FileInfo.FileType.DIRECTORY) {
-                        clientLogic.createGetListRequest(path.toString());
-                    }
-                }
+        Consumer<FileInfo> consumerMouseServer = (selectedFile) -> {
+            Path path = Paths.get(getCurrentPath()).resolve(selectedFile.getFilename());
+            if (selectedFile.getType() == FileInfo.FileType.DIRECTORY) {
+                clientLogic.createGetListRequest(path.toString());
             }
-        });
+        };
+
+        panelBuilder.buildMouseHandler(consumerMouseServer, filesTable);
+
+        panelBuilder.buildActions(filesTable);
     }
 
     @Override
@@ -135,7 +110,14 @@ public class PanelServerController implements Initializable, PanelController<Upd
         return true;
     }
 
+    @Override
+    public void copyPathInBuffer(String srcPath) {
+        ClipboardContent content = new ClipboardContent();
+        content.putString(srcPath);
+        Clipboard.getSystemClipboard().setContent(content);
+    }
 
+    @FXML
     public void btnPathBack(ActionEvent actionEvent) {
         Path backPath = Paths.get(getCurrentPath()).getParent();
         if (backPath != null) {

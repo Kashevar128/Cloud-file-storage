@@ -40,6 +40,8 @@ public class ClientController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         clientPC = (PanelClientController) clientPanel.getProperties().get("ctrl");
         serverPC = (PanelServerController) serverPanel.getProperties().get("ctrl");
+        clientPC.setClientController(this);
+        serverPC.setClientController(this);
     }
 
     @FXML
@@ -69,6 +71,8 @@ public class ClientController implements Initializable {
         srcPC.delFile(srcPath);
     }
 
+
+
     @FXML
     public void refreshBtnAction(ActionEvent actionEvent) {
         clientPC.updateList(Paths.get(clientPC.getCurrentPath()));
@@ -80,6 +84,12 @@ public class ClientController implements Initializable {
         if (selectTable()) {
             Platform.runLater(() -> new EnterWindow(clientLogic.getClientController(), clientLogic.getClientGUI()));
         }
+    }
+
+    public void copyPath() {
+        selectedFile = selectFile();
+        if (selectedFile == null) return;
+        srcPC.copyPathInBuffer(srcPath.toString());
     }
 
     private FileInfo selectFile() {

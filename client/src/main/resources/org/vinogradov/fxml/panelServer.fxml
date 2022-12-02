@@ -3,8 +3,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.text.Font?>
 <VBox alignment="CENTER" xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.vinogradov.myclient.controllers.PanelServerController">
+    <Label text="Your Cloud" textFill="blue" >
+        <font>
+            <Font size="15.0"/>
+        </font>
+    </Label>
     <HBox>
         <TextField fx:id="pathField" editable="false" HBox.hgrow="ALWAYS"/>
         <Button text="Назад" onAction="#btnPathBack"/>
