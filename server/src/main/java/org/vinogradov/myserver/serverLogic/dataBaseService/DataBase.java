@@ -12,8 +12,6 @@ public interface DataBase {
 
     void deleteUser(String name);
 
-    void startDataBase();
-
     void closeDataBase();
 
 }

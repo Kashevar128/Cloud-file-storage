@@ -87,11 +87,6 @@ public class DataBaseImpl implements DataBase {
     }
 
     @Override
-    public void startDataBase() {
-
-    }
-
-    @Override
     public void closeDataBase() {
         try {
             connection.close();

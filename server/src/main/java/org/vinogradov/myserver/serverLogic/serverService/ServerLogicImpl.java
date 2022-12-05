@@ -208,7 +208,7 @@ public class ServerLogicImpl implements ServerLogic {
             };
             Map<Long, String> srcPathsMap = sendFileServerController.getSrcPathsMap();
             for (Map.Entry<Long, String> entry : srcPathsMap.entrySet()) {
-                HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile);
+                HelperMethods.splitFile(entry.getKey(), entry.getValue(), myFunctionSendPartFile);
             }
             sendFileServerController.clearSrcPathsMap();
         }

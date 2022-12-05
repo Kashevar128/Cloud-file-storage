@@ -1,4 +1,5 @@
 package org.vinogradov.myserver.serverLogic.consoleService;
+
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
@@ -6,9 +7,13 @@ import org.vinogradov.myserver.serverLogic.storageService.Storage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLogic {
+    private final String badDirectory = "Директория не найдена";
+    private final Path rootPath = Paths.get("server/Data_Storage");
+
     private Path currentPath;
     private List<Path> currentListPath;
 
@@ -18,6 +23,8 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     private ConsoleGUI consoleGUI;
 
     public ConsoleLogicImpl(DataBase dataBase, Storage storage, NettyServer nettyServer) {
+        currentPath = rootPath;
+        currentListPath = createListPaths(rootPath);
         this.dataBase = dataBase;
         this.storage = storage;
         this.nettyServer = nettyServer;
@@ -47,13 +54,61 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
 
     @Override
     public void movePath(Path path) {
-        if(path == null || !Files.exists(path)) {
-            consoleGUI.setLog("Файл не найден");
+        if (path == null || !Files.exists(path) || !Files.isDirectory(path)) {
+            consoleGUI.setLog(badDirectory);
             return;
         }
-        currentListPath = createListPaths(path);
+        if (!filterPath(path)) {
+            showCurrentPath();
+            return;
+        }
         currentPath = path;
+        currentListPath = createListPaths(path);
         showCurrentPath();
+    }
+
+    @Override
+    public void appendMovePath(Path pathNameDirectory) {
+        if (pathNameDirectory == null) {
+            consoleGUI.setLog(badDirectory);
+            return;
+        }
+        Path newPath = currentPath.resolve(pathNameDirectory);
+        if (!Files.exists(newPath) || !Files.isDirectory(newPath)) {
+            consoleGUI.setLog(badDirectory);
+            return;
+        }
+        if (!filterPath(newPath)) {
+            showCurrentPath();
+            return;
+        }
+        currentPath = newPath;
+        currentListPath = createListPaths(newPath);
+        showCurrentPath();
+    }
+
+    @Override
+    public void moveRoot() {
+        movePath(rootPath);
+    }
+
+    @Override
+    public void moveBack() {
+        Path newPath = currentPath.getParent();
+        if (!filterPath(newPath)) {
+            showCurrentPath();
+            return;
+        }
+        currentPath = newPath;
+        currentListPath = createListPaths(currentPath);
+        showCurrentPath();
+    }
+
+    @Override
+    public void createNewUserInDb(String name, String password) {
+        if (name != null && password != null) {
+
+        }
     }
 
 
@@ -78,6 +133,10 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
             throw new RuntimeException(e);
         }
         return listFileName;
+    }
+
+    private boolean filterPath(Path path) {
+        return path.toString().contains(rootPath.toString());
     }
 }
 

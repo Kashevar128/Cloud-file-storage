@@ -23,7 +23,6 @@ public class ConsoleGUI extends JFrame implements ActionListener {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
- //       setAlwaysOnTop(true);
 
         log.setEditable(false);
         log.setLineWrap(true);

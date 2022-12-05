@@ -14,4 +14,12 @@ public interface ConsoleLogic {
 
     void movePath(Path path);
 
+    void appendMovePath(Path nameDirectory);
+
+    void moveRoot();
+
+    void moveBack();
+
+    void createNewUserInDb(String name, String password);
+
 }

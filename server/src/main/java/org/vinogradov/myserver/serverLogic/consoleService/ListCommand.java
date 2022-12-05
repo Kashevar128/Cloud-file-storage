@@ -16,11 +16,12 @@ public class ListCommand {
         commandEnumMap.put("ban", CommandEnum.BAN_USER);
         commandEnumMap.put("createFile", CommandEnum.CREATE_NEW_PACKAGE);
         commandEnumMap.put("delPackage", CommandEnum.DELETE_PACKAGE);
-        commandEnumMap.put("storage", CommandEnum.SHOW_STORAGE);
         commandEnumMap.put("cancel", CommandEnum.CANCEL);
         commandEnumMap.put("clear", CommandEnum.CLEAR);
         commandEnumMap.put("exit", CommandEnum.EXIT);
         commandEnumMap.put("currentPath", CommandEnum.CURRENT_PATH);
+        commandEnumMap.put("root", CommandEnum.ROOT);
+        commandEnumMap.put("entry", CommandEnum.ENTRY);
     }
 
     public CommandEnum getCommand(String command) {
@@ -39,11 +40,12 @@ public class ListCommand {
         BAN_USER,
         CREATE_NEW_PACKAGE,
         DELETE_PACKAGE,
-        SHOW_STORAGE,
         CANCEL,
         CLEAR,
         EXIT,
-        CURRENT_PATH
+        CURRENT_PATH,
+        ROOT,
+        ENTRY
     }
 
 

@@ -43,7 +43,7 @@ public class HelperMethods {
         return counter <= 5;
     }
 
-    public static boolean split(Long id, String path, MyFunction<Long, byte[], Boolean> filePartMyFunction) {
+    public static boolean splitFile(Long id, String path, MyFunction<Long, byte[], Boolean> filePartMyFunction) {
         byte[] filePart = new byte[Constants.MB_1];
         try (FileInputStream fileInputStream = new FileInputStream(path)) {
             int size;
