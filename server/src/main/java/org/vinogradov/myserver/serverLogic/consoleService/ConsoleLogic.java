@@ -26,4 +26,8 @@ public interface ConsoleLogic {
 
     void closeNetty();
 
+    void createNewFolder(String nameFolder);
+
+    void deleteFile(String nameFolder);
+
 }

@@ -1,5 +1,6 @@
 package org.vinogradov.myserver.serverLogic.consoleService;
 
+import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
@@ -15,8 +16,12 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     private final String badDirectory = "Директория не найдена";
     private final String badCommand = "Команда не найдена";
     private final Path rootPath = Paths.get("server/Data_Storage");
-    private final String badCreate = "Пользователь не был создан";
-    private final String badDelete = "Пользователь не был удален";
+    private final String badCreateUser = "Пользователь не был создан";
+    private final String badDeleteUser = "Пользователь не был удален";
+    private final String badCreateFolder = "Ошибка при создании папки";
+    private final String badDelFile = "Такого файла нет";
+    private final String errorDel = "Ошибка при удалении файла";
+
 
     private Path currentPath;
     private List<Path> currentListPath;
@@ -109,36 +114,69 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
 
     @Override
     public void createNewUserInDB(String name, String password) {
-        if (name != null && password != null) {
+        if (name != null && password != null && !name.isEmpty() && !password.isEmpty() ) {
             User user = new User(name, password);
             if (!dataBase.createUser(user)) {
-                consoleGUI.setLog(badCreate);
+                consoleGUI.setLog(badCreateUser);
                 return;
             }
             String createUser = String.format("Пользователь %s успешно создан", name);
             consoleGUI.setLog(createUser);
             return;
         }
-        consoleGUI.setLog(badCreate);
+        consoleGUI.setLog(badCreateUser);
     }
 
     @Override
     public void deleteUserInDB(String name) {
-        if (name != null) {
+        if (name != null && !name.isEmpty()) {
             if (!dataBase.deleteUser(name)) {
-                consoleGUI.setLog(badDelete);
+                consoleGUI.setLog(badDeleteUser);
                 return;
             }
             String deleteUser = String.format("Пользователь %s успешно удален", name);
             consoleGUI.setLog(deleteUser);
             return;
         }
-        consoleGUI.setLog(badDelete);
+        consoleGUI.setLog(badDeleteUser);
     }
 
     @Override
     public void closeNetty() {
         nettyServer.closeServer();
+    }
+
+    @Override
+    public void createNewFolder(String nameFolder) {
+        if (nameFolder == null || nameFolder.isEmpty()) {
+            consoleGUI.setLog(badCreateFolder);
+            return;
+        }
+        currentPath = currentPath.resolve(Paths.get(nameFolder));
+        HelperMethods.createNewUserDirectory(currentPath);
+        currentListPath = createListPaths(currentPath);
+        String createFolder = String.format("Папка %s успешно создана", nameFolder);
+        consoleGUI.setLog(createFolder);
+    }
+
+    @Override
+    public void deleteFile(String nameFolder) {
+        if (nameFolder == null || nameFolder.isEmpty()) {
+            consoleGUI.setLog(badDelFile);
+            return;
+        }
+        Path resolve = currentPath.resolve(Paths.get(nameFolder));
+        if (!Files.exists(resolve)) {
+            consoleGUI.setLog(badDelFile);
+            return;
+        }
+        if (!HelperMethods.deleteUserFile(resolve)) {
+            consoleGUI.setLog(errorDel);
+        }
+        String delComplete = String.format("Файл %s успешно удален", nameFolder);
+        consoleGUI.setLog(delComplete);
+        currentListPath = createListPaths(currentPath);
+        showCurrentPath();
     }
 
 
@@ -147,7 +185,7 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     }
 
     private void showInGUI(String msg) {
-        if (msg == null) {
+        if (msg == null || msg.isEmpty()) {
             consoleGUI.setLog("null");
             return;
         }

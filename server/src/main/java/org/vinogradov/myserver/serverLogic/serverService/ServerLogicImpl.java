@@ -114,7 +114,7 @@ public class ServerLogicImpl implements ServerLogic {
             sendMessage(new NotCreateNewPathResponse());
             return;
         }
-        HelperMethods.createNewUserFile(converterPath.getServerPathToPath());
+        HelperMethods.createNewUserDirectory(converterPath.getServerPathToPath());
         sendMessage(new GetListResponse(converterPath.getParentClientPathString(),
                 converterPath.getParentServerPathToPath()));
     }

@@ -14,8 +14,8 @@ public class ListCommand {
         commandEnumMap.put("back", CommandEnum.BACK);
         commandEnumMap.put("move", CommandEnum.MOVE);
         commandEnumMap.put("ban", CommandEnum.BAN_USER);
-        commandEnumMap.put("createFile", CommandEnum.CREATE_NEW_PACKAGE);
-        commandEnumMap.put("delPackage", CommandEnum.DELETE_PACKAGE);
+        commandEnumMap.put("newFolder", CommandEnum.CREATE_NEW_PACKAGE);
+        commandEnumMap.put("delFile", CommandEnum.DELETE_PACKAGE);
         commandEnumMap.put("cancel", CommandEnum.CANCEL);
         commandEnumMap.put("clear", CommandEnum.CLEAR);
         commandEnumMap.put("exit", CommandEnum.EXIT);

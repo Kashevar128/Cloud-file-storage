@@ -43,6 +43,10 @@ public class ExecuteTheCommand {
             case CREATE_NEW_USER -> consoleLogic.createNewUserInDB(nameUser, password);
 
             case DELETE_USER -> consoleLogic.deleteUserInDB(info);
+
+            case CREATE_NEW_PACKAGE -> consoleLogic.createNewFolder(info);
+
+            case DELETE_PACKAGE -> consoleLogic.deleteFile(info);
         }
     }
 

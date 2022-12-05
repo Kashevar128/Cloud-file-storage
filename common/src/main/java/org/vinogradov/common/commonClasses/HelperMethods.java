@@ -123,7 +123,7 @@ public class HelperMethods {
         }
     }
 
-    public static void createNewUserFile(Path srcPath) {
+    public static void createNewUserDirectory(Path srcPath) {
         if (!srcPath.toFile().exists()) {
             try {
                 Files.createDirectory(srcPath);
