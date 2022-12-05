@@ -47,6 +47,8 @@ public class ExecuteTheCommand {
             case CREATE_NEW_PACKAGE -> consoleLogic.createNewFolder(info);
 
             case DELETE_PACKAGE -> consoleLogic.deleteFile(info);
+
+            case All_USERS_DB -> consoleLogic.showListDB();
         }
     }
 

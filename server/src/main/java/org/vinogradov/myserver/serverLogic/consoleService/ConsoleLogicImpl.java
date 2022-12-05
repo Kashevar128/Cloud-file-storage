@@ -179,6 +179,23 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         showCurrentPath();
     }
 
+    @Override
+    public void showListDB() {
+        List<List<String>> lists = dataBase.showAllUser();
+        String showUsersDB = showUsersDB(lists);
+        consoleGUI.setLog(showUsersDB);
+    }
+
+    @Override
+    public void showUserDB(String name) {
+
+    }
+
+    @Override
+    public void banUser(String name) {
+
+    }
+
 
     public void setConsoleGUI(ConsoleGUI consoleGUI) {
         this.consoleGUI = consoleGUI;

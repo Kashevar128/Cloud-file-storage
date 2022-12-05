@@ -16,8 +16,12 @@ public class DisplayingInformation {
         return pathStr.concat(arrayStr);
     }
 
-    public void showUsersDB(Map<String, String> usersMap) {
-
+    public String showUsersDB(List<List<String>> users) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (List<String> ls : users) {
+            stringBuilder.append(Arrays.toString(ls.toArray())).append("\n");
+        }
+        return stringBuilder.toString();
     }
 
     public void showUsersOnline(Map<String, ChannelHandlerContext> usersOnlineMap) {

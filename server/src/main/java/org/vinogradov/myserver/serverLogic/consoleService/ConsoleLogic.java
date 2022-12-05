@@ -30,4 +30,10 @@ public interface ConsoleLogic {
 
     void deleteFile(String nameFolder);
 
+    void showListDB();
+
+    void showUserDB(String name);
+
+    void banUser(String name);
+
 }

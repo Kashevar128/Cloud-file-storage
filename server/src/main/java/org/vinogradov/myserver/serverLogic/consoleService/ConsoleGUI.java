@@ -18,15 +18,15 @@ public class ConsoleGUI extends JFrame implements ActionListener {
 
         log = new JTextArea(waiting + "\n");
         fieldInput = new JTextField();
-        log.setFont(new Font("Dialog", Font.PLAIN, 20));
-        fieldInput.setFont(new Font("Dialog", Font.PLAIN, 20));
+        log.setFont(new Font("Dialog", Font.PLAIN, 18));
+        fieldInput.setFont(new Font("Dialog", Font.PLAIN, 18));
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(this);
         log.setEditable(false);
-        log.setLineWrap(true);
-        log.setWrapStyleWord(true);
+   //     log.setLineWrap(true);
+  //      log.setWrapStyleWord(true);
 
         fieldInput.addActionListener(this);
 

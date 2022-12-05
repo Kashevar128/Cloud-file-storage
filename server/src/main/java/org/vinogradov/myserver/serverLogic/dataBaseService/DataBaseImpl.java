@@ -4,6 +4,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.vinogradov.common.commonClasses.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBaseImpl implements DataBase {
 
@@ -100,6 +102,24 @@ public class DataBaseImpl implements DataBase {
     public void closeDataBase() {
         try {
             connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<List<String>> showAllUser() {
+        List<List<String>> arrayUser = new ArrayList<>();
+        try(Statement statement = connection.createStatement()) {
+            ResultSet rs = statement.executeQuery(queryGetAllUsers);
+            while (rs.next()) {
+               List<String> paramList = new ArrayList<>();
+               paramList.add(rs.getString(1));
+               paramList.add(rs.getString(2));
+                paramList.add(rs.getString(3));
+               arrayUser.add(paramList);
+            }
+            return arrayUser;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
