@@ -28,7 +28,7 @@ public class ExecuteTheCommand {
 
             case CLEAR -> consoleLogic.clearConsole();
 
-            case EXIT -> consoleLogic.exitServer();
+            case EXIT -> consoleLogic.exitConsole();
 
             case CURRENT_PATH -> consoleLogic.showCurrentPath();
 
@@ -39,14 +39,24 @@ public class ExecuteTheCommand {
             case ENTRY -> consoleLogic.movePath(Paths.get(info));
 
             case BACK -> consoleLogic.moveBack();
+
+            case CREATE_NEW_USER -> consoleLogic.createNewUserInDB(nameUser, password);
+
+            case DELETE_USER -> consoleLogic.deleteUserInDB(info);
         }
     }
 
     private boolean handlerCommand(String msg) {
-        String[] strings = msg.split(" ", 3);
+        String[] strings = msg.split(" ", 2);
         command = strings[0].trim();
-        if (strings.length > 1) info = strings[1].trim();
-        if (info.contains(","))
+        if (strings.length > 1)  {
+            info = strings[1].trim();
+            if (info.contains(",")) {
+                String[] split = info.split(",", 2);
+                nameUser = split[0];
+                password = split[1];
+            }
+        }
         if (!listCommand.isACommand(command)) {
             consoleLogic.voidCommand();
             return false;

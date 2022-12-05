@@ -18,7 +18,7 @@ public class ServerConsole {
         SwingUtilities.invokeLater(() -> {
             ConsoleLogicImpl consoleLogicImpl = new ConsoleLogicImpl(dataBase, storage, nettyServer);
             ExecuteTheCommand executeTheCommand = new ExecuteTheCommand(consoleLogicImpl);
-            ConsoleGUI consoleGUI = new ConsoleGUI(executeTheCommand);
+            ConsoleGUI consoleGUI = new ConsoleGUI(executeTheCommand, consoleLogicImpl);
             consoleLogicImpl.setConsoleGUI(consoleGUI);
         });
     }

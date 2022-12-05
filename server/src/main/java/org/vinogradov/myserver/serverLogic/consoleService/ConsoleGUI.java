@@ -2,8 +2,7 @@ package org.vinogradov.myserver.serverLogic.consoleService;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class ConsoleGUI extends JFrame implements ActionListener {
     private final String waiting = "Ожидание команды:";
@@ -11,9 +10,11 @@ public class ConsoleGUI extends JFrame implements ActionListener {
     private final JTextArea log;
     private final JTextField fieldInput;
     private final ExecuteTheCommand executeTheCommand;
+    private final ConsoleLogic consoleLogic;
 
-    public ConsoleGUI(ExecuteTheCommand executeTheCommand) {
+    public ConsoleGUI(ExecuteTheCommand executeTheCommand, ConsoleLogic consoleLogic) {
         this.executeTheCommand = executeTheCommand;
+        this.consoleLogic = consoleLogic;
 
         log = new JTextArea(waiting + "\n");
         fieldInput = new JTextField();
@@ -22,8 +23,7 @@ public class ConsoleGUI extends JFrame implements ActionListener {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(600, 400);
-        setLocationRelativeTo(null);
-
+        setLocationRelativeTo(this);
         log.setEditable(false);
         log.setLineWrap(true);
         log.setWrapStyleWord(true);
@@ -32,6 +32,43 @@ public class ConsoleGUI extends JFrame implements ActionListener {
 
         add(new JScrollPane(log), BorderLayout.CENTER);
         add(fieldInput, BorderLayout.SOUTH);
+
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                consoleLogic.closeNetty();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                consoleLogic.closeNetty();
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
 
         setResizable(false);
         setVisible(true);
@@ -69,7 +106,7 @@ public class ConsoleGUI extends JFrame implements ActionListener {
         });
     }
 
-    public void closeConsole() {
+    public void exit() {
         this.dispose();
     }
 }

@@ -1,5 +1,6 @@
 package org.vinogradov.myserver.serverLogic.consoleService;
 
+import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
@@ -12,7 +13,10 @@ import java.util.List;
 
 public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLogic {
     private final String badDirectory = "Директория не найдена";
+    private final String badCommand = "Команда не найдена";
     private final Path rootPath = Paths.get("server/Data_Storage");
+    private final String badCreate = "Пользователь не был создан";
+    private final String badDelete = "Пользователь не был удален";
 
     private Path currentPath;
     private List<Path> currentListPath;
@@ -41,15 +45,14 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         consoleGUI.clearLog();
     }
 
-    @Override
-    public void exitServer() {
+    public void exitConsole() {
         nettyServer.closeServer();
-        consoleGUI.closeConsole();
+        consoleGUI.exit();
     }
 
     @Override
     public void voidCommand() {
-        consoleGUI.setLog("Команда не найдена");
+        consoleGUI.setLog(badCommand);
     }
 
     @Override
@@ -105,10 +108,37 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     }
 
     @Override
-    public void createNewUserInDb(String name, String password) {
+    public void createNewUserInDB(String name, String password) {
         if (name != null && password != null) {
-
+            User user = new User(name, password);
+            if (!dataBase.createUser(user)) {
+                consoleGUI.setLog(badCreate);
+                return;
+            }
+            String createUser = String.format("Пользователь %s успешно создан", name);
+            consoleGUI.setLog(createUser);
+            return;
         }
+        consoleGUI.setLog(badCreate);
+    }
+
+    @Override
+    public void deleteUserInDB(String name) {
+        if (name != null) {
+            if (!dataBase.deleteUser(name)) {
+                consoleGUI.setLog(badDelete);
+                return;
+            }
+            String deleteUser = String.format("Пользователь %s успешно удален", name);
+            consoleGUI.setLog(deleteUser);
+            return;
+        }
+        consoleGUI.setLog(badDelete);
+    }
+
+    @Override
+    public void closeNetty() {
+        nettyServer.closeServer();
     }
 
 

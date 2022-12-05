@@ -10,7 +10,7 @@ public interface DataBase {
 
     boolean auth(User user);
 
-    void deleteUser(String name);
+    boolean deleteUser(String name);
 
     void closeDataBase();
 

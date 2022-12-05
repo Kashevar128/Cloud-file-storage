@@ -9,14 +9,16 @@ public class DataBaseImpl implements DataBase {
 
     private Connection connection;
 
-    private String queryCreateTable = "CREATE TABLE IF NOT EXISTS Users(Id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    private final String queryCreateTable = "CREATE TABLE IF NOT EXISTS Users(Id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "User TEXT UNIQUE, Password TEXT)";
 
-    private String queryGetAllUsers = "SELECT * FROM Users";
+    private final String queryGetAllUsers = "SELECT * FROM Users";
 
-    private String queryNewUser = "INSERT INTO Users(User, Password) VALUES (?, ?)";
+    private final String queryNewUser = "INSERT INTO Users(User, Password) VALUES (?, ?)";
 
-    private String queryGetUserForName = "SELECT * FROM Users WHERE User = ?";
+    private final String queryGetUserForName = "SELECT * FROM Users WHERE User = ?";
+
+    private final String queryDeleteUser = "DELETE FROM Users WHERE User = ?";
 
     public DataBaseImpl() throws Exception {
         Class.forName("org.sqlite.JDBC");
@@ -76,15 +78,23 @@ public class DataBaseImpl implements DataBase {
             String passTable = rs.getString("Password");
             if (!passTable.equals(encryptPassword)) return false;
             else return true;
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void deleteUser(String name) {
-
+    public boolean deleteUser(String name) {
+        if (!findUser(name)) return false;
+        try (PreparedStatement statement = connection.prepareStatement(queryDeleteUser)) {
+            statement.setString(1, name);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
     @Override
     public void closeDataBase() {

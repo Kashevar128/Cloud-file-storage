@@ -8,7 +8,7 @@ public interface ConsoleLogic {
 
     void clearConsole();
 
-    void exitServer();
+    void exitConsole();
 
     void voidCommand();
 
@@ -20,6 +20,10 @@ public interface ConsoleLogic {
 
     void moveBack();
 
-    void createNewUserInDb(String name, String password);
+    void createNewUserInDB(String name, String password);
+
+    void deleteUserInDB(String name);
+
+    void closeNetty();
 
 }
