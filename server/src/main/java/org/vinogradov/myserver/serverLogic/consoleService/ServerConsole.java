@@ -1,24 +1,26 @@
 package org.vinogradov.myserver.serverLogic.consoleService;
 
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
-import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
+import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
+
+import javax.swing.*;
 
 public class ServerConsole {
 
-    public ServerConsole() {
-        DataBase dataBase;
-        try {
-            dataBase = new DataBaseImpl();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Storage storage = new Storage();
-        ConsoleLogic consoleLogic = new ConsoleLogic(dataBase, storage);
-        ExecuteTheCommand executeTheCommand = new ExecuteTheCommand(consoleLogic);
-        EnteringCommands enteringCommands = new EnteringCommands(executeTheCommand);
+    private final DataBase dataBase;
+    private final Storage storage;
 
-        new Thread(enteringCommands).start();
+
+    public ServerConsole(DataBase dataBase, Storage storage, NettyServer nettyServer) {
+        this.dataBase = dataBase;
+        this.storage = storage;
+        SwingUtilities.invokeLater(() -> {
+            ConsoleLogicImpl consoleLogicImpl = new ConsoleLogicImpl(dataBase, storage, nettyServer);
+            ExecuteTheCommand executeTheCommand = new ExecuteTheCommand(consoleLogicImpl);
+            ConsoleGUI consoleGUI = new ConsoleGUI(executeTheCommand);
+            consoleLogicImpl.setConsoleGUI(consoleGUI);
+        });
     }
 
 }

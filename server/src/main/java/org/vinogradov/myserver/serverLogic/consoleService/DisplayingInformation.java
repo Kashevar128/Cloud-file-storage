@@ -9,10 +9,11 @@ import java.util.Map;
 
 public class DisplayingInformation {
 
-    public void showNameFiles(Path currentPath, List<Path> fileNamesList) {
-        String pathStr = currentPath + "/";
-        System.out.println(pathStr);
-        System.out.println(Arrays.toString(fileNamesList.toArray()));
+    public String showDirectoryFiles(Path currentPath, List<Path> fileNamesList) {
+        String pathStr = "Текущая директория: " + currentPath + "\n";
+        if(fileNamesList == null) return null;
+        String arrayStr = "Файлы директории: " + Arrays.toString(fileNamesList.toArray());
+        return pathStr.concat(arrayStr);
     }
 
     public void showUsersDB(Map<String, String> usersMap) {

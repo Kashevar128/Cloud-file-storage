@@ -6,7 +6,6 @@ import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 public class StartServer {
     public static void main(String[] args) {
         try {
-            new ServerConsole();
             new NettyServer();
         } catch (InterruptedException e) {
             throw new RuntimeException("Проблемы при запуске сервера");
