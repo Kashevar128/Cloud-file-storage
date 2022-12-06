@@ -67,12 +67,14 @@ public class ServerLogicImpl implements ServerLogic {
                 sendMessage(new TheUserIsAlreadyLoggedIn());
                 return;
             }
+            Path startList = startWorkingWithUser(user);
+            ConverterPath converterPath = connectionsController.getConverterPath();
+            converterPath.setPath(startList.toString(), false);
+            String pathStartListEdit = converterPath.getClientPathString();
+            sendMessage(new RegOrAuthServerResponse(true, pathStartListEdit, startList, statusUser, user));
+            return;
         }
-        Path startList = startWorkingWithUser(user);
-        ConverterPath converterPath = connectionsController.getConverterPath();
-        converterPath.setPath(startList.toString(), false);
-        String pathStartListEdit = converterPath.getClientPathString();
-        sendMessage(new RegOrAuthServerResponse(complete, pathStartListEdit, startList, statusUser, user));
+        sendMessage(new RegOrAuthServerResponse(false, statusUser));
     }
 
     @Override
@@ -112,7 +114,7 @@ public class ServerLogicImpl implements ServerLogic {
         String clientPathFolder = createNewFolderRequest.getPathFolder();
         ConverterPath converterPath = connectionsController.getConverterPath();
         converterPath.setPath(clientPathFolder, true);
-        boolean youCanCreateTheFollowingDirectory = HelperMethods.
+        boolean youCanCreateTheFollowingDirectory =
                 countNextDirectory(converterPath.getClientPathString());
         if (!youCanCreateTheFollowingDirectory) {
             sendMessage(new NotCreateNewPathResponse());
@@ -267,6 +269,14 @@ public class ServerLogicImpl implements ServerLogic {
         connectionsController.setConverterPath(userPath.toString());
         connectionsController.setCloudUser(storage.getCloudUser(user.getNameUser()));
         return userPath;
+    }
+
+    public static boolean countNextDirectory(String path) {
+        int counter = 0;
+        for (char ch : path.toCharArray()) {
+            if (ch == '/') counter++;
+        }
+        return counter <= Constants.PACKAGE_INVESTMENT_LEVEL;
     }
 
     public ReceivingFileServerController getReceivingFileServerController() {

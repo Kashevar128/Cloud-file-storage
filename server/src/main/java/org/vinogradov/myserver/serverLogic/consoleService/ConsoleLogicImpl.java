@@ -7,6 +7,7 @@ import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 import org.vinogradov.myserver.serverLogic.serverService.UserContextRepository;
+import org.vinogradov.myserver.serverLogic.storageService.CloudUser;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLogic {
     private final String badDirectory = "Директория не найдена";
@@ -25,10 +27,12 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     private final String badDelFile = "Такого файла нет";
     private final String errorDel = "Ошибка при удалении файла";
     private final String badRequestUser = "Пользователь не найден";
+    private final String badSizeUser = "Не найден указанный размер";
 
 
     private Path currentPath;
     private List<Path> currentListPath;
+    private SizeConstants sizeConstants;
 
     private final DataBase dataBase;
     private final Storage storage;
@@ -38,6 +42,7 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     public ConsoleLogicImpl(DataBase dataBase, Storage storage, NettyServer nettyServer) {
         currentPath = rootPath;
         currentListPath = createListPaths(rootPath);
+        this.sizeConstants = new SizeConstants();
         this.dataBase = dataBase;
         this.storage = storage;
         this.nettyServer = nettyServer;
@@ -213,7 +218,6 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         }
         dataBase.setAccess(name, Constants.ACCESS_FALSE);
         UserContextRepository userContextRepository = nettyServer.getUserContextRepository();
-        if (userContextRepository == null) return;
         ChannelHandlerContext context = userContextRepository.getContext(name);
         if (context == null) return;
         context.close();
@@ -230,6 +234,31 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         dataBase.setAccess(name, Constants.ACCESS_TRUE);
         String unBan = String.format("Пользователь %s разбанен", name);
         consoleGUI.setLog(unBan);
+    }
+
+    @Override
+    public void setSizeStorage(String name, String sizeStr) {
+        if (name == null || name.isEmpty()) {
+            consoleGUI.setLog(badRequestUser);
+            return;
+        }
+        if (sizeStr == null || sizeStr.isEmpty()) {
+            consoleGUI.setLog(badSizeUser);
+            return;
+        }
+        long constant = sizeConstants.getConstant(sizeStr);
+        if (constant == 0L) {
+            consoleGUI.setLog(badSizeUser);
+            return;
+        }
+        dataBase.setSizeStorageDB(name, constant);
+        ConcurrentMap<String, CloudUser> listUserRepositories = storage.getListUserRepositories();
+        CloudUser cloudUser = listUserRepositories.get(name);
+        String reSizeComplete = String.format("Размер для %s успешно изменен", name);
+        consoleGUI.setLog(reSizeComplete);
+        if (cloudUser == null) return;
+        cloudUser.setMaxSize(constant);
+
     }
 
 

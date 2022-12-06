@@ -24,4 +24,8 @@ public interface DataBase {
 
     boolean getAccess(String name);
 
+    void setSizeStorageDB(String name, long size);
+
+    long getSizeStorageDB (String name);
+
 }

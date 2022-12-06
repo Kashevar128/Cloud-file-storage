@@ -5,16 +5,16 @@ import java.nio.file.Paths;
 public class ExecuteTheCommand {
     private String command;
     private String info;
-    private String nameUser;
-    private String password;
+    private String info_1;
+    private String info_2;
     private final ConsoleLogic consoleLogic;
     private final ListCommand listCommand;
 
     public ExecuteTheCommand(ConsoleLogicImpl consoleLogicImpl) {
         this.command = null;
         this.info = null;
-        this.nameUser = null;
-        this.password = null;
+        this.info_1 = null;
+        this.info_2 = null;
         this.consoleLogic = consoleLogicImpl;
         this.listCommand = new ListCommand();
     }
@@ -40,7 +40,7 @@ public class ExecuteTheCommand {
 
             case BACK -> consoleLogic.moveBack();
 
-            case CREATE_NEW_USER -> consoleLogic.createNewUserInDB(nameUser, password);
+            case CREATE_NEW_USER -> consoleLogic.createNewUserInDB(info_1, info_2);
 
             case DELETE_USER -> consoleLogic.deleteUserInDB(info);
 
@@ -55,6 +55,8 @@ public class ExecuteTheCommand {
             case BAN_USER -> consoleLogic.banUser(info);
 
             case UNBAN_USER -> consoleLogic.unBanUser(info);
+
+            case SET_SIZE_STORAGE -> consoleLogic.setSizeStorage(info_1, info_2);
         }
     }
 
@@ -65,8 +67,8 @@ public class ExecuteTheCommand {
             info = strings[1].trim();
             if (info.contains(",")) {
                 String[] split = info.split(",", 2);
-                nameUser = split[0];
-                password = split[1];
+                info_1 = split[0];
+                info_2 = split[1];
             }
         }
         if (!listCommand.isACommand(command)) {

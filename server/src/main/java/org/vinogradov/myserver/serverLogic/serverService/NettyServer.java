@@ -28,8 +28,8 @@ public class NettyServer {
     public NettyServer() throws InterruptedException {
         try {
             this.userContextRepository = new UserContextRepository();
-            this.storage = new Storage();
             this.dataBase = new DataBaseImpl();
+            this.storage = new Storage(dataBase);
             this.serverConsole = new ServerConsole(dataBase, storage, this);
         } catch (Exception e) {
             throw new RuntimeException(e);

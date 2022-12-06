@@ -38,4 +38,6 @@ public interface ConsoleLogic {
 
     void unBanUser(String name);
 
+    void setSizeStorage(String name, String size);
+
 }

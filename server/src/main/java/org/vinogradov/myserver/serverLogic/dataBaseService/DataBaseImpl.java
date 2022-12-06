@@ -14,23 +14,19 @@ public class DataBaseImpl implements DataBase {
 
     //language=SQLite
     private final String queryCreateTable = "CREATE TABLE IF NOT EXISTS Users(Id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "User TEXT UNIQUE, Password TEXT, Access INTEGER)";
+            "User TEXT UNIQUE, Password TEXT, Access INTEGER, Size TEXT)";
 
-    //language=SQLite
     private final String queryGetAllUsers = "SELECT * FROM Users";
 
-    //language=SQLite
-    private final String queryNewUser = "INSERT INTO Users(User, Password, Access) VALUES (?, ?, ?)";
+    private final String queryNewUser = "INSERT INTO Users(User, Password, Access, Size) VALUES (?, ?, ?, ?)";
 
-    //language=SQLite
     private final String queryGetUserForName = "SELECT * FROM Users WHERE User = ?";
 
-    //language=SQLite
     private final String queryDeleteUser = "DELETE FROM Users WHERE User = ?";
 
-    //language=SQLite
     private final String queryAccess = "UPDATE Users SET Access = ? WHERE User = ?";
 
+    private final String querySize = "UPDATE Users SET Size = ? WHERE User = ?";
 
     public DataBaseImpl() throws Exception {
         Class.forName("org.sqlite.JDBC");
@@ -56,6 +52,7 @@ public class DataBaseImpl implements DataBase {
                 statement.setString(1, name);
                 statement.setString(2, encryptedPassword);
                 statement.setInt(3, Constants.ACCESS_TRUE);
+                statement.setString(4, String.valueOf(Constants.GB_2));
                 statement.executeUpdate();
                 return true;
             } catch (SQLException e) {
@@ -129,6 +126,7 @@ public class DataBaseImpl implements DataBase {
                 paramList.add(rs.getString(2));
                 paramList.add(rs.getString(3));
                 paramList.add(rs.getString(4));
+                paramList.add(rs.getString(5));
                 arrayUser.add(paramList);
             }
             return arrayUser;
@@ -147,6 +145,7 @@ public class DataBaseImpl implements DataBase {
             array.add(rs.getString(2));
             array.add(rs.getString(3));
             array.add(rs.getString(4));
+            array.add(rs.getString(5));
             return array;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -170,6 +169,29 @@ public class DataBaseImpl implements DataBase {
             statement.setString(1, name);
             ResultSet rs = statement.executeQuery();
             return rs.getInt(4) == Constants.ACCESS_TRUE;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void setSizeStorageDB(String name, long size) {
+        try (PreparedStatement statement = connection.prepareStatement(querySize)) {
+            statement.setString(1, String.valueOf(size));
+            statement.setString(2, name);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public long getSizeStorageDB(String name) {
+        try (PreparedStatement statement = connection.prepareStatement(queryGetUserForName)) {
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            String sizeStr = rs.getString(5);
+            return Long.parseLong(sizeStr);
         } catch (SQLException e) {
             throw new RuntimeException();
         }

@@ -1,5 +1,7 @@
 package org.vinogradov.myserver.serverLogic.consoleService;
 
+import org.vinogradov.common.commonClasses.Constants;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ public class ListCommand {
         commandEnumMap.put("allUsers", CommandEnum.All_USERS_DB);
         commandEnumMap.put("getUser", CommandEnum.USER_DB);
         commandEnumMap.put("unBan", CommandEnum.UNBAN_USER);
+        commandEnumMap.put("setSizeStorage", CommandEnum.SET_SIZE_STORAGE);
     }
 
     public CommandEnum getCommand(String command) {
@@ -51,7 +54,8 @@ public class ListCommand {
         ENTRY,
         All_USERS_DB,
         USER_DB,
-        UNBAN_USER
+        UNBAN_USER,
+        SET_SIZE_STORAGE
     }
 
 
