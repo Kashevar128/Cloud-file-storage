@@ -8,11 +8,11 @@ public class RegOrAuthServerResponse implements BasicQuery {
 
     private final boolean regOrAuthComplete;
 
-    private final UpdatePanel updatePanel;
+    private UpdatePanel updatePanel;
 
     private final StatusUser statusUser;
 
-    private final User user;
+    private User user;
 
     public RegOrAuthServerResponse(boolean regOrAuthComplete, String pathEdit, Path path, StatusUser statusUser , User user) {
         this.regOrAuthComplete = regOrAuthComplete;
@@ -20,6 +20,11 @@ public class RegOrAuthServerResponse implements BasicQuery {
                 HelperMethods.generateFileInfoList(path));
         this.statusUser = statusUser;
         this.user = user;
+    }
+
+    public RegOrAuthServerResponse(boolean regOrAuthComplete, StatusUser statusUser) {
+        this.regOrAuthComplete = regOrAuthComplete;
+        this.statusUser = statusUser;
     }
 
     @Override

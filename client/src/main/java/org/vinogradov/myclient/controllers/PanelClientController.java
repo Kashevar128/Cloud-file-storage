@@ -103,7 +103,7 @@ public class PanelClientController implements Initializable, PanelController<Pat
     @Override
     public void createNewPackage(String nameFolder) {
         Path path = Paths.get(getCurrentPath()).resolve(nameFolder);
-        HelperMethods.createNewUserFile(path);
+        HelperMethods.createNewUserDirectory(path);
         updateList(Paths.get(getCurrentPath()));
     }
 

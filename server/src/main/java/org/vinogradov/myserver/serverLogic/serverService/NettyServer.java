@@ -9,18 +9,33 @@ import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.vinogradov.common.commonClasses.Constants;
+import org.vinogradov.myserver.serverLogic.consoleService.ServerConsole;
+import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
+import org.vinogradov.myserver.serverLogic.dataBaseService.DataBaseImpl;
+import org.vinogradov.myserver.serverLogic.storageService.Storage;
 
 public class NettyServer {
+    private final ChannelFuture channelFuture;
 
-    private static final UserContextRepository userContextRepository;
+    private final UserContextRepository userContextRepository;
+    private final Storage storage;
+    private final DataBase dataBase;
+    private final ServerConsole serverConsole;
 
-    static {
-        userContextRepository = new UserContextRepository();
-    }
+    private final  EventLoopGroup bossGroup;
+    private final EventLoopGroup workerGroup;
 
     public NettyServer() throws InterruptedException {
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+            this.userContextRepository = new UserContextRepository();
+            this.dataBase = new DataBaseImpl();
+            this.storage = new Storage(dataBase);
+            this.serverConsole = new ServerConsole(dataBase, storage, this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup)
@@ -32,24 +47,33 @@ public class NettyServer {
                             inbound.addLast(
                                     new ObjectDecoder(Constants.MB_10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ServerHandler()
+                                    new ServerHandler(dataBase, storage, NettyServer.this)
                             );
                         }
                     });
-            ChannelFuture channelFuture = serverBootstrap.bind(45001).sync();
+            this.channelFuture = serverBootstrap.bind(45001).sync();
             System.out.println("Start server");
             channelFuture.channel().closeFuture().sync();
         } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-            ServerLogic.unConnectDataBase();
+            closeServer();
         }
     }
 
-    public static UserContextRepository getUserContextRepository() {
+    public void closeServer() {
+        workerGroup.shutdownGracefully();
+        bossGroup.shutdownGracefully();
+        dataBase.closeDataBase();
+    }
+
+    public UserContextRepository getUserContextRepository() {
         return userContextRepository;
     }
 
+    public DataBase getDataBase() {
+        return dataBase;
+    }
 
-
+    public Storage getStorage() {
+        return storage;
+    }
 }

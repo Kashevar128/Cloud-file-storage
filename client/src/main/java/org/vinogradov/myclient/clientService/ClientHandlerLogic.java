@@ -25,4 +25,6 @@ public interface ClientHandlerLogic {
     void getHandingTheUserIsAlreadyLoggedIn(TheUserIsAlreadyLoggedIn theUserIsAlreadyLoggedIn);
 
     void getHandingOverwriteFileResponse(OverwriteFileResponse overwriteFileResponse);
+
+    void getHandingBanUserResponse(BanUserResponse banUserResponse);
 }

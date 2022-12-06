@@ -147,5 +147,12 @@ public class AlertWindowsClass {
         alert.showAndWait();
     }
 
+    public static void showBanUserAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING,
+                "Вам запрещен доступ на сервер", ButtonType.OK);
+        alert.setHeaderText("БАН!");
+        alert.showAndWait();
+    }
+
 }
 

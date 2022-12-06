@@ -2,6 +2,8 @@ package org.vinogradov.myserver.serverLogic.dataBaseService;
 
 import org.vinogradov.common.commonClasses.User;
 
+import java.util.List;
+
 public interface DataBase {
 
     boolean createUser(User user);
@@ -10,10 +12,20 @@ public interface DataBase {
 
     boolean auth(User user);
 
-    void deleteUser(String name);
-
-    void startDataBase();
+    boolean deleteUser(String name);
 
     void closeDataBase();
+
+    List<List<String>> showAllUser();
+
+    List<String> showUser(String name);
+
+    void setAccess(String name, int param);
+
+    boolean getAccess(String name);
+
+    void setSizeStorageDB(String name, long size);
+
+    long getSizeStorageDB (String name);
 
 }

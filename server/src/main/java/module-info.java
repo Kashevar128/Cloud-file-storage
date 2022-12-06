@@ -4,4 +4,5 @@ module server {
     requires common;
     requires java.sql;
     requires org.apache.commons.codec;
+    requires java.desktop;
 }

@@ -70,7 +70,11 @@ public class ClientLogic implements ClientHandlerLogic {
                 runnableFalse = runnableRegFalse;
             }
         }
-        startClientGUI(regOrAuthComplete, updatePanel, runnableComplete, runnableFalse);
+        if (regOrAuthComplete) {
+            startClientGUI(updatePanel, runnableComplete);
+            return;
+        }
+        startFalseClientGUI(runnableFalse);
     }
 
     @Override
@@ -109,7 +113,7 @@ public class ClientLogic implements ClientHandlerLogic {
             };
             Map<Long, String> pathsMapFile = sendFileClientController.getSrcPathsMap();
             for (Map.Entry<Long, String> entry : pathsMapFile.entrySet()) {
-                if (HelperMethods.split(entry.getKey(), entry.getValue(), myFunctionSendPartFile)) break;
+                if (HelperMethods.splitFile(entry.getKey(), entry.getValue(), myFunctionSendPartFile)) break;
             }
             sendFileClientController.clearSrcPathsMap();
         } else {
@@ -193,6 +197,11 @@ public class ClientLogic implements ClientHandlerLogic {
             } else runnableCreateSendFileRequest.run();
         });
 
+    }
+
+    @Override
+    public void getHandingBanUserResponse(BanUserResponse banUserResponse) {
+        Platform.runLater(AlertWindowsClass::showBanUserAlert);
     }
 
     public void closeClient() {
@@ -304,8 +313,8 @@ public class ClientLogic implements ClientHandlerLogic {
 
     public void lossOfConnectionToTheServer() {
         Platform.runLater(() -> {
-            if(regAuthGui != null) regAuthGui.getStage().close();
-            if(clientGUI != null) clientGUI.getStage().close();
+            if (regAuthGui != null) regAuthGui.getStage().close();
+            if (clientGUI != null) clientGUI.getStage().close();
             AlertWindowsClass.showLossOfConnectionAlert();
         });
         closeClient();
@@ -313,24 +322,24 @@ public class ClientLogic implements ClientHandlerLogic {
 
     public void closeRegAuthGui() {
         Platform.runLater(() -> {
-            if(regAuthGui != null) regAuthGui.getStage().close();
+            if (regAuthGui != null) regAuthGui.getStage().close();
         });
     }
 
-    private void startClientGUI(boolean complete, UpdatePanel updatePanel, Runnable runnableComplete, Runnable runnableFalse) {
-        if (complete) {
-            Platform.runLater(() -> {
-                regAuthGui.getStage().close();
-                runnableComplete.run();
-                this.clientGUI = new ClientGUI(clientLogic);
-                this.clientController = clientGUI.getClientController();
-                clientController.setClientLogic(clientLogic);
-                clientController.serverPC.updateList(updatePanel);
-            });
-            Platform.runLater(() -> this.progressBarSendFile = new ProgressBarSendFile());
-        } else {
-            Platform.runLater(runnableFalse);
-        }
+    private void startClientGUI(UpdatePanel updatePanel, Runnable runnableComplete) {
+        Platform.runLater(() -> {
+            regAuthGui.getStage().close();
+            runnableComplete.run();
+            this.clientGUI = new ClientGUI(clientLogic);
+            this.clientController = clientGUI.getClientController();
+            clientController.setClientLogic(clientLogic);
+            clientController.serverPC.updateList(updatePanel);
+        });
+        Platform.runLater(() -> this.progressBarSendFile = new ProgressBarSendFile());
+    }
+
+    private void startFalseClientGUI(Runnable runnableFalse) {
+        Platform.runLater(runnableFalse);
     }
 
 

@@ -1,18 +1,16 @@
 package org.vinogradov.myserver.serverLogic.storageService;
 
-import org.vinogradov.common.commonClasses.Constants;
-
 public class CloudUser {
 
-    private final String pathCloud;
+    private final String nameUser;
 
-    private final long maxSize;
+    private long maxSize;
 
     private long sizeCloud;
 
-    public CloudUser(String pathCloud, long sizeCloud) {
-        this.pathCloud = pathCloud;
-        this.maxSize = Constants.GB_20;
+    public CloudUser(String nameUser, long maxSize, long sizeCloud) {
+        this.nameUser = nameUser;
+        this.maxSize = maxSize;
         this.sizeCloud = sizeCloud;
     }
 
@@ -30,8 +28,12 @@ public class CloudUser {
         return copySizeCloud >= maxSize;
     }
 
-    public String getPathCloud() {
-        return pathCloud;
+    public void setMaxSize(long maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public String getNameUser() {
+        return nameUser;
     }
 
     public long getSizeCloud() {

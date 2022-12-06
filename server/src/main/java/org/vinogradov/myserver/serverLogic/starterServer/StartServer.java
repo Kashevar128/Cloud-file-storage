@@ -1,5 +1,6 @@
 package org.vinogradov.myserver.serverLogic.starterServer;
 
+import org.vinogradov.myserver.serverLogic.consoleService.ServerConsole;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 
 public class StartServer {
