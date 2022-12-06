@@ -4,7 +4,6 @@ module client {
     requires common;
     requires io.netty.transport;
     requires io.netty.codec;
-    requires support;
 
     exports org.vinogradov.myclient.controllers;
     exports org.vinogradov.myclient.GUI;

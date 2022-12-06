@@ -5,8 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.myclient.GUI.AlertWindowsClass;
-import org.vinogradov.mysupport.HelperMethods;
 
 
 public class EnterWindowController {
