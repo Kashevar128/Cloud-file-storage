@@ -28,7 +28,7 @@ public class DisplayingInformation {
         return Arrays.toString(infoUser.toArray()) + "\n";
     }
 
-    public void showUsersOnline(Map<String, ChannelHandlerContext> usersOnlineMap) {
-
+    public String showUsersOnline(List<String> userOnline) {
+        return Arrays.toString(userOnline.toArray());
     }
 }

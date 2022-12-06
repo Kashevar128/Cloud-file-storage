@@ -1,7 +1,5 @@
 package org.vinogradov.myserver.serverLogic.consoleService;
 
-import org.vinogradov.common.commonClasses.Constants;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,16 +16,16 @@ public class ListCommand {
         commandEnumMap.put("ban", CommandEnum.BAN_USER);
         commandEnumMap.put("newFolder", CommandEnum.CREATE_NEW_PACKAGE);
         commandEnumMap.put("delFile", CommandEnum.DELETE_PACKAGE);
-        commandEnumMap.put("cancel", CommandEnum.CANCEL);
         commandEnumMap.put("clear", CommandEnum.CLEAR);
         commandEnumMap.put("exit", CommandEnum.EXIT);
-        commandEnumMap.put("currentPath", CommandEnum.CURRENT_PATH);
+        commandEnumMap.put("curPath", CommandEnum.CURRENT_PATH);
         commandEnumMap.put("root", CommandEnum.ROOT);
         commandEnumMap.put("entry", CommandEnum.ENTRY);
         commandEnumMap.put("allUsers", CommandEnum.All_USERS_DB);
         commandEnumMap.put("getUser", CommandEnum.USER_DB);
         commandEnumMap.put("unBan", CommandEnum.UNBAN_USER);
         commandEnumMap.put("setSizeStorage", CommandEnum.SET_SIZE_STORAGE);
+        commandEnumMap.put("listOnline", CommandEnum.USERS_ONLINE);
     }
 
     public CommandEnum getCommand(String command) {
@@ -46,7 +44,6 @@ public class ListCommand {
         BAN_USER,
         CREATE_NEW_PACKAGE,
         DELETE_PACKAGE,
-        CANCEL,
         CLEAR,
         EXIT,
         CURRENT_PATH,
@@ -55,7 +52,8 @@ public class ListCommand {
         All_USERS_DB,
         USER_DB,
         UNBAN_USER,
-        SET_SIZE_STORAGE
+        SET_SIZE_STORAGE,
+        USERS_ONLINE
     }
 
 

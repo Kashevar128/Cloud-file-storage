@@ -221,6 +221,7 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         ChannelHandlerContext context = userContextRepository.getContext(name);
         if (context == null) return;
         context.close();
+        userContextRepository.deleteUserContext(name);
         String endConnection = String.format("Пользователь %s ушел в бан", name);
         consoleGUI.setLog(endConnection);
     }
@@ -259,6 +260,13 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         if (cloudUser == null) return;
         cloudUser.setMaxSize(constant);
 
+    }
+
+    @Override
+    public void showUsersOnline() {
+        UserContextRepository userContextRepository = nettyServer.getUserContextRepository();
+        String usersOnline = showUsersOnline(userContextRepository.getUserList());
+        consoleGUI.setLog(usersOnline);
     }
 
 

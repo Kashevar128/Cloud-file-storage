@@ -40,4 +40,6 @@ public interface ConsoleLogic {
 
     void setSizeStorage(String name, String size);
 
+    void showUsersOnline();
+
 }

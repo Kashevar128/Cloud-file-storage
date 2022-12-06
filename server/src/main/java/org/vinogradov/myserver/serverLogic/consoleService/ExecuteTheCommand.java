@@ -57,6 +57,8 @@ public class ExecuteTheCommand {
             case UNBAN_USER -> consoleLogic.unBanUser(info);
 
             case SET_SIZE_STORAGE -> consoleLogic.setSizeStorage(info_1, info_2);
+
+            case USERS_ONLINE -> consoleLogic.showUsersOnline();
         }
     }
 

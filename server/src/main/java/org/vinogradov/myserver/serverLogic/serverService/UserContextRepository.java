@@ -3,6 +3,8 @@ package org.vinogradov.myserver.serverLogic.serverService;
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.common.commonClasses.User;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,6 +36,12 @@ public class UserContextRepository {
         String user = channelHandlerContextUserMap.get(context);
         channelHandlerContextUserMap.remove(context);
         userChannelHandlerContextMap.remove(user);
+    }
+
+    public List<String> getUserList() {
+        List<String> arraylist = new ArrayList<>();
+        arraylist = userChannelHandlerContextMap.keySet().stream().toList();
+        return arraylist;
     }
 
     public ChannelHandlerContext getContext(String user) {
