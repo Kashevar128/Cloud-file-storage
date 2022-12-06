@@ -195,6 +195,11 @@ public class ClientLogic implements ClientHandlerLogic {
 
     }
 
+    @Override
+    public void getHandingBanUserResponse(BanUserResponse banUserResponse) {
+        Platform.runLater(AlertWindowsClass::showBanUserAlert);
+    }
+
     public void closeClient() {
         nettyClient.exitClient();
     }

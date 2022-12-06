@@ -18,4 +18,10 @@ public interface DataBase {
 
     List<List<String>> showAllUser();
 
+    List<String> showUser(String name);
+
+    void setAccess(String name, int param);
+
+    boolean getAccess(String name);
+
 }

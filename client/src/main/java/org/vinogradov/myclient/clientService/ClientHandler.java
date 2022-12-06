@@ -64,6 +64,10 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         RESPONSE_HANDLERS.put(OverwriteFileResponse.class, (basicQuery, clientHandlerLogic) -> {
             clientHandlerLogic.getHandingOverwriteFileResponse((OverwriteFileResponse) basicQuery);
         });
+
+        RESPONSE_HANDLERS.put(BanUserResponse.class, (basicQuery, clientHandlerLogic) -> {
+            clientHandlerLogic.getHandingBanUserResponse((BanUserResponse) basicQuery);
+        });
     }
 
     @Override

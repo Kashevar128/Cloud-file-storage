@@ -1,9 +1,12 @@
 package org.vinogradov.myserver.serverLogic.consoleService;
 
+import io.netty.channel.ChannelHandlerContext;
+import org.vinogradov.common.commonClasses.Constants;
 import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.common.commonClasses.User;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
+import org.vinogradov.myserver.serverLogic.serverService.UserContextRepository;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
 
 import java.io.IOException;
@@ -21,6 +24,7 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     private final String badCreateFolder = "Ошибка при создании папки";
     private final String badDelFile = "Такого файла нет";
     private final String errorDel = "Ошибка при удалении файла";
+    private final String badRequest = "Имя не найдено";
 
 
     private Path currentPath;
@@ -182,18 +186,35 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     @Override
     public void showListDB() {
         List<List<String>> lists = dataBase.showAllUser();
-        String showUsersDB = showUsersDB(lists);
+        String showUsersDB = showAllUsersDB(lists);
         consoleGUI.setLog(showUsersDB);
     }
 
     @Override
     public void showUserDB(String name) {
-
+        if(name == null || name.isEmpty()) {
+            consoleGUI.setLog(badRequest);
+            return;
+        }
+        List<String> list = dataBase.showUser(name);
+        if (list.get(0) == null) {
+            consoleGUI.setLog(badRequest);
+            return;
+        }
+        String showUserDB = showUserDB(list);
+        consoleGUI.setLog(showUserDB);
     }
 
     @Override
     public void banUser(String name) {
-
+        dataBase.setAccess(name, Constants.ACCESS_FALSE);
+        UserContextRepository userContextRepository = nettyServer.getUserContextRepository();
+        if (userContextRepository == null) return;
+        ChannelHandlerContext context = userContextRepository.getContext(name);
+        if (context == null) return;
+        context.close();
+        String endConnection = String.format("Пользователь %s ушел в бан", name);
+        consoleGUI.setLog(endConnection);
     }
 
 

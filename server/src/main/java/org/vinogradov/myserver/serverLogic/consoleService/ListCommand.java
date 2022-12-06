@@ -23,6 +23,7 @@ public class ListCommand {
         commandEnumMap.put("root", CommandEnum.ROOT);
         commandEnumMap.put("entry", CommandEnum.ENTRY);
         commandEnumMap.put("allUsers", CommandEnum.All_USERS_DB);
+        commandEnumMap.put("getUser", CommandEnum.USER_DB);
     }
 
     public CommandEnum getCommand(String command) {
@@ -47,7 +48,8 @@ public class ListCommand {
         CURRENT_PATH,
         ROOT,
         ENTRY,
-        All_USERS_DB
+        All_USERS_DB,
+        USER_DB
     }
 
 

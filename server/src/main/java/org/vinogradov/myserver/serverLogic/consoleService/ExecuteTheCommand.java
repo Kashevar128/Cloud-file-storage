@@ -49,6 +49,10 @@ public class ExecuteTheCommand {
             case DELETE_PACKAGE -> consoleLogic.deleteFile(info);
 
             case All_USERS_DB -> consoleLogic.showListDB();
+
+            case USER_DB -> consoleLogic.showUserDB(info);
+
+            case BAN_USER -> consoleLogic.banUser(info);
         }
     }
 

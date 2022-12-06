@@ -57,6 +57,10 @@ public class ServerLogicImpl implements ServerLogic {
             case AUTH -> complete = dataBase.auth(user);
         }
         if (complete) {
+            if (!dataBase.getAccess(user.getNameUser())) {
+                sendMessage(new BanUserResponse());
+                return;
+            }
             boolean addUser = nettyServer.getUserContextRepository()
                     .addUserChannelHandlerContextMap(user.getNameUser(), context);
             if (!addUser) {
