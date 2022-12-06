@@ -24,6 +24,7 @@ public class ListCommand {
         commandEnumMap.put("entry", CommandEnum.ENTRY);
         commandEnumMap.put("allUsers", CommandEnum.All_USERS_DB);
         commandEnumMap.put("getUser", CommandEnum.USER_DB);
+        commandEnumMap.put("unBan", CommandEnum.UNBAN_USER);
     }
 
     public CommandEnum getCommand(String command) {
@@ -49,7 +50,8 @@ public class ListCommand {
         ROOT,
         ENTRY,
         All_USERS_DB,
-        USER_DB
+        USER_DB,
+        UNBAN_USER
     }
 
 

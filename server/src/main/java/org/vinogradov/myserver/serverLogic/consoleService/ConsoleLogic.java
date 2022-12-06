@@ -36,4 +36,6 @@ public interface ConsoleLogic {
 
     void banUser(String name);
 
+    void unBanUser(String name);
+
 }

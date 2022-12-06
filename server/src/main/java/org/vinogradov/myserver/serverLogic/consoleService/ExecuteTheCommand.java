@@ -53,6 +53,8 @@ public class ExecuteTheCommand {
             case USER_DB -> consoleLogic.showUserDB(info);
 
             case BAN_USER -> consoleLogic.banUser(info);
+
+            case UNBAN_USER -> consoleLogic.unBanUser(info);
         }
     }
 

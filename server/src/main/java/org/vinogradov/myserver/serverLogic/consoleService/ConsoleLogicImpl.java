@@ -24,7 +24,7 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     private final String badCreateFolder = "Ошибка при создании папки";
     private final String badDelFile = "Такого файла нет";
     private final String errorDel = "Ошибка при удалении файла";
-    private final String badRequest = "Имя не найдено";
+    private final String badRequestUser = "Пользователь не найден";
 
 
     private Path currentPath;
@@ -193,12 +193,12 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     @Override
     public void showUserDB(String name) {
         if(name == null || name.isEmpty()) {
-            consoleGUI.setLog(badRequest);
+            consoleGUI.setLog(badRequestUser);
             return;
         }
         List<String> list = dataBase.showUser(name);
         if (list.get(0) == null) {
-            consoleGUI.setLog(badRequest);
+            consoleGUI.setLog(badRequestUser);
             return;
         }
         String showUserDB = showUserDB(list);
@@ -207,6 +207,10 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
 
     @Override
     public void banUser(String name) {
+        if (name == null || name.isEmpty() || !dataBase.findUser(name)) {
+            consoleGUI.setLog(badRequestUser);
+            return;
+        }
         dataBase.setAccess(name, Constants.ACCESS_FALSE);
         UserContextRepository userContextRepository = nettyServer.getUserContextRepository();
         if (userContextRepository == null) return;
@@ -215,6 +219,17 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         context.close();
         String endConnection = String.format("Пользователь %s ушел в бан", name);
         consoleGUI.setLog(endConnection);
+    }
+
+    @Override
+    public void unBanUser(String name) {
+        if (name == null || name.isEmpty() || !dataBase.findUser(name)) {
+            consoleGUI.setLog(badRequestUser);
+            return;
+        }
+        dataBase.setAccess(name, Constants.ACCESS_TRUE);
+        String unBan = String.format("Пользователь %s разбанен", name);
+        consoleGUI.setLog(unBan);
     }
 
 
