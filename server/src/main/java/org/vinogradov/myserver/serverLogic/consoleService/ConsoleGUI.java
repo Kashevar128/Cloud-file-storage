@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class ConsoleGUI extends JFrame implements ActionListener {
-    private final String waiting = "Ожидание команды:";
+    private final String waiting = "Введите <help> для помощи. Ожидание команды:";
 
     private final JTextArea log;
     private final JTextField fieldInput;

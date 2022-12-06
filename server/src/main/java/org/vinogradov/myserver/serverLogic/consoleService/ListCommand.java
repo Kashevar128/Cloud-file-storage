@@ -26,6 +26,7 @@ public class ListCommand {
         commandEnumMap.put("unBan", CommandEnum.UNBAN_USER);
         commandEnumMap.put("setSizeStorage", CommandEnum.SET_SIZE_STORAGE);
         commandEnumMap.put("listOnline", CommandEnum.USERS_ONLINE);
+        commandEnumMap.put("help", CommandEnum.HELP);
     }
 
     public CommandEnum getCommand(String command) {
@@ -53,7 +54,8 @@ public class ListCommand {
         USER_DB,
         UNBAN_USER,
         SET_SIZE_STORAGE,
-        USERS_ONLINE
+        USERS_ONLINE,
+        HELP
     }
 
 

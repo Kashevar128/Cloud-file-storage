@@ -30,9 +30,9 @@ public interface ConsoleLogic {
 
     void deleteFile(String nameFolder);
 
-    void showListDB();
+    void getListDB();
 
-    void showUserDB(String name);
+    void getUserDB(String name);
 
     void banUser(String name);
 
@@ -40,6 +40,8 @@ public interface ConsoleLogic {
 
     void setSizeStorage(String name, String size);
 
-    void showUsersOnline();
+    void getUsersOnline();
+
+    void getHelp();
 
 }

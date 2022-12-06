@@ -189,14 +189,14 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     }
 
     @Override
-    public void showListDB() {
+    public void getListDB() {
         List<List<String>> lists = dataBase.showAllUser();
         String showUsersDB = showAllUsersDB(lists);
         consoleGUI.setLog(showUsersDB);
     }
 
     @Override
-    public void showUserDB(String name) {
+    public void getUserDB(String name) {
         if(name == null || name.isEmpty()) {
             consoleGUI.setLog(badRequestUser);
             return;
@@ -263,10 +263,15 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     }
 
     @Override
-    public void showUsersOnline() {
+    public void getUsersOnline() {
         UserContextRepository userContextRepository = nettyServer.getUserContextRepository();
         String usersOnline = showUsersOnline(userContextRepository.getUserList());
         consoleGUI.setLog(usersOnline);
+    }
+
+    @Override
+    public void getHelp() {
+        consoleGUI.setLog(showHelp());
     }
 
 

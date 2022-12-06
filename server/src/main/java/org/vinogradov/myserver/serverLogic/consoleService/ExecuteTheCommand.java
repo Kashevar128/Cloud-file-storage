@@ -48,9 +48,9 @@ public class ExecuteTheCommand {
 
             case DELETE_PACKAGE -> consoleLogic.deleteFile(info);
 
-            case All_USERS_DB -> consoleLogic.showListDB();
+            case All_USERS_DB -> consoleLogic.getListDB();
 
-            case USER_DB -> consoleLogic.showUserDB(info);
+            case USER_DB -> consoleLogic.getUserDB(info);
 
             case BAN_USER -> consoleLogic.banUser(info);
 
@@ -58,7 +58,9 @@ public class ExecuteTheCommand {
 
             case SET_SIZE_STORAGE -> consoleLogic.setSizeStorage(info_1, info_2);
 
-            case USERS_ONLINE -> consoleLogic.showUsersOnline();
+            case USERS_ONLINE -> consoleLogic.getUsersOnline();
+
+            case HELP -> consoleLogic.getHelp();
         }
     }
 
