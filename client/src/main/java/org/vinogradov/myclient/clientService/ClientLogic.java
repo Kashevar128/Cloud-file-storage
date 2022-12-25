@@ -326,21 +326,7 @@ public class ClientLogic implements ClientHandlerLogic {
         });
     }
 
-    private void startClientGUI(UpdatePanel updatePanel, Runnable runnableComplete) {
-        Platform.runLater(() -> {
-            regAuthGui.getStage().close();
-            runnableComplete.run();
-            this.clientGUI = new ClientGUI(clientLogic);
-            this.clientController = clientGUI.getClientController();
-            clientController.setClientLogic(clientLogic);
-            clientController.serverPC.updateList(updatePanel);
-        });
-        Platform.runLater(() -> this.progressBarSendFile = new ProgressBarSendFile());
-    }
 
-    private void startFalseClientGUI(Runnable runnableFalse) {
-        Platform.runLater(runnableFalse);
-    }
 
 
 }
