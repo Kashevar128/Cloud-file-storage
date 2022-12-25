@@ -65,7 +65,23 @@ public class HelperMethods {
         return fileOutputStream;
     }
 
-
+    //реализация паттерна "Visitor" - метод filesWalk() принемает на вход
+    //директорию с файлами, затем осуществляет проход по всем файлам с применением
+    //к ним логики pathConsumer
+    private static void filesWalk(Path directory, Consumer<Path> pathConsumer) {
+        try {
+            List<Path> list = Files.list(directory).collect(Collectors.toList());
+            for (Path filePathEntry : list) {
+                if (Files.isDirectory(filePathEntry)) {
+                    filesWalk(filePathEntry, pathConsumer);
+                } else {
+                    pathConsumer.accept(filePathEntry);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static String createNewDstPath(Path srcPathDirectory, Path srcPathEntryFile, Path dstPathDirectory) {
         String pathSrc = srcPathDirectory.toString();

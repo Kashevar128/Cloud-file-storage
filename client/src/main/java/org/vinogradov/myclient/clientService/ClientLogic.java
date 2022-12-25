@@ -326,7 +326,23 @@ public class ClientLogic implements ClientHandlerLogic {
         });
     }
 
+    //Поведенческий шаблон "Команда" - методы startClientGUI() и startFalseClientGUI()
+    //принимают на вход Runnable c определенной логикой в зависимости от результатов if и switch
+    private void startClientGUI(UpdatePanel updatePanel, Runnable runnableComplete) {
+        Platform.runLater(() -> {
+            regAuthGui.getStage().close();
+            runnableComplete.run();
+            this.clientGUI = new ClientGUI(clientLogic);
+            this.clientController = clientGUI.getClientController();
+            clientController.setClientLogic(clientLogic);
+            clientController.serverPC.updateList(updatePanel);
+        });
+        Platform.runLater(() -> this.progressBarSendFile = new ProgressBarSendFile());
+    }
 
+    private void startFalseClientGUI(Runnable runnableFalse) {
+        Platform.runLater(runnableFalse);
+    }
 
 
 }
