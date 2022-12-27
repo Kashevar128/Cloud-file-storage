@@ -19,7 +19,7 @@ public class ConnectionsController {
     private User user;
 
     public void newConnectionLimit(ChannelHandlerContext context) {
-        connectionLimit = ConnectionLimit.of(context);
+        connectionLimit = new ConnectionLimit(context);
     }
 
     public void stopTimerConnectionLimit() {

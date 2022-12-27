@@ -14,11 +14,7 @@ public class ConnectionLimit {
     private Timer timer;
     private long delay;
 
-    public static ConnectionLimit of(ChannelHandlerContext context) {
-        return new ConnectionLimit(context);
-    }
-
-    private ConnectionLimit(ChannelHandlerContext userContext) {
+    public ConnectionLimit(ChannelHandlerContext userContext) {
         this.userContext = userContext;
         this.delay = 180000L;
         this.timer = new Timer();
