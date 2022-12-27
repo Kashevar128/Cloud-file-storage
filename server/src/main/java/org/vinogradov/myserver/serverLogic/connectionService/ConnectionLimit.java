@@ -14,6 +14,7 @@ public class ConnectionLimit {
     private Timer timer;
     private long delay;
 
+    // Шаблон "Фабричный метод"
     public static ConnectionLimit of(ChannelHandlerContext context) {
         return new ConnectionLimit(context);
     }

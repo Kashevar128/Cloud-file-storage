@@ -19,6 +19,7 @@ public class ConnectionsController {
     private User user;
 
     public void newConnectionLimit(ChannelHandlerContext context) {
+        // Применение шаблона "Фабричный метод"
         connectionLimit = ConnectionLimit.of(context);
     }
 
