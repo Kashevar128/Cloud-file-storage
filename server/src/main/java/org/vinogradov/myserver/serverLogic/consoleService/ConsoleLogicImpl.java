@@ -3,10 +3,14 @@ package org.vinogradov.myserver.serverLogic.consoleService;
 import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.common.commonClasses.Constants;
 import org.vinogradov.common.commonClasses.HelperMethods;
+import org.vinogradov.common.commonClasses.StatusUser;
 import org.vinogradov.common.commonClasses.User;
+import org.vinogradov.common.requests.PatternMatchingRequest;
+import org.vinogradov.myserver.serverLogic.connectionService.ConnectionsController;
 import org.vinogradov.myserver.serverLogic.consoleService.controllers.ServerConsoleController;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
+import org.vinogradov.myserver.serverLogic.serverService.ServerLogicImpl;
 import org.vinogradov.myserver.serverLogic.serverService.UserContextRepository;
 import org.vinogradov.myserver.serverLogic.storageService.CloudUser;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
@@ -39,6 +43,8 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     private final Storage storage;
     private final NettyServer nettyServer;
     private ServerConsoleController serverConsoleController;
+    private ServerLogicImpl serverLogic;
+    private ConnectionsController connectionsController;
 
     public ConsoleLogicImpl(DataBase dataBase, Storage storage, NettyServer nettyServer) {
         currentPath = rootPath;
@@ -47,6 +53,8 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         this.dataBase = dataBase;
         this.storage = storage;
         this.nettyServer = nettyServer;
+        this.serverLogic = new ServerLogicImpl(dataBase, storage, nettyServer);
+        this.connectionsController = serverLogic.getConnectionsController();
     }
 
     @Override
@@ -126,6 +134,12 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     public void createNewUserInDB(String name, String password) {
         if (name != null && password != null && !name.isEmpty() && !password.isEmpty() ) {
             User user = new User(name, password);
+            if (connectionsController.patternMatching(name, password) != null) {
+                serverConsoleController.setLog("Несоответствие правилам создания полей пользователя, " +
+                        "уточние правила в классе AlertWindowsClass в методах showIncorrectPasswordAlert() и " +
+                        "showIncorrectUserNameAlert()");
+                return;
+            }
             if (!dataBase.createUser(user)) {
                 serverConsoleController.setLog(badCreateUser);
                 return;

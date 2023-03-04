@@ -286,4 +286,8 @@ public class ServerLogicImpl implements ServerLogic {
     public SendFileServerController getSendFileServerController() {
         return sendFileServerController;
     }
+
+    public ConnectionsController getConnectionsController() {
+        return connectionsController;
+    }
 }
