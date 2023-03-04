@@ -17,6 +17,6 @@
 2. cd cloud-file-storage
 3. mvn clean package
 4. java -jar server/target/server-1.0-SNAPSHOT-jar-with-dependencies.jar
-5. java -jar client/target/client-1.0-SNAPSHOT-jar-with-dependencies.jar
+5. java -jar client/target/client-1.0-SNAPSHOT-jar-with-dependencies.jar    
 Пункт 5 можно повторить в параллельно запущенных терминалах, для подключения к серверу
 нескольких клиентов одновременно.
