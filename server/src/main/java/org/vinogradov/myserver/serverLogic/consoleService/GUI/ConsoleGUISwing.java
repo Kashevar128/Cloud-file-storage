@@ -1,10 +1,13 @@
-package org.vinogradov.myserver.serverLogic.consoleService;
+package org.vinogradov.myserver.serverLogic.consoleService.GUI;
+
+import org.vinogradov.myserver.serverLogic.consoleService.ConsoleLogic;
+import org.vinogradov.myserver.serverLogic.consoleService.ExecuteTheCommand;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ConsoleGUI extends JFrame implements ActionListener {
+public class ConsoleGUISwing extends JFrame implements ActionListener {
     private final String waiting = "Введите <help> для помощи. Ожидание команды:";
 
     private final JTextArea log;
@@ -12,7 +15,7 @@ public class ConsoleGUI extends JFrame implements ActionListener {
     private final ExecuteTheCommand executeTheCommand;
     private final ConsoleLogic consoleLogic;
 
-    public ConsoleGUI(ExecuteTheCommand executeTheCommand, ConsoleLogic consoleLogic) {
+    public ConsoleGUISwing(ExecuteTheCommand executeTheCommand, ConsoleLogic consoleLogic) {
         this.executeTheCommand = executeTheCommand;
         this.consoleLogic = consoleLogic;
 

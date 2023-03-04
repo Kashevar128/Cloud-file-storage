@@ -47,7 +47,7 @@ public class NettyServer {
                             inbound.addLast(
                                     new ObjectDecoder(Constants.MB_10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new ServerHandler(dataBase, storage, NettyServer.this)
+                                    new ServerHandler(dataBase, storage, NettyServer.this, serverConsole.getServerGUI().getServerConsoleController())
                             );
                         }
                     });
