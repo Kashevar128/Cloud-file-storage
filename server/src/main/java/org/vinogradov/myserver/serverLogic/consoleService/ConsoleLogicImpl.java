@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.vinogradov.common.commonClasses.Constants;
 import org.vinogradov.common.commonClasses.HelperMethods;
 import org.vinogradov.common.commonClasses.User;
+import org.vinogradov.myserver.serverLogic.consoleService.controllers.ServerConsoleController;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.serverService.NettyServer;
 import org.vinogradov.myserver.serverLogic.serverService.UserContextRepository;
@@ -37,7 +38,7 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     private final DataBase dataBase;
     private final Storage storage;
     private final NettyServer nettyServer;
-    private ConsoleGUI consoleGUI;
+    private ServerConsoleController serverConsoleController;
 
     public ConsoleLogicImpl(DataBase dataBase, Storage storage, NettyServer nettyServer) {
         currentPath = rootPath;
@@ -56,23 +57,23 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
 
     @Override
     public void clearConsole() {
-        consoleGUI.clearLog();
+        serverConsoleController.clearLog();
     }
 
     public void exitConsole() {
         nettyServer.closeServer();
-        consoleGUI.exit();
+        serverConsoleController.exit();
     }
 
     @Override
     public void voidCommand() {
-        consoleGUI.setLog(badCommand);
+        serverConsoleController.setLog(badCommand);
     }
 
     @Override
     public void movePath(Path path) {
         if (path == null || !Files.exists(path) || !Files.isDirectory(path)) {
-            consoleGUI.setLog(badDirectory);
+            serverConsoleController.setLog(badDirectory);
             return;
         }
         if (!filterPath(path)) {
@@ -87,12 +88,12 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     @Override
     public void appendMovePath(Path pathNameDirectory) {
         if (pathNameDirectory == null) {
-            consoleGUI.setLog(badDirectory);
+            serverConsoleController.setLog(badDirectory);
             return;
         }
         Path newPath = currentPath.resolve(pathNameDirectory);
         if (!Files.exists(newPath) || !Files.isDirectory(newPath)) {
-            consoleGUI.setLog(badDirectory);
+            serverConsoleController.setLog(badDirectory);
             return;
         }
         if (!filterPath(newPath)) {
@@ -126,28 +127,28 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
         if (name != null && password != null && !name.isEmpty() && !password.isEmpty() ) {
             User user = new User(name, password);
             if (!dataBase.createUser(user)) {
-                consoleGUI.setLog(badCreateUser);
+                serverConsoleController.setLog(badCreateUser);
                 return;
             }
             String createUser = String.format("Пользователь %s успешно создан", name);
-            consoleGUI.setLog(createUser);
+            serverConsoleController.setLog(createUser);
             return;
         }
-        consoleGUI.setLog(badCreateUser);
+        serverConsoleController.setLog(badCreateUser);
     }
 
     @Override
     public void deleteUserInDB(String name) {
         if (name != null && !name.isEmpty()) {
             if (!dataBase.deleteUser(name)) {
-                consoleGUI.setLog(badDeleteUser);
+                serverConsoleController.setLog(badDeleteUser);
                 return;
             }
             String deleteUser = String.format("Пользователь %s успешно удален", name);
-            consoleGUI.setLog(deleteUser);
+            serverConsoleController.setLog(deleteUser);
             return;
         }
-        consoleGUI.setLog(badDeleteUser);
+        serverConsoleController.setLog(badDeleteUser);
     }
 
     @Override
@@ -158,32 +159,32 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     @Override
     public void createNewFolder(String nameFolder) {
         if (nameFolder == null || nameFolder.isEmpty()) {
-            consoleGUI.setLog(badCreateFolder);
+            serverConsoleController.setLog(badCreateFolder);
             return;
         }
         currentPath = currentPath.resolve(Paths.get(nameFolder));
         HelperMethods.createNewUserDirectory(currentPath);
         currentListPath = createListPaths(currentPath);
         String createFolder = String.format("Папка %s успешно создана", nameFolder);
-        consoleGUI.setLog(createFolder);
+        serverConsoleController.setLog(createFolder);
     }
 
     @Override
     public void deleteFile(String nameFolder) {
         if (nameFolder == null || nameFolder.isEmpty()) {
-            consoleGUI.setLog(badDelFile);
+            serverConsoleController.setLog(badDelFile);
             return;
         }
         Path resolve = currentPath.resolve(Paths.get(nameFolder));
         if (!Files.exists(resolve)) {
-            consoleGUI.setLog(badDelFile);
+            serverConsoleController.setLog(badDelFile);
             return;
         }
         if (!HelperMethods.deleteUserFile(resolve)) {
-            consoleGUI.setLog(errorDel);
+            serverConsoleController.setLog(errorDel);
         }
         String delComplete = String.format("Файл %s успешно удален", nameFolder);
-        consoleGUI.setLog(delComplete);
+        serverConsoleController.setLog(delComplete);
         currentListPath = createListPaths(currentPath);
         showCurrentPath();
     }
@@ -192,71 +193,72 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     public void getListDB() {
         List<List<String>> lists = dataBase.showAllUser();
         String showUsersDB = showAllUsersDB(lists);
-        consoleGUI.setLog(showUsersDB);
+        serverConsoleController.setLog(showUsersDB);
     }
 
     @Override
     public void getUserDB(String name) {
         if(name == null || name.isEmpty()) {
-            consoleGUI.setLog(badRequestUser);
+            serverConsoleController.setLog(badRequestUser);
             return;
         }
         List<String> list = dataBase.showUser(name);
         if (list.get(0) == null) {
-            consoleGUI.setLog(badRequestUser);
+            serverConsoleController.setLog(badRequestUser);
             return;
         }
         String showUserDB = showUserDB(list);
-        consoleGUI.setLog(showUserDB);
+        serverConsoleController.setLog(showUserDB);
     }
 
     @Override
     public void banUser(String name) {
         if (name == null || name.isEmpty() || !dataBase.findUser(name)) {
-            consoleGUI.setLog(badRequestUser);
+            serverConsoleController.setLog(badRequestUser);
             return;
         }
         dataBase.setAccess(name, Constants.ACCESS_FALSE);
         UserContextRepository userContextRepository = nettyServer.getUserContextRepository();
         ChannelHandlerContext context = userContextRepository.getContext(name);
-        if (context == null) return;
-        context.close();
-        userContextRepository.deleteUserContext(name);
+        if (context != null) {
+            context.close();
+            userContextRepository.deleteUserContext(name);
+        }
         String endConnection = String.format("Пользователь %s ушел в бан", name);
-        consoleGUI.setLog(endConnection);
+        serverConsoleController.setLog(endConnection);
     }
 
     @Override
     public void unBanUser(String name) {
         if (name == null || name.isEmpty() || !dataBase.findUser(name)) {
-            consoleGUI.setLog(badRequestUser);
+            serverConsoleController.setLog(badRequestUser);
             return;
         }
         dataBase.setAccess(name, Constants.ACCESS_TRUE);
         String unBan = String.format("Пользователь %s разбанен", name);
-        consoleGUI.setLog(unBan);
+        serverConsoleController.setLog(unBan);
     }
 
     @Override
     public void setSizeStorage(String name, String sizeStr) {
         if (name == null || name.isEmpty()) {
-            consoleGUI.setLog(badRequestUser);
+            serverConsoleController.setLog(badRequestUser);
             return;
         }
         if (sizeStr == null || sizeStr.isEmpty()) {
-            consoleGUI.setLog(badSizeUser);
+            serverConsoleController.setLog(badSizeUser);
             return;
         }
         long constant = sizeConstants.getConstant(sizeStr);
         if (constant == 0L) {
-            consoleGUI.setLog(badSizeUser);
+            serverConsoleController.setLog(badSizeUser);
             return;
         }
         dataBase.setSizeStorageDB(name, constant);
         ConcurrentMap<String, CloudUser> listUserRepositories = storage.getListUserRepositories();
         CloudUser cloudUser = listUserRepositories.get(name);
         String reSizeComplete = String.format("Размер для %s успешно изменен", name);
-        consoleGUI.setLog(reSizeComplete);
+        serverConsoleController.setLog(reSizeComplete);
         if (cloudUser == null) return;
         cloudUser.setMaxSize(constant);
 
@@ -266,25 +268,25 @@ public class ConsoleLogicImpl extends DisplayingInformation implements ConsoleLo
     public void getUsersOnline() {
         UserContextRepository userContextRepository = nettyServer.getUserContextRepository();
         String usersOnline = showUsersOnline(userContextRepository.getUserList());
-        consoleGUI.setLog(usersOnline);
+        serverConsoleController.setLog(usersOnline);
     }
 
     @Override
     public void getHelp() {
-        consoleGUI.setLog(showHelp());
+        serverConsoleController.setLog(showHelp());
+    }
+
+    public void setServerConsoleController(ServerConsoleController serverConsoleController) {
+        this.serverConsoleController = serverConsoleController;
     }
 
 
-    public void setConsoleGUI(ConsoleGUI consoleGUI) {
-        this.consoleGUI = consoleGUI;
-    }
-
-    private void showInGUI(String msg) {
+        private void showInGUI(String msg) {
         if (msg == null || msg.isEmpty()) {
-            consoleGUI.setLog("null");
+            serverConsoleController.setLog("null");
             return;
         }
-        consoleGUI.setLog(msg);
+        serverConsoleController.setLog(msg);
     }
 
     private List<Path> createListPaths(Path path) {

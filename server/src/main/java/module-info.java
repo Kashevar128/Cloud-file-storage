@@ -5,4 +5,9 @@ module server {
     requires org.apache.commons.codec;
     requires java.desktop;
     requires common;
+    requires javafx.fxml;
+    requires javafx.graphics;
+    requires javafx.controls;
+
+    exports org.vinogradov.myserver.serverLogic.consoleService.controllers;
 }

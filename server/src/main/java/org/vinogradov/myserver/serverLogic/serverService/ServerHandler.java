@@ -4,9 +4,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.vinogradov.common.commonClasses.BasicQuery;
 import org.vinogradov.common.requests.*;
+import org.vinogradov.myserver.serverLogic.consoleService.controllers.ServerConsoleController;
 import org.vinogradov.myserver.serverLogic.dataBaseService.DataBase;
 import org.vinogradov.myserver.serverLogic.storageService.Storage;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -18,13 +18,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     private final DataBase dataBase;
     private final Storage storage;
     private final NettyServer nettyServer;
+    private final ServerConsoleController serverConsoleController;
 
     private static final Map<Class<? extends BasicQuery>, BiConsumer<ServerLogic, BasicQuery>> REQUEST_HANDLERS = new HashMap<>();
 
-    public ServerHandler(DataBase dataBase, Storage storage, NettyServer nettyServer) {
+    public ServerHandler(DataBase dataBase, Storage storage, NettyServer nettyServer, ServerConsoleController serverConsoleController) {
         this.dataBase = dataBase;
         this.storage = storage;
         this.nettyServer = nettyServer;
+        this.serverConsoleController = serverConsoleController;
         this.serverLogicImpl = new ServerLogicImpl(dataBase, storage, nettyServer);
     }
 
@@ -94,7 +96,21 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {;
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        serverConsoleController.setLog("----------------------------------------------------------------------\n" +
+                "Новый пользователь: " + ctx.channel().toString() + "\n----------------------------------------------------------------------");
+        serverConsoleController.writeWaitingMsg();
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        serverConsoleController.setLog("----------------------------------------------------------------------\n" +
+                "Пользователь вышел: " + ctx.channel().toString() + "\n----------------------------------------------------------------------");
+        serverConsoleController.writeWaitingMsg();
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicQuery request = (BasicQuery) msg;
 
         if (!serverLogicImpl.filterSecurity(request)) return;
