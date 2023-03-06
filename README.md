@@ -14,7 +14,7 @@
 2. логин: User2, пароль: GHsdfnxcv890.
 
 Запуск приложения:
-1. git clone https://github.com/Kashevar128/cloud-file-storage
+1. git clone https://github.com/Kashevar128/cloud-file-storage.git
 2. cd cloud-file-storage
 3. mvn clean package
 4. java -jar server/target/server-1.0-SNAPSHOT-jar-with-dependencies.jar
